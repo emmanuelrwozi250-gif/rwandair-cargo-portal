@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RwandAir Cargo · Portal Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Lato',sans-serif;background:#002B52;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
+.logo-area{text-align:center;margin-bottom:48px;}
+.logo-badge{width:64px;height:64px;background:#FEE014;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#002B52;margin:0 auto 16px;}
+.logo-title{font-size:28px;font-weight:900;color:#fff;letter-spacing:-.5px;}
+.logo-sub{font-size:13px;color:rgba(255,255,255,.45);margin-top:5px;font-weight:300;}
+.tagline{font-size:11px;color:#FEE014;font-weight:700;letter-spacing:.15em;margin-top:8px;}
+.portals{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;width:100%;max-width:680px;}
+.portal-card{background:#fff;border-radius:14px;overflow:hidden;cursor:pointer;transition:all .18s;text-decoration:none;display:block;}
+.portal-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.25);}
+.pc-head{padding:20px 22px 16px;position:relative;}
+.pc-icon{font-size:28px;margin-bottom:10px;}
+.pc-title{font-size:17px;font-weight:900;color:#fff;line-height:1.2;}
+.pc-role{font-size:10px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.1em;margin-top:3px;}
+.pc-body{padding:15px 22px 20px;background:#fff;}
+.pc-desc{font-size:12px;color:#6B7A99;line-height:1.6;margin-bottom:14px;}
+.pc-links{display:flex;flex-direction:column;gap:4px;}
+.pc-link{font-size:11px;color:#00529B;font-weight:600;display:flex;align-items:center;gap:5px;}
+.pc-link::before{content:'→';font-size:10px;}
+.pc-cta{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;background:#00529B;color:#fff;border-radius:8px;font-size:11px;font-weight:700;margin-top:12px;}
+.pc-cta:hover{background:#003D73;}
+
+/* Card colors */
+.gsa-head{background:linear-gradient(135deg,#00529B,#003D73);}
+.wh-head{background:linear-gradient(135deg,#1EA2DC,#0077A8);}
+.mgmt-head{background:linear-gradient(135deg,#002B52,#00529B);}
+.plan-head{background:linear-gradient(135deg,#94C943,#6B9A2A);}
+
+.footer{margin-top:36px;text-align:center;font-size:10px;color:rgba(255,255,255,.25);}
+.footer a{color:rgba(255,255,255,.4);text-decoration:none;}
+.env-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(254,224,20,.15);border:1px solid rgba(254,224,20,.25);border-radius:20px;font-size:9px;font-weight:700;color:#FEE014;letter-spacing:.08em;margin-bottom:28px;}
+.edot{width:6px;height:6px;background:#94C943;border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+@media(max-width:600px){.portals{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="logo-area">
+  <div class="env-badge"><div class="edot"></div> STAGING ENVIRONMENT · INTERNAL USE ONLY</div>
+  <div class="logo-badge">WB</div>
+  <div class="logo-title">RwandAir Cargo</div>
+  <div class="logo-sub">Operations Intelligence Portal Suite</div>
+  <div class="tagline">SELECT YOUR ROLE TO CONTINUE</div>
+</div>
+
+<div class="portals">
+
+  <!-- GSA / AGENT -->
+  <a class="portal-card" href="portal-gsa.html">
+    <div class="pc-head gsa-head">
+      <div class="pc-icon">✈️</div>
+      <div class="pc-title">GSA & Agent Portal</div>
+      <div class="pc-role">SALES AGENTS · GSA OFFICES</div>
+    </div>
+    <div class="pc-body">
+      <div class="pc-desc">Book shipments, check live route availability, view rates, track AWBs, and manage claims from your station.</div>
+      <div class="pc-links">
+        <div class="pc-link">Space & Availability Search</div>
+        <div class="pc-link">My Bookings & Tracking</div>
+        <div class="pc-link">Rates & Claims</div>
+      </div>
+      <div class="pc-cta">Open GSA Portal →</div>
+    </div>
+  </a>
+
+  <!-- WAREHOUSE OPS -->
+  <a class="portal-card" href="portal-warehouse.html">
+    <div class="pc-head wh-head">
+      <div class="pc-icon">🏭</div>
+      <div class="pc-title">Warehouse Operations</div>
+      <div class="pc-role">STATION OPS · GROUND HANDLERS</div>
+    </div>
+    <div class="pc-body">
+      <div class="pc-desc">Monitor transit cargo, manage dwell alerts, oversee inbound & outbound flights, handle DG and perishable cargo.</div>
+      <div class="pc-links">
+        <div class="pc-link">Transit Cargo & Dwell Alerts</div>
+        <div class="pc-link">Inbound & Outbound Flights</div>
+        <div class="pc-link">DG / Perishable / ULD Tracking</div>
+      </div>
+      <div class="pc-cta">Open Warehouse Portal →</div>
+    </div>
+  </a>
+
+  <!-- EXECUTIVE / MANAGEMENT -->
+  <a class="portal-card" href="portal-management.html">
+    <div class="pc-head mgmt-head">
+      <div class="pc-icon">📈</div>
+      <div class="pc-title">Executive Dashboard</div>
+      <div class="pc-role">MANAGEMENT · DIRECTORS · HQ</div>
+    </div>
+    <div class="pc-body">
+      <div class="pc-desc">Top-level KPIs, revenue by market, operational health across all 32 stations, and full network performance.</div>
+      <div class="pc-links">
+        <div class="pc-link">Revenue & Yield Dashboard</div>
+        <div class="pc-link">Operational Health (RAG)</div>
+        <div class="pc-link">Network Performance Reports</div>
+      </div>
+      <div class="pc-cta">Open Executive Dashboard →</div>
+    </div>
+  </a>
+
+  <!-- NETWORK PLANNING -->
+  <a class="portal-card" href="portal-planning.html">
+    <div class="pc-head plan-head">
+      <div class="pc-icon">🗓️</div>
+      <div class="pc-title">Network Planning</div>
+      <div class="pc-role">PLANNING TEAM · HQ COMMERCIAL</div>
+    </div>
+    <div class="pc-body">
+      <div class="pc-desc">Capacity planning, demand forecasting, space allocation, route performance analytics, and seasonal trend analysis.</div>
+      <div class="pc-links">
+        <div class="pc-link">Capacity & Space Allocation</div>
+        <div class="pc-link">Demand Forecast & Trends</div>
+        <div class="pc-link">Route P&L & Fleet Utilisation</div>
+      </div>
+      <div class="pc-cta">Open Planning Portal →</div>
+    </div>
+  </a>
+
+</div>
+
+<div class="footer">
+  RwandAir Cargo · Intelligence Portal Suite · Staging v2.0<br>
+  Data source: CargoFlash API · <a href="portal.html">Full Portal (All Roles)</a>
+</div>
+
+</body>
+</html>
