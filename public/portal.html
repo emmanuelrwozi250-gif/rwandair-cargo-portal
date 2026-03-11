@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RwandAir Cargo · Intelligence Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0D2E6E;--navy2:#0A2255;--navy3:#071840;
+  --gold:#F5C518;--gold2:#D4A800;--goldL:#FFF5B0;
+  --red:#C0392B;--green:#1A8A4A;--amber:#D97706;
+  --teal:#0891B2;--purple:#7C3AED;--smoke:#F1F4F9;
+  --white:#fff;--mid:#6B7A99;--dark:#1A2340;--border:#DDE3EE;
+  --sw:230px;
+}
+body{font-family:'Inter',sans-serif;background:var(--smoke);color:var(--dark);overflow:hidden;height:100vh;display:flex;flex-direction:column;}
+.tb{height:50px;background:var(--navy3);display:flex;align-items:center;padding:0 16px;gap:14px;flex-shrink:0;border-bottom:2px solid var(--gold);}
+.logo{display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.lm{width:28px;height:28px;background:var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;color:var(--navy3);}
+.lt{font-size:12px;font-weight:700;color:#fff;line-height:1.2;}
+.ls{font-size:9px;color:rgba(255,255,255,.4);}
+.tc{flex:1;display:flex;justify-content:center;gap:12px;align-items:center;}
+.rtabs{display:flex;gap:3px;background:rgba(255,255,255,.07);border-radius:7px;padding:3px;}
+.rtab{padding:4px 11px;border-radius:5px;font-size:10.5px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.5);transition:all .14s;border:none;background:none;font-family:'Inter',sans-serif;}
+.rtab:hover:not(.active){color:#fff;background:rgba(255,255,255,.09);}
+.rtab.active{background:var(--gold);color:var(--navy3);}
+.tr{display:flex;align-items:center;gap:10px;}
+.ubadge{display:flex;align-items:center;gap:7px;padding:3px 9px;background:rgba(255,255,255,.07);border-radius:18px;}
+.udot{width:22px;height:22px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--navy3);}
+.uinfo{font-size:10px;color:rgba(255,255,255,.65);}
+.sync{font-size:9px;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:4px;}
+.sdot{width:6px;height:6px;background:#22C55E;border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.body{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:var(--sw);background:var(--navy2);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:thin;}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:2px;}
+.ns{padding:11px 0 3px 14px;font-size:8px;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:.12em;}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;color:rgba(255,255,255,.55);font-size:11px;font-weight:500;transition:all .12s;border-left:2px solid transparent;}
+.ni:hover{background:rgba(255,255,255,.06);color:#fff;}
+.ni.active{background:rgba(245,197,24,.1);color:var(--gold);border-left-color:var(--gold);}
+.ni .ic{font-size:12px;width:15px;text-align:center;flex-shrink:0;}
+.nbadge{margin-left:auto;font-size:8.5px;font-weight:700;padding:1px 5px;border-radius:8px;color:#fff;}
+.br{background:var(--red);}
+.ba{background:var(--amber);}
+.sfooter{margin-top:auto;padding:11px 14px;border-top:1px solid rgba(255,255,255,.07);}
+.sft{font-size:9px;color:rgba(255,255,255,.25);}
+.main{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px;}
+.page{display:none;flex-direction:column;gap:14px;}
+.page.active{display:flex;}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.ptitle{font-size:18px;font-weight:800;color:var(--dark);}
+.psub{font-size:11px;color:var(--mid);margin-top:2px;}
+.pac{display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
+.btn{padding:6px 13px;border-radius:7px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:none;transition:all .13s;white-space:nowrap;}
+.bpri{background:var(--navy);color:#fff;}
+.bpri:hover{background:var(--navy2);}
+.bgold{background:var(--gold);color:var(--navy3);}
+.bgold:hover{background:var(--gold2);}
+.bout{background:transparent;color:var(--navy);border:1px solid var(--border);}
+.bout:hover{background:#fff;}
+.bsm{padding:4px 9px;font-size:10px;}
+.card{background:#fff;border-radius:10px;border:1px solid var(--border);overflow:hidden;}
+.ch{padding:12px 15px 9px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.ct{font-size:12px;font-weight:700;color:var(--dark);}
+.cs{font-size:10px;color:var(--mid);margin-top:1px;}
+.cb{padding:13px 15px;}
+.sg4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;}
+.sg3{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;}
+.sg2{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;}
+.sc{background:#fff;border-radius:10px;border:1px solid var(--border);padding:13px 15px;position:relative;overflow:hidden;}
+.sl{font-size:9.5px;color:var(--mid);font-weight:600;margin-bottom:5px;letter-spacing:.03em;}
+.sv{font-size:22px;font-weight:800;color:var(--dark);line-height:1.1;}
+.sch{font-size:10px;margin-top:3px;font-weight:600;}
+.sup{color:var(--green);}
+.sdn{color:var(--red);}
+.swn{color:var(--amber);}
+.sbar{position:absolute;bottom:0;left:0;right:0;height:3px;}
+.sp{background:var(--navy3);border-radius:11px;padding:16px 18px;}
+.spt{font-size:11.5px;font-weight:700;color:#fff;margin-bottom:11px;}
+.sr{display:flex;gap:9px;align-items:flex-end;flex-wrap:wrap;}
+.fi{display:flex;flex-direction:column;gap:4px;}
+.fi label{font-size:9px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;}
+.fi select,.fi input{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);border-radius:6px;padding:6px 9px;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;outline:none;}
+.fi select option{background:#1A2340;}
+.fi select:focus,.fi input:focus{border-color:var(--gold);}
+.fi input::placeholder{color:rgba(255,255,255,.3);}
+.fw{flex:1.4;min-width:110px;}
+.fm{flex:1;min-width:90px;}
+.fs{flex:.8;min-width:75px;}
+.ar{background:#fff;border-radius:10px;border:1px solid var(--border);}
+.ah{background:var(--smoke);padding:10px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px;}
+.rd{display:flex;align-items:center;gap:7px;}
+.rcode{font-size:17px;font-weight:800;color:var(--dark);}
+.rarr{font-size:10px;color:var(--mid);}
+.vtag{font-size:9px;background:var(--gold);color:var(--navy3);padding:2px 7px;border-radius:9px;font-weight:700;}
+.alegs{display:grid;grid-template-columns:1fr 1fr;}
+.leg{padding:13px 15px;border-right:1px solid var(--border);}
+.leg:last-child{border-right:none;}
+.lr{font-size:12.5px;font-weight:700;color:var(--dark);}
+.lf{font-size:10px;color:var(--mid);margin-top:2px;}
+.cw{background:var(--smoke);border-radius:5px;height:6px;margin:7px 0;overflow:hidden;}
+.cb2{height:100%;border-radius:5px;}
+.cg{background:linear-gradient(90deg,#1A8A4A,#22C55E);}
+.ca{background:linear-gradient(90deg,#D97706,#F59E0B);}
+.cr{background:linear-gradient(90deg,#C0392B,#EF4444);}
+.cst{display:flex;justify-content:space-between;font-size:9px;color:var(--mid);}
+.prow{background:var(--smoke);padding:10px 15px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;}
+.dt{width:100%;border-collapse:collapse;font-size:11px;}
+.dt th{padding:7px 11px;text-align:left;font-size:9px;font-weight:700;color:var(--mid);letter-spacing:.05em;background:var(--smoke);border-bottom:1px solid var(--border);}
+.dt td{padding:8px 11px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.dt tr:last-child td{border-bottom:none;}
+.dt tr:hover td{background:#FAFBFF;}
+.mono{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--navy);}
+.pill{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:9px;font-size:9px;font-weight:700;white-space:nowrap;}
+.pg{background:#E8F8EE;color:#1A8A4A;}
+.pa{background:#FEF3E2;color:#D97706;}
+.pr{background:#FDECEA;color:#C0392B;}
+.pb{background:#EEF2FF;color:#3730A3;}
+.pt{background:#E0F2FE;color:#0369A1;}
+.pp{background:#F3E8FF;color:#7C3AED;}
+.pn{background:#F0F0F0;color:#555;}
+.dw{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;}
+.dok{color:var(--green);}
+.dwn{color:var(--amber);}
+.dal{color:var(--red);}
+.pbar{width:80px;height:5px;background:var(--border);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;}
+.pf{height:100%;border-radius:3px;}
+.as{border-radius:8px;padding:9px 13px;display:flex;align-items:flex-start;gap:9px;}
+.asr{background:#FDECEA;border:1px solid #FECACA;}
+.asa{background:#FEF3E2;border:1px solid #FDE68A;}
+.asb{background:#EEF2FF;border:1px solid #C7D2FE;}
+.asg{background:#E8F8EE;border:1px solid #A7F3D0;}
+.ai{font-size:15px;flex-shrink:0;margin-top:1px;}
+.at2{font-size:11px;font-weight:700;color:var(--dark);}
+.am{font-size:10px;color:var(--mid);margin-top:1px;}
+.tabs{display:flex;gap:2px;background:var(--smoke);padding:3px;border-radius:7px;border:1px solid var(--border);}
+.tab{padding:5px 11px;border-radius:5px;font-size:10.5px;font-weight:600;cursor:pointer;color:var(--mid);border:none;background:none;font-family:'Inter',sans-serif;transition:all .12s;}
+.tab.active{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.07);}
+.tl{display:flex;align-items:center;padding:7px 0;}
+.tw{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.td{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;flex-shrink:0;}
+.tdd{background:var(--green);color:#fff;}
+.tda{background:var(--gold);color:var(--navy3);}
+.tdp{background:var(--border);color:var(--mid);}
+.tde{background:var(--red);color:#fff;}
+.tline{flex:1;height:2px;background:var(--border);}
+.tline.done{background:var(--green);}
+.tlbl{font-size:8px;color:var(--mid);font-weight:500;text-align:center;max-width:55px;}
+.ttime{font-size:8px;color:var(--mid);font-family:'Space Mono',monospace;}
+.row{display:flex;gap:13px;}
+.c5{flex:.5;min-width:0;}
+.c6{flex:1;min-width:0;}
+.c7{flex:1.2;min-width:0;}
+.c8{flex:1.5;min-width:0;}
+.rg3{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;}
+.rg4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;}
+.rc{background:#fff;border-radius:10px;border:1px solid var(--border);padding:14px;cursor:pointer;transition:all .14s;position:relative;overflow:hidden;}
+.rc:hover{border-color:var(--navy);box-shadow:0 3px 14px rgba(14,48,112,.1);transform:translateY(-1px);}
+.rca{position:absolute;top:0;left:0;right:0;height:3px;}
+.rci{font-size:20px;margin-bottom:7px;}
+.rct{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:3px;}
+.rcd{font-size:10px;color:var(--mid);line-height:1.5;}
+.rcm{display:flex;gap:5px;margin-top:9px;flex-wrap:wrap;}
+.rctag{font-size:8.5px;font-weight:600;padding:2px 6px;border-radius:7px;background:var(--smoke);color:var(--mid);}
+.rsech{font-size:11.5px;font-weight:800;color:var(--dark);margin-bottom:9px;display:flex;align-items:center;gap:7px;}
+.rsecbar{width:4px;height:15px;border-radius:2px;display:inline-block;}
+.rv{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:998;align-items:center;justify-content:center;}
+.rvbox{background:#fff;border-radius:13px;width:860px;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.rvh{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1;}
+.rvb{padding:20px;}
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;}
+.mbox{background:#fff;border-radius:13px;width:540px;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.mhd{background:var(--navy3);padding:15px 19px;border-radius:13px 13px 0 0;display:flex;justify-content:space-between;align-items:center;}
+.mbd{padding:17px 19px;display:flex;flex-direction:column;gap:11px;}
+.fw2{display:flex;flex-direction:column;gap:4px;}
+.fw2 label{font-size:9.5px;font-weight:700;color:var(--mid);letter-spacing:.04em;}
+.fw2 select,.fw2 input,.fw2 textarea{padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-size:11px;font-family:'Inter',sans-serif;outline:none;}
+.fw2 select:focus,.fw2 input:focus{border-color:var(--navy);}
+.ng{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.nc{background:#fff;border-radius:9px;border:1px solid var(--border);padding:11px 13px;cursor:pointer;transition:all .13s;}
+.nc:hover{border-color:var(--navy);}
+.nc.nal{border-color:var(--red);background:#FFFAF9;}
+.nc.nwn{border-color:var(--amber);background:#FFFDF5;}
+.nclg{font-size:19px;font-weight:800;color:var(--dark);}
+.ncs{font-size:9.5px;color:var(--mid);margin-top:1px;}
+.nmr{display:flex;gap:9px;margin-top:7px;}
+.nm{font-size:9px;color:var(--mid);}
+.nm strong{display:block;font-size:12px;font-weight:700;}
+.muted{color:var(--mid);}
+.text-r{text-align:right;}
+.mt{margin-top:8px;}
+.divider{height:1px;background:var(--border);}
+.green{color:var(--green);}
+.red{color:var(--red);}
+.amber{color:var(--amber);}
+.bold{font-weight:700;}
+.chart-wrap{position:relative;height:200px;}
+.chart-wrap-lg{position:relative;height:260px;}
+/* SEARCH */
+.tsearch{position:relative;width:210px;}
+.tsearch-input{width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:7px;padding:5px 10px 5px 28px;color:#fff;font-size:11px;font-family:'Inter',sans-serif;outline:none;}
+.tsearch-input:focus{border-color:var(--gold);}
+.tsearch-input::placeholder{color:rgba(255,255,255,.4);}
+.tsearch-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:11px;pointer-events:none;}
+.srch-drop{position:absolute;top:calc(100%+6px);left:0;width:300px;background:#fff;border-radius:9px;border:1px solid var(--border);box-shadow:0 8px 25px rgba(0,0,0,.12);z-index:2000;display:none;max-height:300px;overflow-y:auto;}
+.srch-drop.open{display:block;}
+.srch-sec{padding:7px 12px 3px;font-size:8.5px;font-weight:700;color:var(--mid);letter-spacing:.08em;}
+.srch-item{padding:7px 12px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:9px;color:var(--dark);}
+.srch-item:hover{background:var(--smoke);}
+.srch-code{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--navy);min-width:90px;}
+.srch-desc{font-size:10px;color:var(--mid);}
+.srch-empty{padding:16px 12px;font-size:11px;color:var(--mid);text-align:center;}
+/* NOTIFICATIONS */
+.bell-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:5px 10px;cursor:pointer;color:#fff;font-size:13px;line-height:1;display:flex;align-items:center;gap:4px;font-family:'Inter',sans-serif;}
+.bell-btn:hover{background:rgba(255,255,255,.15);}
+.bell-count{font-size:9px;font-weight:700;background:var(--red);border-radius:8px;padding:1px 5px;color:#fff;}
+.notif-panel{position:fixed;top:0;right:-320px;width:300px;height:100vh;background:#fff;border-left:1px solid var(--border);box-shadow:-8px 0 30px rgba(0,0,0,.12);z-index:3000;display:flex;flex-direction:column;transition:right .22s ease;}
+.notif-panel.open{right:0;}
+.notif-hd{background:var(--navy3);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:2px solid var(--gold);}
+.notif-hd-t{font-size:13px;font-weight:700;color:#fff;}
+.notif-hd-s{font-size:10px;color:rgba(255,255,255,.45);margin-top:1px;}
+.notif-close{background:rgba(255,255,255,.1);border:none;color:#fff;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px;font-family:'Inter',sans-serif;}
+.notif-body{flex:1;overflow-y:auto;padding:10px;}
+.ni2{background:var(--smoke);border-radius:9px;padding:10px 12px;margin-bottom:7px;border-left:3px solid var(--border);cursor:pointer;}
+.ni2.nt-r{border-left-color:var(--red);background:#FFFAF9;}
+.ni2.nt-a{border-left-color:var(--amber);background:#FFFDF5;}
+.ni2.nt-g{border-left-color:var(--green);background:#F5FDF8;}
+.ni2.nt-b{border-left-color:var(--teal);background:#F0FAFF;}
+.ni2-title{font-size:11px;font-weight:700;color:var(--dark);}
+.ni2-desc{font-size:10px;color:var(--mid);margin-top:2px;line-height:1.45;}
+.ni2-time{font-size:9px;color:var(--mid);margin-top:5px;}
+.notif-footer{padding:10px 16px;border-top:1px solid var(--border);text-align:center;flex-shrink:0;}
+/* SPARKLINE */
+.sparkline{width:72px;height:24px;position:absolute;right:12px;bottom:14px;opacity:.85;}
+/* MAP */
+#map-container{height:400px;border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+/* CSV BUTTON */
+.bcsv{background:#E8F8EE;color:var(--green);border:1px solid #A7F3D0;}
+.bcsv:hover{background:#D1F5E0;}
+/* RAG HEALTH GRID */
+.rag-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.rag-card{background:#fff;border-radius:10px;border:1px solid var(--border);padding:12px 14px;border-top:4px solid var(--border);}
+.rag-card.rag-g{border-top-color:var(--green);}
+.rag-card.rag-a{border-top-color:var(--amber);}
+.rag-card.rag-r{border-top-color:var(--red);}
+.rag-station{font-size:18px;font-weight:800;color:var(--dark);}
+.rag-city{font-size:9px;color:var(--mid);margin-bottom:8px;}
+.rag-metric{display:flex;justify-content:space-between;font-size:10px;margin-top:3px;}
+.rag-label{color:var(--mid);}
+.rag-val{font-weight:700;}
+.rag-score{font-size:20px;font-weight:800;margin-top:7px;}
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .sg4{grid-template-columns:repeat(2,1fr);}
+  .sg3{grid-template-columns:repeat(2,1fr);}
+  .ng{grid-template-columns:repeat(2,1fr);}
+  .rg3,.rg4{grid-template-columns:repeat(2,1fr);}
+  .alegs{grid-template-columns:1fr;}
+  .row{flex-direction:column;}
+  .rag-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:600px){
+  .sg4,.sg3,.sg2,.rag-grid{grid-template-columns:1fr;}
+  .ng,.rg3,.rg4{grid-template-columns:1fr;}
+  .ptitle{font-size:15px;}
+  .main{padding:10px 12px;}
+  .tsearch{display:none;}
+}
+/* ACCESSIBILITY */
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px;}
+.leaflet-station-label{background:transparent!important;border:none!important;box-shadow:none!important;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:var(--navy3);}
+</style>
+</head>
+<body>
+<!-- TOP BAR -->
+<div class="tb" role="banner">
+  <div class="logo">
+    <div class="lm" aria-label="RwandAir Cargo WB">WB</div>
+    <div><div class="lt">RwandAir Cargo · Intelligence Portal</div><div class="ls">Booking · Visibility · Operations · Reports</div></div>
+  </div>
+  <div class="tc">
+    <div class="rtabs" role="tablist" aria-label="Role selector">
+      <button class="rtab active" role="tab" aria-selected="true" onclick="switchRole('gsa',this)">GSA / Agent</button>
+      <button class="rtab" role="tab" aria-selected="false" onclick="switchRole('warehouse',this)">Warehouse Ops</button>
+      <button class="rtab" role="tab" aria-selected="false" onclick="switchRole('commercial',this)">HQ Commercial</button>
+      <button class="rtab" role="tab" aria-selected="false" onclick="switchRole('planning',this)">Planning</button>
+      <button class="rtab" role="tab" aria-selected="false" onclick="switchRole('mgmt',this)">Management</button>
+    </div>
+    <div class="tsearch" role="search">
+      <span class="tsearch-icon" aria-hidden="true">🔍</span>
+      <input class="tsearch-input" id="gsearch" type="search" placeholder="Search AWB, station, page…" aria-label="Global search" autocomplete="off"
+        oninput="globalSearch(this.value)" onfocus="openSearch()" onblur="closeSearchDelay()">
+      <div class="srch-drop" id="srch-drop" role="listbox" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="tr">
+    <div class="sync"><div class="sdot"></div>Live · CargoFlash</div>
+    <button class="bell-btn" id="bell-btn" onclick="toggleNotifications()" aria-label="Notifications" aria-expanded="false">
+      🔔 <span class="bell-count" id="bell-count">7</span>
+    </button>
+    <div class="ubadge"><div class="udot" id="udot">ER</div><div class="uinfo" id="uinfo">Lagos GSA · LOS</div></div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-panel" id="notif-panel" role="dialog" aria-label="Notifications panel" aria-live="polite">
+  <div class="notif-hd">
+    <div><div class="notif-hd-t">Notifications</div><div class="notif-hd-s">7 unread alerts</div></div>
+    <button class="notif-close" onclick="toggleNotifications()">✕ Close</button>
+  </div>
+  <div class="notif-body">
+    <div class="ni2 nt-r"><div class="ni2-title">🚨 Dwell Breach — NBO</div><div class="ni2-desc">206-12389 · Automotive Parts · 67hrs in warehouse. Exceeds 48hr SLA. Immediate action required.</div><div class="ni2-time">2 min ago</div></div>
+    <div class="ni2 nt-r"><div class="ni2-title">🚨 Dwell Breach — NBO</div><div class="ni2-desc">206-12453 · Pharmaceuticals · 51hrs. Cool room placement required. Notify shipper.</div><div class="ni2-time">15 min ago</div></div>
+    <div class="ni2 nt-a"><div class="ni2-title">⚠ Capacity Alert — CPT→LHR</div><div class="ni2-desc">Route at 96% load factor. Oversold risk for week 12. Consider capacity reallocation.</div><div class="ni2-time">1 hr ago</div></div>
+    <div class="ni2 nt-a"><div class="ni2-title">⚠ Yield Below Target — ADD</div><div class="ni2-desc">ADD→Europe yield at USD 2.90/kg vs target USD 3.50. GSA review recommended.</div><div class="ni2-time">2 hrs ago</div></div>
+    <div class="ni2 nt-b"><div class="ni2-title">ℹ WB204 Departed NBO</div><div class="ni2-desc">WB204 departed NBO 09:18 (+3min). 3 transit shipments loaded. ETA LHR 14:43.</div><div class="ni2-time">3 hrs ago</div></div>
+    <div class="ni2 nt-g"><div class="ni2-title">✓ LOS Revenue Target Achieved</div><div class="ni2-desc">Lagos GSA exceeded March target by 4.2%. USD 312,400 booked vs USD 300,000 target.</div><div class="ni2-time">Today 06:00</div></div>
+    <div class="ni2 nt-a"><div class="ni2-title">⚠ DG Compliance — JNB</div><div class="ni2-desc">1 undeclared DG incident at JNB. Under review. Regulatory notification required within 24hrs.</div><div class="ni2-time">Yesterday 18:45</div></div>
+  </div>
+  <div class="notif-footer"><button class="btn bout bsm" style="width:100%">Mark All Read</button></div>
+</div>
+
+<div class="body">
+<!-- SIDEBAR -->
+<div class="sidebar" role="navigation" aria-label="Main navigation">
+  <div id="nav-gsa">
+    <div class="ns">BOOKING</div>
+    <div class="ni active" tabindex="0" role="button" aria-label="Space and Availability" onclick="sp('gsa-search')"><span class="ic" aria-hidden="true">🔍</span>Space &amp; Availability</div>
+    <div class="ni" tabindex="0" role="button" aria-label="My Bookings" onclick="sp('gsa-bookings')"><span class="ic" aria-hidden="true">📋</span>My Bookings</div>
+    <div class="ni" tabindex="0" role="button" aria-label="Shipment Tracking" onclick="sp('gsa-tracking')"><span class="ic" aria-hidden="true">📦</span>Shipment Tracking</div>
+    <div class="ns">MARKET</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('rates')"><span class="ic" aria-hidden="true">💰</span>Rates &amp; Pricing</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('claims')"><span class="ic" aria-hidden="true">⚠️</span>Claims &amp; Irregularities</div>
+    <div class="ns">REPORTS</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('reports')"><span class="ic" aria-hidden="true">📊</span>Reports Hub</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('network')"><span class="ic" aria-hidden="true">🌍</span>Network Map</div>
+  </div>
+  <div id="nav-warehouse" style="display:none">
+    <div class="ns">LIVE OPS</div>
+    <div class="ni active" tabindex="0" role="button" onclick="sp('warehouse')"><span class="ic" aria-hidden="true">🏭</span>Transit Cargo<span class="nbadge br">4</span></div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('dwell')"><span class="ic" aria-hidden="true">⏱️</span>Dwell Alerts<span class="nbadge ba">7</span></div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('inbound')"><span class="ic" aria-hidden="true">📥</span>Inbound Today</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('outbound')"><span class="ic" aria-hidden="true">📤</span>Outbound Today</div>
+    <div class="ns">SPECIAL</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('dg')"><span class="ic" aria-hidden="true">☢️</span>Dangerous Goods<span class="nbadge br">2</span></div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('perishable')"><span class="ic" aria-hidden="true">🌡️</span>Temp-Sensitive</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('uld')"><span class="ic" aria-hidden="true">📦</span>ULD Status</div>
+    <div class="ns">REPORTS</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('reports')"><span class="ic" aria-hidden="true">📊</span>Reports Hub</div>
+  </div>
+  <div id="nav-commercial" style="display:none">
+    <div class="ns">NETWORK</div>
+    <div class="ni active" tabindex="0" role="button" onclick="sp('commercial')"><span class="ic" aria-hidden="true">📊</span>Network Overview</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('capacity-route')"><span class="ic" aria-hidden="true">✈️</span>Capacity by Route</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('pricing')"><span class="ic" aria-hidden="true">💲</span>Pricing Management</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('gsa-perf')"><span class="ic" aria-hidden="true">🤝</span>GSA Performance</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('yield')"><span class="ic" aria-hidden="true">📈</span>Yield Analysis</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('interline')"><span class="ic" aria-hidden="true">🔄</span>Interline Revenue</div>
+    <div class="ns">REPORTS</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('reports')"><span class="ic" aria-hidden="true">📊</span>Reports Hub</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('network')"><span class="ic" aria-hidden="true">🌍</span>All Stations</div>
+  </div>
+  <div id="nav-planning" style="display:none">
+    <div class="ns">PLANNING</div>
+    <div class="ni active" tabindex="0" role="button" onclick="sp('cap-plan')"><span class="ic" aria-hidden="true">🗓️</span>Capacity Planning</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('forecast')"><span class="ic" aria-hidden="true">🔮</span>Demand Forecast</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('alloc')"><span class="ic" aria-hidden="true">🗂️</span>Space Allocation</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('route-perf')"><span class="ic" aria-hidden="true">✈️</span>Route Performance</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('seasonal')"><span class="ic" aria-hidden="true">📅</span>Seasonal Trends</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('fleet')"><span class="ic" aria-hidden="true">🛩️</span>Fleet Utilisation</div>
+    <div class="ns">REPORTS</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('reports')"><span class="ic" aria-hidden="true">📊</span>Reports Hub</div>
+  </div>
+  <div id="nav-mgmt" style="display:none">
+    <div class="ns">EXECUTIVE</div>
+    <div class="ni active" tabindex="0" role="button" onclick="sp('mgmt')"><span class="ic" aria-hidden="true">📈</span>KPI Dashboard</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('rev-market')"><span class="ic" aria-hidden="true">💵</span>Revenue by Market</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('ops-health')"><span class="ic" aria-hidden="true">❤️</span>Operational Health</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('network')"><span class="ic" aria-hidden="true">🌍</span>Network Health</div>
+    <div class="ns">REPORTS</div>
+    <div class="ni" tabindex="0" role="button" onclick="sp('reports')"><span class="ic" aria-hidden="true">📊</span>All Reports</div>
+  </div>
+  <div class="sfooter">
+    <div class="sft">CargoFlash API · All systems online<br><strong style="color:rgba(255,255,255,.3)">Last sync: 2 min ago</strong></div>
+  </div>
+</div>
+<!-- MAIN CONTENT -->
+<div class="main" role="main">
+<!-- GSA: SPACE & AVAILABILITY -->
+<div class="page active" id="page-gsa-search" role="tabpanel" aria-label="Space and Availability">
+  <div class="ph">
+    <div><div class="ptitle">Space &amp; Availability Search</div><div class="psub">Check live capacity on any route · Both legs shown simultaneously · Through-rates calculated automatically</div></div>
+    <button class="btn bgold" onclick="openModal()">+ New Booking</button>
+  </div>
+  <div class="sp">
+    <div class="spt">🔍 Search Route Availability</div>
+    <div class="sr">
+      <div class="fi fw"><label>ORIGIN</label><select><option>LOS — Lagos, Nigeria</option><option>JNB — Johannesburg</option><option>NBO — Nairobi</option><option>ADD — Addis Ababa</option><option>CPT — Cape Town</option><option>DAR — Dar es Salaam</option><option>EBB — Entebbe</option></select></div>
+      <div class="fi fw"><label>DESTINATION</label><select><option>LHR — London Heathrow</option><option>CDG — Paris CDG</option><option>AMS — Amsterdam</option><option>BRU — Brussels</option><option>DXB — Dubai</option><option>ORD — Chicago</option><option>HKG — Hong Kong</option></select></div>
+      <div class="fi fs"><label>DATE</label><input type="date" id="sdate"></div>
+      <div class="fi fs"><label>WEIGHT (KG)</label><input type="number" value="450"></div>
+      <div class="fi fs"><label>VOLUME (CBM)</label><input type="number" value="2.4" step="0.1"></div>
+      <div class="fi fs"><label>COMMODITY</label><select><option>General Cargo</option><option>Perishable</option><option>Pharma</option><option>Dangerous Goods</option><option>Valuable</option><option>Live Animals</option></select></div>
+      <div class="fi" style="justify-content:flex-end"><label style="opacity:0">.</label><button class="btn bgold" style="height:31px" onclick="flashSearch()">Search →</button></div>
+    </div>
+  </div>
+  <div id="sresults">
+    <div class="ar">
+      <div class="ah">
+        <div>
+          <div class="rd"><span class="rcode">LOS</span><span class="rarr">──✈──</span><span class="rcode" style="color:var(--gold);font-size:13px">NBO</span><span class="rarr">──✈──</span><span class="rcode">LHR</span><span class="vtag">VIA KIGALI</span></div>
+          <div style="font-size:9.5px;color:var(--mid);margin-top:2px">Wed 12 Mar 2026 · Both legs confirmed available · 450 kg / 2.4 CBM · General Cargo</div>
+        </div>
+        <div style="display:flex;gap:7px;align-items:center"><span class="pill pg">✓ SPACE AVAILABLE</span><button class="btn bpri bsm" onclick="openModal()">Book Now</button></div>
+      </div>
+      <div class="alegs">
+        <div class="leg">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px">
+            <div><div class="lr">LOS → NBO <span style="font-size:9.5px;color:var(--mid);font-weight:400">via KGL</span></div><div class="lf">WB101 · Dep 22:30 LOS · Arr 06:45 NBO (+1)</div></div>
+            <span class="pill pg">Available</span>
+          </div>
+          <div class="cw"><div class="cb2 cg" style="width:52%"></div></div>
+          <div class="cst"><span>Used: 2,350 / 4,500 kg · 48% loaded</span></div>
+          <div style="margin-top:8px;display:flex;gap:16px">
+            <div><div style="font-size:9px;color:var(--mid)">AVAIL. WEIGHT</div><div style="font-size:14px;font-weight:800;color:var(--green)">2,150 kg</div></div>
+            <div><div style="font-size:9px;color:var(--mid)">AVAIL. VOLUME</div><div style="font-size:14px;font-weight:800;color:var(--green)">8.6 CBM</div></div>
+            <div><div style="font-size:9px;color:var(--mid)">AIRCRAFT</div><div style="font-size:11px;font-weight:700">B737-800F</div></div>
+          </div>
+        </div>
+        <div class="leg">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px">
+            <div><div class="lr">NBO → LHR <span style="font-size:9.5px;color:var(--mid);font-weight:400">direct</span></div><div class="lf">WB204 · Dep 09:15 NBO · Arr 14:40 LHR</div></div>
+            <span class="pill pa">Limited</span>
+          </div>
+          <div class="cw"><div class="cb2 ca" style="width:78%"></div></div>
+          <div class="cst"><span>Used: 3,510 / 4,500 kg · 78% loaded</span></div>
+          <div style="margin-top:8px;display:flex;gap:16px">
+            <div><div style="font-size:9px;color:var(--mid)">AVAIL. WEIGHT</div><div style="font-size:14px;font-weight:800;color:var(--amber)">990 kg</div></div>
+            <div><div style="font-size:9px;color:var(--mid)">AVAIL. VOLUME</div><div style="font-size:14px;font-weight:800;color:var(--amber)">3.2 CBM</div></div>
+            <div><div style="font-size:9px;color:var(--mid)">AIRCRAFT</div><div style="font-size:11px;font-weight:700">B737-800F</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="prow">
+        <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+          <div><div style="font-size:9px;color:var(--mid);margin-bottom:2px">THROUGH RATE (LOS→LHR)</div><div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:18px;font-weight:800;color:var(--navy)">USD 3.85</span><span style="font-size:10px;color:var(--mid)">/kg · all-in via NBO</span></div></div>
+          <div><div style="font-size:9px;color:var(--mid);margin-bottom:2px">YOUR SHIPMENT (450 kg)</div><div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:18px;font-weight:800;color:var(--green)">USD 1,732</span><span style="font-size:10px;color:var(--mid)">estimated total</span></div></div>
+          <div><div style="font-size:9px;color:var(--mid);margin-bottom:2px">TRANSIT TIME</div><div style="font-size:12px;font-weight:700">~16 hrs · NBO dwell: 2.5 hrs</div></div>
+        </div>
+        <div style="display:flex;gap:7px"><button class="btn bout bsm">💾 Save Quote</button><button class="btn bpri bsm" onclick="openModal()">Confirm Booking →</button></div>
+      </div>
+    </div>
+    <div class="ar" style="margin-top:9px;opacity:.82">
+      <div class="ah">
+        <div><div class="rd"><span class="rcode">LOS</span><span class="rarr">──✈──</span><span class="rcode" style="color:var(--gold);font-size:13px">NBO</span><span class="rarr">──✈──</span><span class="rcode">LHR</span><span class="vtag">NEXT DAY</span></div><div style="font-size:9.5px;color:var(--mid);margin-top:2px">Thu 13 Mar 2026 · Full availability on both legs · Recommended for large shipments</div></div>
+        <div style="display:flex;gap:7px;align-items:center"><span class="pill pg">✓ GOOD AVAILABILITY</span><button class="btn bout bsm" onclick="openModal()">Book This</button></div>
+      </div>
+      <div class="alegs">
+        <div class="leg"><div class="lr" style="margin-bottom:6px">WB103 · 22:30 LOS → 06:45 NBO</div><div class="cw"><div class="cb2 cg" style="width:31%"></div></div><div class="cst"><span style="color:var(--green);font-weight:600">69% free · 3,105 kg available</span></div></div>
+        <div class="leg"><div class="lr" style="margin-bottom:6px">WB206 · 09:15 NBO → 14:40 LHR</div><div class="cw"><div class="cb2 cg" style="width:42%"></div></div><div class="cst"><span style="color:var(--green);font-weight:600">58% free · 2,610 kg available</span></div></div>
+      </div>
+      <div class="prow"><div style="font-size:11px;font-weight:600;color:var(--navy)">Through rate: <strong>USD 3.85/kg</strong> · Full availability</div><button class="btn bout bsm" onclick="openModal()">Book →</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- GSA: MY BOOKINGS -->
+<div class="page" id="page-gsa-bookings" role="tabpanel" aria-label="My Bookings">
+  <div class="ph">
+    <div><div class="ptitle">My Bookings — LOS</div><div class="psub">All active and historical bookings from Lagos GSA · localStorage + live data</div></div>
+    <div class="pac">
+      <button class="btn bcsv bsm" onclick="exportCSV('bookings-table')">↓ Export CSV</button>
+      <button class="btn bgold bsm" onclick="openModal()">+ New Booking</button>
+    </div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">ACTIVE BOOKINGS</div><div class="sv">23</div><div class="sch sup">↑ +3 this week</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,20 12,18 24,15 36,16 48,12 60,10 72,8" fill="none" stroke="#1A8A4A" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">IN TRANSIT</div><div class="sv">8</div><div class="sch swn">On 6 different routes</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,18 12,16 24,14 36,15 48,12 60,11 72,10" fill="none" stroke="#0891B2" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">DELIVERED THIS MONTH</div><div class="sv">51</div><div class="sch sup">↑ +18% vs LM</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,22 12,19 24,16 36,14 48,12 60,9 72,6" fill="none" stroke="#1A8A4A" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">TOTAL REVENUE (USD)</div><div class="sv">312K</div><div class="sch sup">↑ +4.2% vs target</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,20 12,17 24,15 36,13 48,11 60,9 72,7" fill="none" stroke="#1A8A4A" stroke-width="1.8"/></svg></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">All Bookings</div><div class="cs">Rendered from localStorage + mock data</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="bookings-table">
+        <thead><tr><th>AWB</th><th>ROUTE</th><th>STATUS</th><th>DATE</th><th>WEIGHT</th><th>SHIPPER</th><th></th></tr></thead>
+        <tbody id="bookings-tbody">
+          <tr><td><span class="mono">206-81234</span></td><td style="font-weight:600">LOS→LHR</td><td><span class="pill pt">In Transit</span></td><td>2026-03-08</td><td>340 kg</td><td>Dangote Cement Ltd</td><td><button class="btn bout bsm" onclick="doTrack('206-81234')">Track →</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- GSA: TRACKING -->
+<div class="page" id="page-gsa-tracking" role="tabpanel" aria-label="Shipment Tracking">
+  <div class="ph">
+    <div><div class="ptitle">Shipment Tracking</div><div class="psub">Enter AWB to see full journey · Booking → Uplift → Transit → Delivery</div></div>
+  </div>
+  <div class="sp">
+    <div class="spt">📦 Track Shipment</div>
+    <div style="display:flex;gap:9px;align-items:flex-end;flex-wrap:wrap">
+      <div class="fi" style="flex:2;min-width:200px"><label>AWB NUMBER</label><input type="text" id="track-input" placeholder="e.g. 206-81234" style="font-family:'Space Mono',monospace"></div>
+      <div class="fi"><label style="opacity:0">.</label><button class="btn bgold" style="height:31px" onclick="showTracking()">Track →</button></div>
+    </div>
+  </div>
+  <div id="track-result" style="display:none">
+    <div class="card">
+      <div class="ch"><div class="ct">Shipment Journey</div></div>
+      <div class="cb" id="track-detail"></div>
+    </div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">RECENT SEARCHES</div><div class="sv" style="font-size:16px;font-family:'Space Mono',monospace">206-81234</div><div class="sch swn">In Transit · LOS→LHR</div></div>
+    <div class="sc"><div class="sl">TRACKED TODAY</div><div class="sv">12</div><div class="sch sup">AWBs tracked this session</div></div>
+    <div class="sc"><div class="sl">ON-TIME DELIVERY</div><div class="sv">94<span style="font-size:12px">%</span></div><div class="sch sup">Last 30 days</div></div>
+    <div class="sc"><div class="sl">AVG TRANSIT TIME</div><div class="sv">18<span style="font-size:12px">hrs</span></div><div class="sch">Via NBO hub</div></div>
+  </div>
+</div>
+
+<!-- RATES & PRICING (stub) -->
+<div class="page" id="page-rates" role="tabpanel" aria-label="Rates and Pricing">
+  <div class="ph">
+    <div><div class="ptitle">Rates &amp; Pricing</div><div class="psub">Current rate cards · Through-rates · Surcharges · Valid from 1 Mar 2026</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('rates-table')">↓ Export CSV</button><button class="btn bpri bsm">Update Rates</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">ACTIVE RATE CARDS</div><div class="sv">48</div><div class="sch">Across 12 markets</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,18 12,16 24,14 36,14 48,13 60,12 72,12" fill="none" stroke="#0891B2" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">AVG YIELD ($/KG)</div><div class="sv">3.82</div><div class="sch sup">↑ +0.12 vs LM</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,20 12,18 24,16 36,15 48,13 60,11 72,9" fill="none" stroke="#1A8A4A" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">RATES EXPIRING SOON</div><div class="sv" style="color:var(--amber)">5</div><div class="sch swn">Within 30 days</div></div>
+    <div class="sc"><div class="sl">FUEL SURCHARGE</div><div class="sv">1.15<span style="font-size:12px">x</span></div><div class="sch">Updated 1 Mar 2026</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Rate Cards by Route</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="rates-table">
+        <thead><tr><th>ORIGIN</th><th>DESTINATION</th><th>RATE $/KG</th><th>MIN CHARGE</th><th>CURRENCY</th><th>VALID UNTIL</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr><td><strong>LOS</strong></td><td><strong>LHR</strong></td><td class="bold green">3.85</td><td>USD 45</td><td>USD</td><td>31 Mar 2026</td><td>Via NBO · all-in</td></tr>
+          <tr><td><strong>LOS</strong></td><td><strong>CDG</strong></td><td class="bold green">3.90</td><td>USD 45</td><td>USD</td><td>31 Mar 2026</td><td>Via NBO · all-in</td></tr>
+          <tr><td><strong>NBO</strong></td><td><strong>LHR</strong></td><td class="bold green">4.10</td><td>USD 50</td><td>USD</td><td>31 Mar 2026</td><td>Direct · priority</td></tr>
+          <tr><td><strong>NBO</strong></td><td><strong>DXB</strong></td><td class="bold">3.50</td><td>USD 40</td><td>USD</td><td>31 Mar 2026</td><td>Via KGL</td></tr>
+          <tr><td><strong>JNB</strong></td><td><strong>AMS</strong></td><td class="bold green">4.20</td><td>USD 55</td><td>USD</td><td>30 Apr 2026</td><td>Via NBO</td></tr>
+          <tr><td><strong>KGL</strong></td><td><strong>LHR</strong></td><td class="bold">3.65</td><td>USD 42</td><td>USD</td><td>31 Mar 2026</td><td>Hub rate</td></tr>
+          <tr><td><strong>ADD</strong></td><td><strong>CDG</strong></td><td class="bold amber" style="color:var(--amber)">2.90</td><td>USD 38</td><td>USD</td><td>31 Mar 2026</td><td>Below target — review</td></tr>
+          <tr><td><strong>LOS</strong></td><td><strong>DXB</strong></td><td class="bold">3.50</td><td>USD 40</td><td>USD</td><td>15 Apr 2026</td><td>Via NBO</td></tr>
+          <tr><td><strong>CPT</strong></td><td><strong>LHR</strong></td><td class="bold green">4.35</td><td>USD 55</td><td>USD</td><td>30 Apr 2026</td><td>Via NBO · premium</td></tr>
+          <tr><td><strong>DAR</strong></td><td><strong>LHR</strong></td><td class="bold">3.75</td><td>USD 42</td><td>USD</td><td>31 Mar 2026</td><td>Via KGL</td></tr>
+          <tr><td><strong>EBB</strong></td><td><strong>CDG</strong></td><td class="bold">3.60</td><td>USD 40</td><td>USD</td><td>31 Mar 2026</td><td>Via KGL</td></tr>
+          <tr><td><strong>NBO</strong></td><td><strong>HKG</strong></td><td class="bold">5.20</td><td>USD 60</td><td>USD</td><td>30 Apr 2026</td><td>Via DXB</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- CLAIMS -->
+<div class="page" id="page-claims" role="tabpanel" aria-label="Claims and Irregularities">
+  <div class="ph">
+    <div><div class="ptitle">Claims &amp; Irregularities</div><div class="psub">File and track cargo claims · Damage · Pilferage · Delay · Loss</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('claims-table')">↓ Export CSV</button><button class="btn bpri bsm">+ File New Claim</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">OPEN CLAIMS</div><div class="sv" style="color:var(--amber)">6</div><div class="sch swn">3 pending documentation</div></div>
+    <div class="sc"><div class="sl">TOTAL EXPOSURE (USD)</div><div class="sv" style="color:var(--red)">18,450</div><div class="sch sdn">↑ vs last month</div></div>
+    <div class="sc"><div class="sl">AVG RESOLUTION TIME</div><div class="sv">14<span style="font-size:12px">days</span></div><div class="sch swn">Target: 10 days</div></div>
+    <div class="sc"><div class="sl">SETTLED THIS MONTH</div><div class="sv">4</div><div class="sch sup">USD 7,200 paid</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Active &amp; Recent Claims</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="claims-table">
+        <thead><tr><th>CLAIM #</th><th>AWB</th><th>TYPE</th><th>FILED</th><th>STATUS</th><th>AMOUNT (USD)</th><th>RESOLUTION</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">CLM-2026-001</td><td class="mono">206-71200</td><td>Pilferage</td><td>05 Mar 2026</td><td><span class="pill pa">Under Review</span></td><td class="bold">2,400</td><td>Awaiting CCTV review</td></tr>
+          <tr><td class="mono">CLM-2026-002</td><td class="mono">206-69845</td><td>Damage</td><td>02 Mar 2026</td><td><span class="pill pa">Under Review</span></td><td class="bold">5,100</td><td>Handler liability confirmed</td></tr>
+          <tr><td class="mono">CLM-2026-003</td><td class="mono">206-65321</td><td>Delay</td><td>28 Feb 2026</td><td><span class="pill pg">Settled</span></td><td class="bold">850</td><td>USD 850 credited to CASS</td></tr>
+          <tr><td class="mono">CLM-2026-004</td><td class="mono">206-62100</td><td>Loss</td><td>22 Feb 2026</td><td><span class="pill pr">Disputed</span></td><td class="bold">8,200</td><td>Liability cap invoked</td></tr>
+          <tr><td class="mono">CLM-2026-005</td><td class="mono">206-60455</td><td>Wet Damage</td><td>18 Feb 2026</td><td><span class="pill pb">Legal Review</span></td><td class="bold">3,400</td><td>Awaiting legal opinion</td></tr>
+          <tr><td class="mono">CLM-2026-006</td><td class="mono">206-58901</td><td>Short Shipment</td><td>14 Feb 2026</td><td><span class="pill pg">Settled</span></td><td class="bold">500</td><td>USD 500 paid via CASS</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- WAREHOUSE: TRANSIT CARGO -->
+<div class="page" id="page-warehouse" role="tabpanel" aria-label="Transit Cargo">
+  <div class="ph">
+    <div><div class="ptitle">Transit Cargo — NBO Warehouse</div><div class="psub">Live dwell monitoring · All in-transit shipments at Nairobi · Auto-refreshes every 5 min</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('warehouse-table')">↓ Export CSV</button><button class="btn bpri bsm">+ Manual Entry</button></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:7px">
+    <div class="as asr"><div class="ai">🚨</div><div><div class="at2">4 shipments exceed 48-hour dwell threshold — Immediate action required</div><div class="am">AWBs 206-12453 (51hrs · Pharma), 206-12389 (67hrs · Auto Parts), 206-11902 (52hrs), 206-12100 (49hrs). All at NBO.</div></div><button class="btn bsm" style="background:var(--red);color:#fff;flex-shrink:0;align-self:center;margin-left:auto">Action All →</button></div>
+    <div class="as asa"><div class="ai">⚠️</div><div><div class="at2">WB204 NBO→LHR today 09:15 — 3 confirmed shipments on this flight</div><div class="am">All 3 AWBs checked and ready. Physical handover to ramp: 07:30. Cargo cutoff: 08:00.</div></div></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div class="tabs"><button class="tab active">All Transit (18)</button><button class="tab">⚠ Dwell Alert (4)</button><button class="tab">Connecting Today (3)</button><button class="tab">On Track (11)</button></div>
+    <div style="font-size:10px;color:var(--mid)">NBO warehouse · <strong style="color:var(--dark)">18 active AWBs</strong></div>
+  </div>
+  <div class="card">
+    <div class="cb" style="padding:0">
+      <table class="dt" id="warehouse-table">
+        <thead><tr><th>AWB</th><th>ROUTE</th><th>COMMODITY</th><th>WT / CBM</th><th>ARRIVED NBO</th><th>DWELL</th><th>CONNECTING FLT</th><th>DEPARTURE</th><th>STATUS</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><div class="mono">206-12453</div></td><td><strong>LOS→LHR</strong><div style="font-size:9px;color:var(--mid)">via NBO</div></td><td>Pharmaceuticals<div style="font-size:9px;color:var(--red)">⚠ Cool room</div></td><td>340 kg<div style="font-size:9px;color:var(--mid)">1.8 CBM</div></td><td><div>10 Mar 06:45</div></td><td><div class="dw dal">51h 20m</div></td><td><strong>WB204</strong> NBO→LHR</td><td><span class="pill pa">Today 09:15</span></td><td><span class="pill pr">🚨 URGENT</span></td><td><button class="btn bout bsm" onclick="showTL()">Detail</button></td></tr>
+          <tr><td><div class="mono">206-12389</div></td><td><strong>JNB→CDG</strong></td><td>Automotive Parts</td><td>820 kg<div style="font-size:9px;color:var(--mid)">4.2 CBM</div></td><td><div>09 Mar 14:20</div></td><td><div class="dw dal">67h 05m</div></td><td><strong>WB312</strong></td><td><span class="pill pr">Tmrw 11:00</span></td><td><span class="pill pr">🚨 CRITICAL</span></td><td><button class="btn bout bsm" onclick="showTL()">Detail</button></td></tr>
+          <tr><td><div class="mono">206-12501</div></td><td><strong>CPT→AMS</strong></td><td>Fresh Produce</td><td>1,200 kg</td><td><div>11 Mar 18:30</div></td><td><div class="dw dwn">14h 45m</div></td><td><strong>WB408</strong></td><td><span class="pill pb">12 Mar 23:55</span></td><td><span class="pill pg">✓ On Track</span></td><td><button class="btn bout bsm" onclick="showTL()">Detail</button></td></tr>
+          <tr><td><div class="mono">206-12544</div></td><td><strong>ADD→LHR</strong></td><td>Electronics</td><td>210 kg</td><td><div>11 Mar 22:10</div></td><td><div class="dw dwn">11h 05m</div></td><td><strong>WB204</strong></td><td><span class="pill pb">Today 09:15</span></td><td><span class="pill pg">✓ Ready</span></td><td><button class="btn bout bsm" onclick="showTL()">Detail</button></td></tr>
+          <tr><td><div class="mono">206-12567</div></td><td><strong>LOS→BRU</strong></td><td>Garments</td><td>560 kg</td><td><div>12 Mar 06:45</div></td><td><div class="dw dok">2h 10m</div></td><td><strong>WB516</strong></td><td><span class="pill pb">13 Mar 01:30</span></td><td><span class="pill pt">Accepted</span></td><td><button class="btn bout bsm" onclick="showTL()">Detail</button></td></tr>
+          <tr><td><div class="mono">206-12580</div></td><td><strong>NBO→DXB</strong></td><td>Perishables</td><td>890 kg</td><td><div>12 Mar 04:20</div></td><td><div class="dw dok">4h 55m</div></td><td><strong>WB622</strong></td><td><span class="pill pb">12 Mar 22:40</span></td><td><span class="pill pg">✓ On Track</span></td><td><button class="btn bout bsm" onclick="showTL()">Detail</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card" id="tlcard">
+    <div class="ch"><div><div class="ct">AWB 206-12453 · Shipment Journey</div><div class="cs">LOS → NBO → LHR · Pharmaceuticals · 340 kg · PharmaCorp Nigeria Ltd</div></div><span class="pill pr">⚠ DWELL 51hrs — URGENT</span></div>
+    <div class="cb">
+      <div class="tl">
+        <div class="tw"><div class="td tdd">✓</div><div class="tlbl">Booked LOS</div><div class="ttime">08 Mar</div></div>
+        <div class="tline done"></div>
+        <div class="tw"><div class="td tdd">✓</div><div class="tlbl">Uplift LOS WB101</div><div class="ttime">10 Mar 22:30</div></div>
+        <div class="tline done"></div>
+        <div class="tw"><div class="td tde">!</div><div class="tlbl">Arrived NBO</div><div class="ttime">10 Mar 06:45</div></div>
+        <div class="tline"></div>
+        <div class="tw"><div class="td tda">→</div><div class="tlbl">NBO Warehouse</div><div class="ttime">51hrs waiting</div></div>
+        <div class="tline"></div>
+        <div class="tw"><div class="td tdp">5</div><div class="tlbl">Uplift NBO WB204</div><div class="ttime">Today 09:15</div></div>
+        <div class="tline"></div>
+        <div class="tw"><div class="td tdp">6</div><div class="tlbl">Arrive LHR</div><div class="ttime">Today 14:40</div></div>
+      </div>
+      <div style="background:#FEF3E2;border-radius:7px;padding:8px 11px;font-size:10px;color:#92400E;margin-top:4px">⚠️ <strong>Dwell alert:</strong> Pharmaceutical cargo has been in NBO warehouse 51hrs 20min — exceeds 48hr SLA. Confirm cool room placement. Prioritise for WB204 today.</div>
+    </div>
+  </div>
+</div>
+
+<!-- DWELL ALERTS -->
+<div class="page" id="page-dwell" role="tabpanel" aria-label="Dwell Alerts">
+  <div class="ph">
+    <div><div class="ptitle">Dwell Alerts</div><div class="psub">Shipments at or approaching 48hr threshold · Sorted by urgency · Action required flagged red</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('dwell-table')">↓ Export CSV</button><button class="btn bpri bsm">Action All Critical</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">CRITICAL (&gt;48HRS)</div><div class="sv" style="color:var(--red)">4</div><div class="sch sdn">Immediate action</div></div>
+    <div class="sc"><div class="sl">WARNING (36-48HRS)</div><div class="sv" style="color:var(--amber)">3</div><div class="sch swn">Monitor closely</div></div>
+    <div class="sc"><div class="sl">AVG DWELL TIME</div><div class="sv">8.4<span style="font-size:12px">hrs</span></div><div class="sch swn">Target: &lt;6hrs</div></div>
+    <div class="sc"><div class="sl">STATIONS AFFECTED</div><div class="sv">2</div><div class="sch">NBO · KGL</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Dwell Alert Dashboard</div><div class="cs">Sorted by hours in station (descending)</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="dwell-table">
+        <thead><tr><th>AWB</th><th>STATION</th><th>COMMODITY</th><th>HOURS IN STATION</th><th>THRESHOLD</th><th>STATUS</th><th>ACTION REQUIRED</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">206-12389</td><td><strong>NBO</strong></td><td>Automotive Parts</td><td><span class="dw dal">67h 05m</span></td><td>48h</td><td><span class="pill pr">CRITICAL</span></td><td>Book WB312 immediately · Notify shipper</td></tr>
+          <tr><td class="mono">206-12453</td><td><strong>NBO</strong></td><td>Pharmaceuticals</td><td><span class="dw dal">51h 20m</span></td><td>48h</td><td><span class="pill pr">CRITICAL</span></td><td>Cool room check · Priority uplift WB204</td></tr>
+          <tr><td class="mono">206-11902</td><td><strong>NBO</strong></td><td>General Cargo</td><td><span class="dw dal">52h 00m</span></td><td>48h</td><td><span class="pill pr">CRITICAL</span></td><td>Re-book on next available flight</td></tr>
+          <tr><td class="mono">206-12100</td><td><strong>KGL</strong></td><td>Electronics</td><td><span class="dw dal">49h 30m</span></td><td>48h</td><td><span class="pill pr">CRITICAL</span></td><td>Connect via WB101 to NBO tonight</td></tr>
+          <tr><td class="mono">206-12344</td><td><strong>KGL</strong></td><td>Garments</td><td><span class="dw dwn">43h 15m</span></td><td>48h</td><td><span class="pill pa">WARNING</span></td><td>Monitor · Book within 4 hours</td></tr>
+          <tr><td class="mono">206-12289</td><td><strong>NBO</strong></td><td>Fresh Produce</td><td><span class="dw dwn">39h 00m</span></td><td>36h</td><td><span class="pill pa">WARNING</span></td><td>Perishable SLA — accelerate connection</td></tr>
+          <tr><td class="mono">206-12401</td><td><strong>KGL</strong></td><td>General Cargo</td><td><span class="dw dwn">37h 45m</span></td><td>48h</td><td><span class="pill pa">WARNING</span></td><td>Monitor · Connect on WB103 tonight</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- INBOUND TODAY -->
+<div class="page" id="page-inbound" role="tabpanel" aria-label="Inbound Today">
+  <div class="ph">
+    <div><div class="ptitle">Inbound Today</div><div class="psub">All flights arriving today · Pre-arrival manifests · Special handling pre-alerts · 10 Mar 2026</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('inbound-table')">↓ Export CSV</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">FLIGHTS ARRIVING TODAY</div><div class="sv">6</div><div class="sch">3 already landed</div></div>
+    <div class="sc"><div class="sl">TOTAL INBOUND CARGO</div><div class="sv">4,820<span style="font-size:12px">kg</span></div><div class="sch sup">Across all flights</div></div>
+    <div class="sc"><div class="sl">SPECIAL HANDLING</div><div class="sv" style="color:var(--amber)">4</div><div class="sch swn">DG · Pharma · Perishable</div></div>
+    <div class="sc"><div class="sl">ON-TIME ARRIVALS</div><div class="sv">4<span style="font-size:12px">/6</span></div><div class="sch swn">2 delayed</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Today's Inbound Flights</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="inbound-table">
+        <thead><tr><th>FLIGHT</th><th>ORIGIN</th><th>ETA</th><th>STATUS</th><th>PIECES</th><th>WEIGHT (KG)</th><th>SPECIAL</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">WB101</td><td><strong>LOS</strong></td><td>06:45</td><td><span class="pill pg">Landed 06:43</span></td><td>34</td><td>1,240</td><td><span class="pill pt">Pharma (2 AWBs)</span></td></tr>
+          <tr><td class="mono">WB312</td><td><strong>JNB</strong></td><td>08:20</td><td><span class="pill pg">Landed 08:25</span></td><td>18</td><td>820</td><td>—</td></tr>
+          <tr><td class="mono">WB408</td><td><strong>CPT</strong></td><td>09:50</td><td><span class="pill pg">Landed 09:48</span></td><td>42</td><td>1,200</td><td><span class="pill pg">Fresh Produce</span></td></tr>
+          <tr><td class="mono">WB204</td><td><strong>NBO</strong></td><td>14:40</td><td><span class="pill pt">In Flight</span></td><td>28</td><td>940</td><td><span class="pill pr">DG Class 9</span></td></tr>
+          <tr><td class="mono">WB622</td><td><strong>DAR</strong></td><td>17:15</td><td><span class="pill pa">Delayed +45min</span></td><td>15</td><td>380</td><td>—</td></tr>
+          <tr><td class="mono">WB516</td><td><strong>EBB</strong></td><td>21:30</td><td><span class="pill pb">Scheduled</span></td><td>8</td><td>240</td><td><span class="pill pa">Valuable Cargo</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- OUTBOUND TODAY -->
+<div class="page" id="page-outbound" role="tabpanel" aria-label="Outbound Today">
+  <div class="ph">
+    <div><div class="ptitle">Outbound Today</div><div class="psub">All departures today · Remaining space · Confirmed cargo · Cutoff times · 10 Mar 2026</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('outbound-table')">↓ Export CSV</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">DEPARTURES TODAY</div><div class="sv">5</div><div class="sch">2 departed · 3 upcoming</div></div>
+    <div class="sc"><div class="sl">CONFIRMED CARGO</div><div class="sv">6,240<span style="font-size:12px">kg</span></div><div class="sch sup">Across 5 flights</div></div>
+    <div class="sc"><div class="sl">AVG LOAD FACTOR</div><div class="sv">74<span style="font-size:12px">%</span></div><div class="sch swn">1 flight near full</div></div>
+    <div class="sc"><div class="sl">CUTOFF ALERTS</div><div class="sv" style="color:var(--amber)">1</div><div class="sch swn">WB204 cutoff in 45min</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Today's Outbound Departures</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="outbound-table">
+        <thead><tr><th>FLIGHT</th><th>DESTINATION</th><th>STD</th><th>AVAIL WT (KG)</th><th>CONFIRMED WT</th><th>LOAD %</th><th>CUTOFF</th><th>STATUS</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">WB101</td><td><strong>LOS</strong> via KGL</td><td>22:30</td><td>1,800</td><td>2,700</td><td><div class="pbar"><div class="pf" style="width:60%;background:var(--green)"></div></div> 60%</td><td>21:00</td><td><span class="pill pb">Open</span></td></tr>
+          <tr><td class="mono">WB204</td><td><strong>LHR</strong> direct</td><td>09:15</td><td>420</td><td>4,080</td><td><div class="pbar"><div class="pf" style="width:91%;background:var(--red)"></div></div> 91%</td><td>08:00</td><td><span class="pill pa">Closing</span></td></tr>
+          <tr><td class="mono">WB312</td><td><strong>CDG</strong> via NBO</td><td>11:00</td><td>1,200</td><td>2,800</td><td><div class="pbar"><div class="pf" style="width:70%;background:var(--amber)"></div></div> 70%</td><td>09:30</td><td><span class="pill pb">Open</span></td></tr>
+          <tr><td class="mono">WB408</td><td><strong>AMS</strong></td><td>23:55</td><td>2,400</td><td>2,100</td><td><div class="pbar"><div class="pf" style="width:47%;background:var(--navy)"></div></div> 47%</td><td>22:30</td><td><span class="pill pg">Good Avail</span></td></tr>
+          <tr><td class="mono">WB622</td><td><strong>DXB</strong></td><td>18:40</td><td>900</td><td>3,600</td><td><div class="pbar"><div class="pf" style="width:80%;background:var(--amber)"></div></div> 80%</td><td>17:00</td><td><span class="pill pb">Open</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- DANGEROUS GOODS -->
+<div class="page" id="page-dg" role="tabpanel" aria-label="Dangerous Goods">
+  <div class="ph">
+    <div><div class="ptitle">Dangerous Goods</div><div class="psub">All active DG shipments · IATA class · Acceptance status · Segregation requirements · Compliance log</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('dg-table')">↓ Export CSV</button><button class="btn bpri bsm">+ DG Declaration</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">ACTIVE DG SHIPMENTS</div><div class="sv" style="color:var(--red)">4</div><div class="sch sdn">2 require immediate review</div></div>
+    <div class="sc"><div class="sl">COMPLIANCE BREACHES</div><div class="sv" style="color:var(--red)">1</div><div class="sch sdn">JNB incident · Under review</div></div>
+    <div class="sc"><div class="sl">AWAITING ACCEPTANCE</div><div class="sv" style="color:var(--amber)">2</div><div class="sch swn">Docs pending review</div></div>
+    <div class="sc"><div class="sl">CLEARED THIS MONTH</div><div class="sv">18</div><div class="sch sup">100% compliant</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Active DG Shipments</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="dg-table">
+        <thead><tr><th>AWB</th><th>IATA CLASS</th><th>COMMODITY</th><th>NET WT (KG)</th><th>FLIGHT</th><th>ACCEPTANCE</th><th>SEGREGATION</th><th>DG OFFICER</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">206-81100</td><td><span class="pill pr">Class 9</span></td><td>Lithium Batteries</td><td>48</td><td class="mono">WB204</td><td><span class="pill pg">Accepted</span></td><td>Away from Class 3</td><td>J. Kamau</td></tr>
+          <tr><td class="mono">206-80234</td><td><span class="pill pr">Class 3</span></td><td>Flammable Liquid (samples)</td><td>12</td><td class="mono">WB312</td><td><span class="pill pa">Pending Review</span></td><td>Nose only · &gt;10m from AVI</td><td>F. Osei</td></tr>
+          <tr><td class="mono">206-79445</td><td><span class="pill pr">Class 6.2</span></td><td>Biological Substances Cat B</td><td>5</td><td class="mono">WB101</td><td><span class="pill pa">Pending Review</span></td><td>Cool room · Away from food</td><td>M. Wanjiru</td></tr>
+          <tr><td class="mono">206-78901</td><td><span class="pill amber" style="background:#FEF3E2;color:#D97706">Class 2.2</span></td><td>Non-flammable gas (cylinders)</td><td>85</td><td class="mono">WB622</td><td><span class="pill pg">Accepted</span></td><td>Standard positioning</td><td>J. Kamau</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PERISHABLE -->
+<div class="page" id="page-perishable" role="tabpanel" aria-label="Temperature-Sensitive Cargo">
+  <div class="ph">
+    <div><div class="ptitle">Temperature-Sensitive Cargo</div><div class="psub">Pharma and perishable shipments · Cool room status · Temperature log · Dwell alerts prioritised</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('perishable-table')">↓ Export CSV</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">ACTIVE TEMP SHIPMENTS</div><div class="sv">5</div><div class="sch">3 pharma · 2 perishable</div></div>
+    <div class="sc"><div class="sl">COOL ROOM CAPACITY</div><div class="sv">68<span style="font-size:12px">%</span></div><div class="sch swn">8 pallets available</div></div>
+    <div class="sc"><div class="sl">TEMP EXCURSIONS</div><div class="sv" style="color:var(--red)">1</div><div class="sch sdn">206-12453 · Pharma</div></div>
+    <div class="sc"><div class="sl">ON-TIME COOL CHAIN</div><div class="sv">92<span style="font-size:12px">%</span></div><div class="sch sup">Last 30 days</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Temperature-Sensitive Shipments</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="perishable-table">
+        <thead><tr><th>AWB</th><th>TYPE</th><th>TEMP RANGE</th><th>STATION</th><th>HOURS IN STATION</th><th>ALERT</th><th>NEXT FLIGHT</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">206-12453</td><td>Pharmaceuticals (PIL)</td><td>+2°C to +8°C</td><td><strong>NBO</strong></td><td><span class="dw dal">51h 20m</span></td><td><span class="pill pr">URGENT — Excursion risk</span></td><td>WB204 · 09:15</td></tr>
+          <tr><td class="mono">206-81100</td><td>Vaccines (COL)</td><td>+2°C to +8°C</td><td><strong>KGL</strong></td><td><span class="dw dwn">8h 30m</span></td><td><span class="pill pa">Cool room check needed</span></td><td>WB204 · 22:30</td></tr>
+          <tr><td class="mono">206-79200</td><td>Fresh Flowers</td><td>0°C to +5°C</td><td><strong>NBO</strong></td><td><span class="dw dok">3h 15m</span></td><td><span class="pill pg">OK</span></td><td>WB408 · 23:55</td></tr>
+          <tr><td class="mono">206-77400</td><td>Fresh Produce (EAT)</td><td>0°C to +8°C</td><td><strong>KGL</strong></td><td><span class="dw dok">5h 45m</span></td><td><span class="pill pg">OK</span></td><td>WB101 · 22:30</td></tr>
+          <tr><td class="mono">206-74521</td><td>Biologics (PIL)</td><td>-20°C to -15°C</td><td><strong>LOS</strong></td><td><span class="dw dok">2h 00m</span></td><td><span class="pill pg">OK · Deep freeze confirmed</span></td><td>WB101 · 22:30</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ULD STATUS -->
+<div class="page" id="page-uld" role="tabpanel" aria-label="ULD Status">
+  <div class="ph">
+    <div><div class="ptitle">ULD Status</div><div class="psub">ULD location by station · Utilisation rates · Idle ULDs · Repositioning requirements</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('uld-table')">↓ Export CSV</button><button class="btn bout bsm">Reposition ULDs</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">TOTAL ULDs TRACKED</div><div class="sv">62</div><div class="sch">Across 8 stations</div></div>
+    <div class="sc"><div class="sl">IN USE</div><div class="sv">41</div><div class="sch sup">66% utilisation</div></div>
+    <div class="sc"><div class="sl">IDLE &gt;48HRS</div><div class="sv" style="color:var(--amber)">8</div><div class="sch swn">Repositioning needed</div></div>
+    <div class="sc"><div class="sl">DAMAGED / AOG</div><div class="sv" style="color:var(--red)">3</div><div class="sch sdn">Removed from service</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">ULD Location &amp; Status</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="uld-table">
+        <thead><tr><th>ULD #</th><th>TYPE</th><th>LOCATION</th><th>CONTENTS</th><th>LOAD %</th><th>NEXT FLIGHT</th><th>DAYS IDLE</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">PMC-12341-WB</td><td>PMC Pallet</td><td><strong>NBO</strong></td><td>Automotive Parts</td><td><div class="pbar"><div class="pf" style="width:85%;background:var(--amber)"></div></div> 85%</td><td>WB312 · 11:00</td><td>0</td></tr>
+          <tr><td class="mono">AKE-88102-WB</td><td>LD3 Container</td><td><strong>LOS</strong></td><td>Garments</td><td><div class="pbar"><div class="pf" style="width:72%;background:var(--green)"></div></div> 72%</td><td>WB101 · 22:30</td><td>0</td></tr>
+          <tr><td class="mono">PMC-12390-WB</td><td>PMC Pallet</td><td><strong>KGL</strong></td><td>Electronics</td><td><div class="pbar"><div class="pf" style="width:60%;background:var(--green)"></div></div> 60%</td><td>WB204 · 22:30</td><td>0</td></tr>
+          <tr><td class="mono">AKE-90012-WB</td><td>LD3 Container</td><td><strong>NBO</strong></td><td>Empty</td><td><div class="pbar"><div class="pf" style="width:0%;background:var(--border)"></div></div> 0%</td><td>Not assigned</td><td><span style="color:var(--amber);font-weight:700">3</span></td></tr>
+          <tr><td class="mono">PMC-11880-WB</td><td>PMC Pallet</td><td><strong>ADD</strong></td><td>Empty</td><td><div class="pbar"><div class="pf" style="width:0%"></div></div> 0%</td><td>Not assigned</td><td><span style="color:var(--red);font-weight:700">5</span></td></tr>
+          <tr><td class="mono">AKE-77441-WB</td><td>LD3 Container</td><td><strong>JNB</strong></td><td>Fresh Produce</td><td><div class="pbar"><div class="pf" style="width:95%;background:var(--red)"></div></div> 95%</td><td>WB900 · 19:30</td><td>0</td></tr>
+          <tr><td class="mono">PMC-12555-WB</td><td>PMC Pallet</td><td><strong>LHR</strong></td><td>Empty</td><td><div class="pbar"><div class="pf" style="width:0%"></div></div> 0%</td><td>Not assigned</td><td><span style="color:var(--amber);font-weight:700">4</span></td></tr>
+          <tr><td class="mono">AKE-44002-WB</td><td>LD3 Container</td><td><strong>CDG</strong></td><td>Empty — Damaged</td><td>—</td><td>AOG · Repairs pending</td><td><span style="color:var(--red);font-weight:700">7</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- CAPACITY BY ROUTE -->
+<div class="page" id="page-capacity-route" role="tabpanel" aria-label="Capacity by Route">
+  <div class="ph">
+    <div><div class="ptitle">Capacity by Route</div><div class="psub">Route-level capacity management · Allocate, block, and release space · Market allotment management</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('caproute-table')">↓ Export CSV</button><button class="btn bgold bsm">Allocate Space</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">ACTIVE ROUTES</div><div class="sv">14</div><div class="sch">7 below 70% · 2 at risk</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,18 12,16 24,15 36,14 48,13 60,12 72,11" fill="none" stroke="#0891B2" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">AVG LOAD FACTOR</div><div class="sv">74<span style="font-size:12px">%</span></div><div class="sch swn">Target: 80%</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,20 12,18 24,16 36,15 48,14 60,12 72,10" fill="none" stroke="#D97706" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">OVERSOLD ROUTES</div><div class="sv" style="color:var(--red)">2</div><div class="sch sdn">CPT→LHR · NBO→LHR</div></div>
+    <div class="sc"><div class="sl">UNDERSOLD ROUTES</div><div class="sv" style="color:var(--navy)">3</div><div class="sch">ADD→AMS · ADD→CDG · EBB→LHR</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Route Capacity Summary</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="caproute-table">
+        <thead><tr><th>ROUTE</th><th>AIRCRAFT</th><th>CAP (KG)</th><th>BOOKED</th><th>AVAILABLE</th><th>LOAD %</th><th>ACTION</th></tr></thead>
+        <tbody>
+          <tr><td><strong>LOS→LHR</strong> via NBO</td><td>B737-800F</td><td>4,500</td><td>3,330</td><td>1,170</td><td><div class="pbar"><div class="pf" style="width:74%;background:var(--amber)"></div></div> 74%</td><td><button class="btn bout bsm">Manage</button></td></tr>
+          <tr><td><strong>NBO→LHR</strong> direct</td><td>B737-800F</td><td>4,500</td><td>3,780</td><td>720</td><td><div class="pbar"><div class="pf" style="width:84%;background:var(--amber)"></div></div> 84%</td><td><button class="btn bout bsm">Manage</button></td></tr>
+          <tr><td><strong>CPT→LHR</strong> via NBO</td><td>B737-800F</td><td>4,500</td><td>4,320</td><td>180</td><td><div class="pbar"><div class="pf" style="width:96%;background:var(--red)"></div></div> 96%</td><td><button class="btn bpri bsm" style="background:var(--red)">Oversold!</button></td></tr>
+          <tr><td><strong>JNB→CDG</strong> via NBO</td><td>B737-800F</td><td>4,500</td><td>2,925</td><td>1,575</td><td><div class="pbar"><div class="pf" style="width:65%;background:var(--green)"></div></div> 65%</td><td><button class="btn bout bsm">Manage</button></td></tr>
+          <tr><td><strong>ADD→AMS</strong> via NBO</td><td>A330F</td><td>6,000</td><td>2,460</td><td>3,540</td><td><div class="pbar"><div class="pf" style="width:41%;background:var(--navy)"></div></div> 41%</td><td><button class="btn bpri bsm">Promote</button></td></tr>
+          <tr><td><strong>NBO→DXB</strong> direct</td><td>B737-800F</td><td>4,500</td><td>3,555</td><td>945</td><td><div class="pbar"><div class="pf" style="width:79%;background:var(--amber)"></div></div> 79%</td><td><button class="btn bout bsm">Manage</button></td></tr>
+          <tr><td><strong>KGL→CDG</strong> via NBO</td><td>B737-800F</td><td>4,500</td><td>2,925</td><td>1,575</td><td><div class="pbar"><div class="pf" style="width:65%;background:var(--green)"></div></div> 65%</td><td><button class="btn bout bsm">Manage</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING MANAGEMENT -->
+<div class="page" id="page-pricing" role="tabpanel" aria-label="Pricing Management">
+  <div class="ph">
+    <div><div class="ptitle">Pricing Management</div><div class="psub">Set and manage through-rates, leg rates, surcharges, and market-specific pricing by commodity</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('pricing-table')">↓ Export CSV</button><button class="btn bgold bsm">+ New Rate</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">EFFECTIVE RATES</div><div class="sv">48</div><div class="sch">Valid from 1 Mar 2026</div></div>
+    <div class="sc"><div class="sl">BELOW FLOOR RATE</div><div class="sv" style="color:var(--red)">3</div><div class="sch sdn">Action required</div></div>
+    <div class="sc"><div class="sl">AVG DISCOUNT APPLIED</div><div class="sv">8.2<span style="font-size:12px">%</span></div><div class="sch swn">vs filed rate</div></div>
+    <div class="sc"><div class="sl">RATE UPDATES THIS MONTH</div><div class="sv">12</div><div class="sch sup">All approved</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Rate Management — Current Period</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="pricing-table">
+        <thead><tr><th>ROUTE</th><th>MARKET</th><th>RATE $/KG</th><th>FUEL SUR.</th><th>SECURITY SUR.</th><th>TOTAL</th><th>EFFECTIVE</th><th>STATUS</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><strong>LOS→LHR</strong></td><td>West Africa · EU</td><td>3.30</td><td>0.38</td><td>0.17</td><td class="bold green">3.85</td><td>1 Mar 2026</td><td><span class="pill pg">Active</span></td><td><button class="btn bout bsm">Update</button></td></tr>
+          <tr><td><strong>NBO→LHR</strong></td><td>East Africa · EU</td><td>3.55</td><td>0.38</td><td>0.17</td><td class="bold green">4.10</td><td>1 Mar 2026</td><td><span class="pill pg">Active</span></td><td><button class="btn bout bsm">Update</button></td></tr>
+          <tr><td><strong>ADD→LHR</strong></td><td>Ethiopia · EU</td><td>2.38</td><td>0.38</td><td>0.14</td><td class="bold amber" style="color:var(--amber)">2.90</td><td>1 Mar 2026</td><td><span class="pill pr">Below Floor</span></td><td><button class="btn bpri bsm" style="background:var(--red)">Fix Rate</button></td></tr>
+          <tr><td><strong>JNB→AMS</strong></td><td>Southern Africa · EU</td><td>3.65</td><td>0.38</td><td>0.17</td><td class="bold green">4.20</td><td>1 Mar 2026</td><td><span class="pill pg">Active</span></td><td><button class="btn bout bsm">Update</button></td></tr>
+          <tr><td><strong>KGL→LHR</strong></td><td>Hub · EU</td><td>3.10</td><td>0.38</td><td>0.17</td><td class="bold">3.65</td><td>1 Mar 2026</td><td><span class="pill pg">Active</span></td><td><button class="btn bout bsm">Update</button></td></tr>
+          <tr><td><strong>NBO→DXB</strong></td><td>East Africa · Gulf</td><td>2.95</td><td>0.38</td><td>0.17</td><td class="bold">3.50</td><td>1 Mar 2026</td><td><span class="pill pg">Active</span></td><td><button class="btn bout bsm">Update</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- GSA PERFORMANCE -->
+<div class="page" id="page-gsa-perf" role="tabpanel" aria-label="GSA Performance">
+  <div class="ph">
+    <div><div class="ptitle">GSA Performance</div><div class="psub">Revenue, AWB count, yield, and accuracy per GSA · Station rankings vs commercial targets · Mar 2026</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('gsaperf-table')">↓ Export CSV</button><button class="btn bout bsm" onclick="sp('reports')">Full Report</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">ACTIVE GSAs</div><div class="sv">12</div><div class="sch">Across 8 stations</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,18 12,17 24,16 36,15 48,14 60,14 72,13" fill="none" stroke="#0891B2" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">ABOVE TARGET</div><div class="sv" style="color:var(--green)">7</div><div class="sch sup">58% of GSAs on track</div></div>
+    <div class="sc"><div class="sl">BELOW TARGET</div><div class="sv" style="color:var(--red)">3</div><div class="sch sdn">ADD · CPT · EBB</div></div>
+    <div class="sc"><div class="sl">NETWORK YIELD AVG</div><div class="sv">3.82<span style="font-size:12px">$/kg</span></div><div class="sch sup">↑ +0.12 vs LM</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">GSA League Table — March 2026</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="gsaperf-table">
+        <thead><tr><th>RANK</th><th>GSA</th><th>STATION</th><th>REVENUE ($)</th><th>AWBs</th><th>YIELD $/KG</th><th>VS TARGET</th><th>STATUS</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:800;color:var(--gold)">1</td><td><strong>Cargo Africa Ltd</strong></td><td>LOS</td><td class="bold green">312,400</td><td>184</td><td>3.95</td><td class="sup">+4.2%</td><td><span class="pill pg">On Track</span></td></tr>
+          <tr><td style="font-weight:800;color:var(--mid)">2</td><td><strong>East Africa Cargo</strong></td><td>NBO</td><td class="bold green">284,100</td><td>162</td><td>4.10</td><td class="sup">+1.8%</td><td><span class="pill pg">On Track</span></td></tr>
+          <tr><td style="font-weight:800">3</td><td><strong>Southern Air Services</strong></td><td>JNB</td><td class="bold">198,600</td><td>121</td><td>4.05</td><td class="swn">-1.2%</td><td><span class="pill pa">Watch</span></td></tr>
+          <tr><td style="font-weight:800">4</td><td><strong>RwandAir Direct</strong></td><td>KGL</td><td class="bold">156,300</td><td>98</td><td>3.75</td><td class="sup">+2.1%</td><td><span class="pill pg">On Track</span></td></tr>
+          <tr><td style="font-weight:800">5</td><td><strong>Horn of Africa Cargo</strong></td><td>ADD</td><td class="bold" style="color:var(--amber)">124,300</td><td>87</td><td>2.90</td><td class="sdn">-8.6%</td><td><span class="pill pr">Action Req.</span></td></tr>
+          <tr><td style="font-weight:800">6</td><td><strong>Cape Cargo Intl</strong></td><td>CPT</td><td class="bold">97,200</td><td>54</td><td>3.80</td><td class="swn">-2.4%</td><td><span class="pill pa">Watch</span></td></tr>
+          <tr><td style="font-weight:800">7</td><td><strong>Dar Freight Solutions</strong></td><td>DAR</td><td class="bold green">72,400</td><td>41</td><td>3.90</td><td class="sup">+1.0%</td><td><span class="pill pg">On Track</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- YIELD ANALYSIS -->
+<div class="page" id="page-yield" role="tabpanel" aria-label="Yield Analysis">
+  <div class="ph">
+    <div><div class="ptitle">Yield Analysis</div><div class="psub">Revenue per kg by route and commodity · Achieved vs target yield · Underperforming route flags</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('yield-table')">↓ Export CSV</button><button class="btn bout bsm" onclick="viewReport('Yield Analysis Report','Revenue per kg by route, commodity, and market.')">Full Report</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">NETWORK AVG YIELD</div><div class="sv">3.82<span style="font-size:12px">$/kg</span></div><div class="sch sup">↑ +0.12 vs LM</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,20 12,18 24,16 36,15 48,13 60,11 72,9" fill="none" stroke="#1A8A4A" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">ROUTES ABOVE TARGET</div><div class="sv" style="color:var(--green)">4</div><div class="sch sup">LOS · NBO · JNB · KGL</div></div>
+    <div class="sc"><div class="sl">ROUTES BELOW TARGET</div><div class="sv" style="color:var(--red)">2</div><div class="sch sdn">ADD · LOS→DXB</div></div>
+    <div class="sc"><div class="sl">BEST YIELDING ROUTE</div><div class="sv" style="font-size:14px;font-family:'Space Mono',monospace">NBO→CDG</div><div class="sch sup">4.20 $/kg</div></div>
+  </div>
+  <div class="row">
+    <div class="c8">
+      <div class="card">
+        <div class="ch"><div class="ct">Yield by Route — Achieved vs Target</div></div>
+        <div class="cb"><div class="chart-wrap"><canvas id="ch-yield"></canvas></div></div>
+      </div>
+    </div>
+    <div class="c6">
+      <div class="card">
+        <div class="ch"><div class="ct">Yield Table</div></div>
+        <div class="cb" style="padding:0">
+          <table class="dt" id="yield-table">
+            <thead><tr><th>ROUTE</th><th>ACHIEVED $/KG</th><th>TARGET</th><th>VARIANCE</th><th>VS LY</th><th>STATUS</th></tr></thead>
+            <tbody>
+              <tr><td><strong>LOS→LHR</strong></td><td class="bold green">3.85</td><td>3.70</td><td class="sup">+0.15</td><td class="sup">+0.22</td><td><span class="pill pg">Above</span></td></tr>
+              <tr><td><strong>NBO→CDG</strong></td><td class="bold green">4.20</td><td>4.00</td><td class="sup">+0.20</td><td class="sup">+0.18</td><td><span class="pill pg">Above</span></td></tr>
+              <tr><td><strong>JNB→AMS</strong></td><td class="bold green">4.10</td><td>4.25</td><td class="sdn">-0.15</td><td class="sup">+0.08</td><td><span class="pill pa">Watch</span></td></tr>
+              <tr><td><strong>KGL→DXB</strong></td><td class="bold">3.65</td><td>3.80</td><td class="sdn">-0.15</td><td class="sdn">-0.05</td><td><span class="pill pa">Watch</span></td></tr>
+              <tr><td><strong>ADD→LHR</strong></td><td class="bold" style="color:var(--red)">2.90</td><td>3.75</td><td class="sdn">-0.85</td><td class="sdn">-0.62</td><td><span class="pill pr">Action</span></td></tr>
+              <tr><td><strong>LOS→DXB</strong></td><td class="bold">3.50</td><td>3.65</td><td class="sdn">-0.15</td><td class="swn">+0.02</td><td><span class="pill pa">Watch</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INTERLINE -->
+<div class="page" id="page-interline" role="tabpanel" aria-label="Interline Revenue">
+  <div class="ph">
+    <div><div class="ptitle">Interline Revenue</div><div class="psub">Revenue from interline partners · Prorate settlements · Net revenue after interline costs</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('interline-table')">↓ Export CSV</button><button class="btn bout bsm">Settlement Report</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">INTERLINE PARTNERS</div><div class="sv">6</div><div class="sch">Active agreements</div></div>
+    <div class="sc"><div class="sl">TOTAL INTERLINE REV</div><div class="sv">184K<span style="font-size:12px">$</span></div><div class="sch sup">↑ +9% vs LM</div></div>
+    <div class="sc"><div class="sl">NET AFTER PRORATE</div><div class="sv">112K<span style="font-size:12px">$</span></div><div class="sch swn">61% retention</div></div>
+    <div class="sc"><div class="sl">PENDING SETTLEMENT</div><div class="sv" style="color:var(--amber)">USD 24K</div><div class="sch swn">Due by month end</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Interline Revenue by Partner</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="interline-table">
+        <thead><tr><th>PARTNER</th><th>CODE</th><th>AWBs</th><th>REVENUE ($)</th><th>PRORATE ($)</th><th>NET ($)</th><th>SETTLEMENT</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Kenya Airways</strong></td><td class="mono">KQ</td><td>48</td><td class="bold">62,400</td><td>24,960</td><td class="bold green">37,440</td><td><span class="pill pg">Settled</span></td></tr>
+          <tr><td><strong>Ethiopian Airlines</strong></td><td class="mono">ET</td><td>35</td><td class="bold">42,000</td><td>18,900</td><td class="bold green">23,100</td><td><span class="pill pg">Settled</span></td></tr>
+          <tr><td><strong>South African Airways</strong></td><td class="mono">SA</td><td>28</td><td class="bold">33,600</td><td>14,112</td><td class="bold green">19,488</td><td><span class="pill pa">Pending</span></td></tr>
+          <tr><td><strong>Emirates SkyCargo</strong></td><td class="mono">EK</td><td>22</td><td class="bold">24,200</td><td>11,616</td><td class="bold">12,584</td><td><span class="pill pa">Pending</span></td></tr>
+          <tr><td><strong>Turkish Cargo</strong></td><td class="mono">TK</td><td>18</td><td class="bold">12,600</td><td>5,670</td><td class="bold">6,930</td><td><span class="pill pg">Settled</span></td></tr>
+          <tr><td><strong>Air France Cargo</strong></td><td class="mono">AF</td><td>14</td><td class="bold">9,800</td><td>4,606</td><td class="bold">5,194</td><td><span class="pill pb">In Dispute</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- FORECAST -->
+<div class="page" id="page-forecast" role="tabpanel" aria-label="Demand Forecast">
+  <div class="ph">
+    <div><div class="ptitle">Demand Forecast</div><div class="psub">Predicted demand by route and commodity · Based on historical trends, seasonality, and confirmed bookings</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('forecast-table')">↓ Export CSV</button><button class="btn bout bsm" onclick="viewReport('Demand Forecast Report','Predicted demand by route and commodity.')">Full Report</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">FORECAST ACCURACY</div><div class="sv">87<span style="font-size:12px">%</span></div><div class="sch sup">↑ +2% vs last model</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,18 12,16 24,14 36,13 48,12 60,10 72,8" fill="none" stroke="#1A8A4A" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">FORECAST VOLUME (NEXT 4WK)</div><div class="sv">1,860<span style="font-size:12px">t</span></div><div class="sch sup">+8% vs same period LY</div></div>
+    <div class="sc"><div class="sl">HIGH CONFIDENCE ROUTES</div><div class="sv">6</div><div class="sch sup">&gt;90% model confidence</div></div>
+    <div class="sc"><div class="sl">PEAK WEEK FORECAST</div><div class="sv">Wk 13</div><div class="sch swn">510t predicted — Prep now</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Weekly Forecast vs Actuals</div></div>
+    <div class="cb"><div class="chart-wrap-lg"><canvas id="ch-forecast"></canvas></div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Route Forecast Table</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="forecast-table">
+        <thead><tr><th>ROUTE</th><th>FCST WT (T)</th><th>ACTUAL (T)</th><th>ACCURACY</th><th>NEXT 30D FCST</th><th>CONFIDENCE</th></tr></thead>
+        <tbody>
+          <tr><td><strong>LOS→LHR</strong></td><td>420</td><td>418</td><td class="sup bold">99.5%</td><td>435t</td><td><span class="pill pg">High</span></td></tr>
+          <tr><td><strong>NBO→LHR</strong></td><td>380</td><td>395</td><td class="swn bold">96.1%</td><td>410t</td><td><span class="pill pg">High</span></td></tr>
+          <tr><td><strong>JNB→CDG</strong></td><td>290</td><td>281</td><td class="swn bold">96.9%</td><td>305t</td><td><span class="pill pg">High</span></td></tr>
+          <tr><td><strong>ADD→LHR</strong></td><td>180</td><td>141</td><td class="sdn bold">78.3%</td><td>155t</td><td><span class="pill pa">Medium</span></td></tr>
+          <tr><td><strong>KGL→DXB</strong></td><td>220</td><td>224</td><td class="sup bold">98.2%</td><td>235t</td><td><span class="pill pg">High</span></td></tr>
+          <tr><td><strong>NBO→DXB</strong></td><td>370</td><td>—</td><td>—</td><td>370t</td><td><span class="pill pb">Forecast only</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SPACE ALLOCATION -->
+<div class="page" id="page-alloc" role="tabpanel" aria-label="Space Allocation">
+  <div class="ph">
+    <div><div class="ptitle">Space Allocation</div><div class="psub">Capacity distribution by market and GSA per flight · Over-allocation and empty hold flags</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('alloc-table')">↓ Export CSV</button><button class="btn bgold bsm">Reallocate</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">TOTAL ALLOCATED</div><div class="sv">68<span style="font-size:12px">%</span></div><div class="sch swn">912t remaining network-wide</div></div>
+    <div class="sc"><div class="sl">OVER-ALLOCATED ROUTES</div><div class="sv" style="color:var(--red)">2</div><div class="sch sdn">CPT→LHR · NBO→LHR</div></div>
+    <div class="sc"><div class="sl">UNDER-ALLOCATED</div><div class="sv" style="color:var(--navy)">3</div><div class="sch">ADD routes · EBB→LHR</div></div>
+    <div class="sc"><div class="sl">GSA ALLOTMENTS</div><div class="sv">24</div><div class="sch">Across 12 markets</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Allocation Matrix by Route &amp; GSA</div><div class="cs">Tonnes allocated per market per route</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="alloc-table">
+        <thead><tr><th>ROUTE</th><th>GSA LOS</th><th>GSA JNB</th><th>GSA NBO</th><th>GSA ADD</th><th>TOTAL ALLOC</th><th>CAPACITY</th><th>UTIL %</th></tr></thead>
+        <tbody>
+          <tr><td><strong>LOS→LHR</strong></td><td>320t</td><td>—</td><td>80t</td><td>—</td><td class="bold">400t</td><td>540t</td><td><div class="pbar"><div class="pf" style="width:74%;background:var(--amber)"></div></div> 74%</td></tr>
+          <tr><td><strong>NBO→LHR</strong></td><td>120t</td><td>80t</td><td>250t</td><td>40t</td><td class="bold">490t</td><td>540t</td><td><div class="pbar"><div class="pf" style="width:91%;background:var(--red)"></div></div> 91%</td></tr>
+          <tr><td><strong>JNB→CDG</strong></td><td>—</td><td>280t</td><td>60t</td><td>—</td><td class="bold">340t</td><td>540t</td><td><div class="pbar"><div class="pf" style="width:63%;background:var(--green)"></div></div> 63%</td></tr>
+          <tr><td><strong>ADD→AMS</strong></td><td>—</td><td>—</td><td>60t</td><td>160t</td><td class="bold">220t</td><td>540t</td><td><div class="pbar"><div class="pf" style="width:41%;background:var(--navy)"></div></div> 41%</td></tr>
+          <tr><td><strong>KGL→LHR</strong></td><td>80t</td><td>40t</td><td>100t</td><td>—</td><td class="bold">220t</td><td>360t</td><td><div class="pbar"><div class="pf" style="width:61%;background:var(--green)"></div></div> 61%</td></tr>
+          <tr><td><strong>NBO→DXB</strong></td><td>60t</td><td>—</td><td>200t</td><td>60t</td><td class="bold">320t</td><td>400t</td><td><div class="pbar"><div class="pf" style="width:80%;background:var(--amber)"></div></div> 80%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ROUTE PERFORMANCE -->
+<div class="page" id="page-route-perf" role="tabpanel" aria-label="Route Performance">
+  <div class="ph">
+    <div><div class="ptitle">Route Performance</div><div class="psub">Full P&amp;L per route · Revenue, load factor, yield, costs, and margin · Route viability dashboard</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('routeperf-table')">↓ Export CSV</button><button class="btn bout bsm" onclick="viewReport('Route Performance Report','Full P&amp;L view per route.')">Full Report</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">PROFITABLE ROUTES</div><div class="sv" style="color:var(--green)">9</div><div class="sch sup">64% of network</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,16 12,14 24,13 36,12 48,11 60,10 72,9" fill="none" stroke="#1A8A4A" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">LOSS-MAKING ROUTES</div><div class="sv" style="color:var(--red)">2</div><div class="sch sdn">ADD→AMS · EBB→LHR</div></div>
+    <div class="sc"><div class="sl">AVG MARGIN</div><div class="sv">22<span style="font-size:12px">%</span></div><div class="sch swn">Target: 28%</div></div>
+    <div class="sc"><div class="sl">TOP MARGIN ROUTE</div><div class="sv" style="font-size:14px;font-family:'Space Mono',monospace">LOS→LHR</div><div class="sch sup">34% margin</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Route P&amp;L Summary</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="routeperf-table">
+        <thead><tr><th>ROUTE</th><th>REVENUE ($)</th><th>COST ($)</th><th>MARGIN</th><th>LOAD %</th><th>YOY</th><th>VIABILITY</th></tr></thead>
+        <tbody>
+          <tr><td><strong>LOS→LHR</strong></td><td class="bold green">312,400</td><td>206,200</td><td class="bold green">34%</td><td>74%</td><td class="sup">+18%</td><td><span class="pill pg">Strong</span></td></tr>
+          <tr><td><strong>NBO→LHR</strong></td><td class="bold green">284,100</td><td>199,900</td><td class="bold green">30%</td><td>84%</td><td class="sup">+13%</td><td><span class="pill pg">Strong</span></td></tr>
+          <tr><td><strong>JNB→CDG</strong></td><td class="bold">198,600</td><td>152,900</td><td class="bold">23%</td><td>65%</td><td class="sup">+2%</td><td><span class="pill pg">Healthy</span></td></tr>
+          <tr><td><strong>KGL→LHR</strong></td><td class="bold">156,300</td><td>124,500</td><td class="bold">20%</td><td>68%</td><td class="sup">+7%</td><td><span class="pill pg">Healthy</span></td></tr>
+          <tr><td><strong>ADD→LHR</strong></td><td class="bold" style="color:var(--amber)">124,300</td><td>112,800</td><td class="bold swn">9%</td><td>41%</td><td class="sdn">-11%</td><td><span class="pill pa">Watch</span></td></tr>
+          <tr><td><strong>NBO→DXB</strong></td><td class="bold">97,200</td><td>76,400</td><td class="bold">21%</td><td>79%</td><td class="sup">+5%</td><td><span class="pill pg">Healthy</span></td></tr>
+          <tr><td><strong>ADD→AMS</strong></td><td class="bold" style="color:var(--red)">48,900</td><td>62,100</td><td class="bold sdn">-27%</td><td>41%</td><td class="sdn">-18%</td><td><span class="pill pr">Loss-Making</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SEASONAL TRENDS -->
+<div class="page" id="page-seasonal" role="tabpanel" aria-label="Seasonal Trends">
+  <div class="ph">
+    <div><div class="ptitle">Seasonal Trends</div><div class="psub">Y/Y volume and revenue trends by route · Peak periods · Optimal capacity deployment windows</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('seasonal-table')">↓ Export CSV</button><button class="btn bout bsm" onclick="viewReport('Seasonal Trend Report','Year-over-year trends.')">Full Report</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">YTD REVENUE (2026)</div><div class="sv">5.04M<span style="font-size:12px">$</span></div><div class="sch sup">↑ +17% vs 2025 YTD</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,22 12,18 24,14 36,10 48,8 60,6 72,4" fill="none" stroke="#1A8A4A" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">PEAK MONTH (FORECAST)</div><div class="sv">December</div><div class="sch swn">+40% vs Jan baseline</div></div>
+    <div class="sc"><div class="sl">Q1 GROWTH</div><div class="sv">+17<span style="font-size:12px">%</span></div><div class="sch sup">Driven by LOS market</div></div>
+    <div class="sc"><div class="sl">SEASONALITY INDEX</div><div class="sv">1.18</div><div class="sch">Mar · High season</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Revenue Trend — 2026 vs 2025</div></div>
+    <div class="cb"><div class="chart-wrap-lg"><canvas id="ch-seasonal"></canvas></div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Monthly Performance Table</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="seasonal-table">
+        <thead><tr><th>MONTH</th><th>REVENUE ($K)</th><th>VOLUME (T)</th><th>YIELD $/KG</th><th>LOAD %</th><th>VS LY</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Jan 2026</strong></td><td class="bold">1,540</td><td>403</td><td>3.82</td><td>68%</td><td class="sup">+20%</td></tr>
+          <tr><td><strong>Feb 2026</strong></td><td class="bold">1,610</td><td>422</td><td>3.81</td><td>71%</td><td class="sup">+23%</td></tr>
+          <tr><td><strong>Mar 2026</strong></td><td class="bold">1,890</td><td>495</td><td>3.82</td><td>74%</td><td class="sup">+33%</td></tr>
+          <tr><td style="color:var(--mid)">Apr (fcst)</td><td class="bold" style="color:var(--mid)">1,720</td><td>450</td><td>3.82</td><td>72%</td><td>—</td></tr>
+          <tr><td style="color:var(--mid)">May (fcst)</td><td class="bold" style="color:var(--mid)">1,680</td><td>440</td><td>3.82</td><td>70%</td><td>—</td></tr>
+          <tr><td style="color:var(--mid)">Jun (fcst)</td><td class="bold" style="color:var(--mid)">1,800</td><td>471</td><td>3.82</td><td>73%</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- FLEET UTILISATION -->
+<div class="page" id="page-fleet" role="tabpanel" aria-label="Fleet Utilisation">
+  <div class="ph">
+    <div><div class="ptitle">Fleet Utilisation</div><div class="psub">Capacity utilisation by aircraft type and registration · Belly vs freighter revenue split</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('fleet-table')">↓ Export CSV</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">ACTIVE AIRCRAFT</div><div class="sv">5</div><div class="sch">4 belly · 1 freighter</div></div>
+    <div class="sc"><div class="sl">FLEET UTILISATION</div><div class="sv">74<span style="font-size:12px">%</span></div><div class="sch swn">Target: 82%</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,18 12,16 24,15 36,14 48,13 60,12 72,10" fill="none" stroke="#D97706" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">FREIGHTER REVENUE</div><div class="sv">38<span style="font-size:12px">%</span></div><div class="sch">of total cargo revenue</div></div>
+    <div class="sc"><div class="sl">BELLY REVENUE</div><div class="sv">62<span style="font-size:12px">%</span></div><div class="sch sup">Growing YoY</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Fleet by Registration</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="fleet-table">
+        <thead><tr><th>REGISTRATION</th><th>TYPE</th><th>ROUTES</th><th>BELLY CAP (KG)</th><th>USED</th><th>UTILIZATION</th><th>STATUS</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">9XR-WA</td><td>B737-800</td><td>LOS-NBO-LHR</td><td>4,500</td><td>3,330</td><td><div class="pbar"><div class="pf" style="width:74%;background:var(--amber)"></div></div> 74%</td><td><span class="pill pg">Active</span></td></tr>
+          <tr><td class="mono">9XR-WB</td><td>B737-800</td><td>NBO-LHR-CDG</td><td>4,500</td><td>3,780</td><td><div class="pbar"><div class="pf" style="width:84%;background:var(--amber)"></div></div> 84%</td><td><span class="pill pg">Active</span></td></tr>
+          <tr><td class="mono">9XR-WC</td><td>A330-200F</td><td>JNB-AMS-LHR</td><td>6,000</td><td>2,460</td><td><div class="pbar"><div class="pf" style="width:41%;background:var(--navy)"></div></div> 41%</td><td><span class="pill pb">Undersold</span></td></tr>
+          <tr><td class="mono">9XR-WD</td><td>B737-800</td><td>KGL-DXB-BOM</td><td>4,500</td><td>3,555</td><td><div class="pbar"><div class="pf" style="width:79%;background:var(--amber)"></div></div> 79%</td><td><span class="pill pg">Active</span></td></tr>
+          <tr><td class="mono">9XR-WE</td><td>B737-700</td><td>Regional Ops</td><td>3,200</td><td>1,920</td><td><div class="pbar"><div class="pf" style="width:60%;background:var(--green)"></div></div> 60%</td><td><span class="pill pa">Mx Sched</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- REVENUE BY MARKET -->
+<div class="page" id="page-rev-market" role="tabpanel" aria-label="Revenue by Market">
+  <div class="ph">
+    <div><div class="ptitle">Revenue by Market</div><div class="psub">Market-level P&amp;L · Yield per kg · Revenue trend vs prior year · Budget tracking · Mar 2026 YTD</div></div>
+    <div class="pac"><button class="btn bcsv bsm" onclick="exportCSV('revmarket-table')">↓ Export CSV</button><button class="btn bout bsm" onclick="viewReport('Revenue by Route &amp; Market','Full revenue breakdown by market, route, and period.')">Full Report</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">TOTAL NETWORK REVENUE</div><div class="sv">2.4M<span style="font-size:12px">$</span></div><div class="sch sup">↑ +18% vs Mar 2025</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,22 12,19 24,15 36,12 48,9 60,6 72,4" fill="none" stroke="#1A8A4A" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">VS BUDGET</div><div class="sv">+6.2<span style="font-size:12px">%</span></div><div class="sch sup">USD 140K above target</div><svg class="sparkline" viewBox="0 0 72 24"><polyline points="0,14 12,13 24,12 36,11 48,10 60,9 72,8" fill="none" stroke="#1A8A4A" stroke-width="1.8"/></svg></div>
+    <div class="sc"><div class="sl">MARKETS ABOVE TARGET</div><div class="sv" style="color:var(--green)">4</div><div class="sch sup">LOS · NBO · KGL · CPT</div></div>
+    <div class="sc"><div class="sl">MARKETS BELOW TARGET</div><div class="sv" style="color:var(--red)">1</div><div class="sch sdn">ADD — urgent review</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Revenue by Market — Actual vs Budget</div></div>
+    <div class="cb" style="padding:0">
+      <table class="dt" id="revmarket-table">
+        <thead><tr><th>MARKET</th><th>REVENUE ($)</th><th>VS LY</th><th>YIELD $/KG</th><th>VS BUDGET</th><th>AWBs</th><th>STATUS</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Lagos (LOS)</strong></td><td class="bold green">312,400</td><td class="sup">+18%</td><td>3.95</td><td class="sup">+4.2%</td><td>184</td><td><span class="pill pg">On Track</span></td></tr>
+          <tr><td><strong>Nairobi (NBO)</strong></td><td class="bold green">284,100</td><td class="sup">+13%</td><td>4.10</td><td class="sup">+1.8%</td><td>162</td><td><span class="pill pg">On Track</span></td></tr>
+          <tr><td><strong>Johannesburg (JNB)</strong></td><td class="bold">198,600</td><td class="sup">+2%</td><td>4.05</td><td class="swn">-1.2%</td><td>121</td><td><span class="pill pa">Watch</span></td></tr>
+          <tr><td><strong>Kigali (KGL)</strong></td><td class="bold green">156,300</td><td class="sup">+9%</td><td>3.75</td><td class="sup">+2.1%</td><td>98</td><td><span class="pill pg">On Track</span></td></tr>
+          <tr><td><strong>Addis Ababa (ADD)</strong></td><td class="bold" style="color:var(--amber)">124,300</td><td class="sdn">-11%</td><td>2.90</td><td class="sdn">-8.6%</td><td>87</td><td><span class="pill pr">Action Req.</span></td></tr>
+          <tr><td><strong>Cape Town (CPT)</strong></td><td class="bold green">97,200</td><td class="sup">+10%</td><td>3.80</td><td class="sup">+6.3%</td><td>54</td><td><span class="pill pg">On Track</span></td></tr>
+          <tr><td><strong>Dar es Salaam (DAR)</strong></td><td class="bold">72,400</td><td class="sup">+4%</td><td>3.90</td><td class="sup">+1.0%</td><td>41</td><td><span class="pill pg">On Track</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- OPERATIONAL HEALTH -->
+<div class="page" id="page-ops-health" role="tabpanel" aria-label="Operational Health">
+  <div class="ph">
+    <div><div class="ptitle">Operational Health</div><div class="psub">RAG health score for all stations · KPI scorecard · Action items by priority · 10 Mar 2026</div></div>
+    <div class="pac"><button class="btn bout bsm" onclick="viewReport('Network Health Dashboard','RAG health score for all stations.')">Full Report</button></div>
+  </div>
+  <div class="sg4">
+    <div class="sc"><div class="sl">GREEN STATIONS</div><div class="sv" style="color:var(--green)">4</div><div class="sch sup">LOS · JNB · CPT · DAR</div></div>
+    <div class="sc"><div class="sl">AMBER STATIONS</div><div class="sv" style="color:var(--amber)">2</div><div class="sch swn">KGL · DXB</div></div>
+    <div class="sc"><div class="sl">RED STATIONS</div><div class="sv" style="color:var(--red)">2</div><div class="sch sdn">NBO · ADD — Action req.</div></div>
+    <div class="sc"><div class="sl">NETWORK HEALTH SCORE</div><div class="sv">76<span style="font-size:12px">/100</span></div><div class="sch swn">Target: 85/100</div></div>
+  </div>
+  <div class="rag-grid">
+    <div class="rag-card rag-r">
+      <div class="rag-station">NBO</div><div class="rag-city">Nairobi, Kenya · Transit Hub</div>
+      <div class="rag-metric"><span class="rag-label">Load Factor</span><span class="rag-val" style="color:var(--amber)">84%</span></div>
+      <div class="rag-metric"><span class="rag-label">Dwell Alerts</span><span class="rag-val" style="color:var(--red)">4</span></div>
+      <div class="rag-metric"><span class="rag-label">Yield $/kg</span><span class="rag-val">4.10</span></div>
+      <div class="rag-score" style="color:var(--red)">58/100</div>
+    </div>
+    <div class="rag-card rag-r">
+      <div class="rag-station">ADD</div><div class="rag-city">Addis Ababa, Ethiopia</div>
+      <div class="rag-metric"><span class="rag-label">Load Factor</span><span class="rag-val" style="color:var(--navy)">41%</span></div>
+      <div class="rag-metric"><span class="rag-label">Dwell Alerts</span><span class="rag-val" style="color:var(--amber)">2</span></div>
+      <div class="rag-metric"><span class="rag-label">Yield $/kg</span><span class="rag-val" style="color:var(--red)">2.90</span></div>
+      <div class="rag-score" style="color:var(--red)">52/100</div>
+    </div>
+    <div class="rag-card rag-a">
+      <div class="rag-station">KGL</div><div class="rag-city">Kigali, Rwanda · HQ Hub</div>
+      <div class="rag-metric"><span class="rag-label">Load Factor</span><span class="rag-val" style="color:var(--green)">68%</span></div>
+      <div class="rag-metric"><span class="rag-label">Dwell Alerts</span><span class="rag-val" style="color:var(--amber)">3</span></div>
+      <div class="rag-metric"><span class="rag-label">Yield $/kg</span><span class="rag-val">3.75</span></div>
+      <div class="rag-score" style="color:var(--amber)">71/100</div>
+    </div>
+    <div class="rag-card rag-g">
+      <div class="rag-station">LOS</div><div class="rag-city">Lagos, Nigeria</div>
+      <div class="rag-metric"><span class="rag-label">Load Factor</span><span class="rag-val" style="color:var(--green)">72%</span></div>
+      <div class="rag-metric"><span class="rag-label">Dwell Alerts</span><span class="rag-val" style="color:var(--green)">0</span></div>
+      <div class="rag-metric"><span class="rag-label">Yield $/kg</span><span class="rag-val" style="color:var(--green)">3.95</span></div>
+      <div class="rag-score" style="color:var(--green)">89/100</div>
+    </div>
+    <div class="rag-card rag-g">
+      <div class="rag-station">JNB</div><div class="rag-city">Johannesburg, South Africa</div>
+      <div class="rag-metric"><span class="rag-label">Load Factor</span><span class="rag-val" style="color:var(--green)">65%</span></div>
+      <div class="rag-metric"><span class="rag-label">Dwell Alerts</span><span class="rag-val" style="color:var(--green)">0</span></div>
+      <div class="rag-metric"><span class="rag-label">Yield $/kg</span><span class="rag-val">4.05</span></div>
+      <div class="rag-score" style="color:var(--green)">84/100</div>
+    </div>
+    <div class="rag-card rag-g">
+      <div class="rag-station">CPT</div><div class="rag-city">Cape Town, South Africa</div>
+      <div class="rag-metric"><span class="rag-label">Load Factor</span><span class="rag-val" style="color:var(--red)">96%</span></div>
+      <div class="rag-metric"><span class="rag-label">Dwell Alerts</span><span class="rag-val" style="color:var(--green)">0</span></div>
+      <div class="rag-metric"><span class="rag-label">Yield $/kg</span><span class="rag-val" style="color:var(--green)">3.80</span></div>
+      <div class="rag-score" style="color:var(--green)">82/100</div>
+    </div>
+    <div class="rag-card rag-a">
+      <div class="rag-station">DXB</div><div class="rag-city">Dubai International</div>
+      <div class="rag-metric"><span class="rag-label">Load Factor</span><span class="rag-val" style="color:var(--amber)">79%</span></div>
+      <div class="rag-metric"><span class="rag-label">Dwell Alerts</span><span class="rag-val" style="color:var(--amber)">1</span></div>
+      <div class="rag-metric"><span class="rag-label">Yield $/kg</span><span class="rag-val">3.50</span></div>
+      <div class="rag-score" style="color:var(--amber)">74/100</div>
+    </div>
+    <div class="rag-card rag-g">
+      <div class="rag-station">DAR</div><div class="rag-city">Dar es Salaam, Tanzania</div>
+      <div class="rag-metric"><span class="rag-label">Load Factor</span><span class="rag-val" style="color:var(--amber)">58%</span></div>
+      <div class="rag-metric"><span class="rag-label">Dwell Alerts</span><span class="rag-val" style="color:var(--amber)">2</span></div>
+      <div class="rag-metric"><span class="rag-label">Yield $/kg</span><span class="rag-val">3.90</span></div>
+      <div class="rag-score" style="color:var(--green)">78/100</div>
+    </div>
+  </div>
+</div>
