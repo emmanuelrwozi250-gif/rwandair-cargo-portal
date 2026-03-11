@@ -1,236 +1,270 @@
-/* ============================================================
-   RwandAir Cargo Intelligence Portal — Global CSS
-   Brand colours, resets, typography
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════════
+   RwandAir Cargo Intelligence — Global Design System
+   Premium 5-star airline operations platform
+   Three portals: GSA/Agent · Operations · Commercial & Management
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* ── BRAND CSS VARIABLES ─────────────────────────────────── */
+/* Official RwandAir typeface: Lato (Brand Guidelines v1)
+   Available weights: 300 (Light) · 400 (Regular) · 700 (Bold) · 900 (Black/Heavy)
+   Note: 500→400, 600→700, 800→900 fall back automatically in browsers */
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,700;1,900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ── Design Tokens ──────────────────────────────────────────────── */
 :root {
-  /* Primary brand colours */
-  --navy:    #00529B;
-  --navy2:   #003D73;
-  --navy3:   #002B52;
+  /* RwandAir Brand */
+  --rw-navy:       #00529B;
+  --rw-navy-dark:  #003D73;
+  --rw-navy-deep:  #00264A;
+  --rw-navy-night: #001632;
+  --rw-gold:       #FEE014;
+  --rw-gold-warm:  #F5C518;
+  --rw-gold-deep:  #C49A00;
+  --rw-teal:       #1EA2DC;
+  --rw-lime:       #94C943;
 
-  /* Gold accent */
-  --gold:    #FEE014;
-  --gold2:   #D4B200;
-  --gold-lt: #FFF5B0;
+  /* Portal Theming (defaults = GSA) */
+  --portal-primary:      #00529B;
+  --portal-accent:       #FEE014;
+  --portal-sidebar-bg:   #001A3D;
+  --portal-sidebar-hover: rgba(254,224,20,0.08);
+  --portal-sidebar-active: rgba(254,224,20,0.14);
+  --portal-topbar-border: #FEE014;
 
-  /* Semantic colours */
-  --teal:    #1EA2DC;
-  --lime:    #94C943;
-  --red:     #C0392B;
-  --green:   #1A8A4A;
-  --amber:   #D97706;
-  --purple:  #7C3AED;
+  /* Semantic */
+  --green:       #16A34A;
+  --green-bg:    #F0FDF4;
+  --green-muted: #DCFCE7;
+  --red:         #DC2626;
+  --red-bg:      #FEF2F2;
+  --red-muted:   #FEE2E2;
+  --amber:       #D97706;
+  --amber-bg:    #FFFBEB;
+  --amber-muted: #FEF3C7;
+  --blue:        #2563EB;
+  --blue-bg:     #EFF6FF;
+  --teal:        #0891B2;
+  --teal-bg:     #F0FDFA;
+  --purple:      #7C3AED;
+  --purple-bg:   #F5F3FF;
 
   /* Neutrals */
-  --smoke:   #F1F4F9;
-  --white:   #FFFFFF;
-  --mid:     #6B7A99;
-  --dark:    #1A2340;
-  --border:  #DDE3EE;
+  --white:         #FFFFFF;
+  --smoke:         #F3F5FA;
+  --mist:          #E8EDF6;
+  --border:        #DDE3EE;
+  --border-strong: #B8C4D8;
+  --mid:           #8898B3;
+  --body:          #4E5D7A;
+  --heading:       #1A2340;
+  --dark:          #0E1628;
 
-  /* Layout */
-  --topbar-height: 52px;
-  --sidebar-width: 220px;
-  --sidebar-collapsed: 56px;
+  /* Typography — Lato (official RwandAir typeface per Brand Guidelines) */
+  --font: 'Lato', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-xs:   11px;
+  --font-sm:   12px;
+  --font-base: 13px;
+  --font-md:   14px;
+  --font-lg:   15px;
+  --font-xl:   18px;
+  --font-2xl:  22px;
+  --font-3xl:  28px;
+  --font-4xl:  38px;
+  --font-5xl:  52px;
+  --line-tight:   1.2;
+  --line-normal:  1.5;
+  --line-relaxed: 1.65;
 
-  /* Radius */
-  --radius-sm:  6px;
-  --radius-md:  10px;
-  --radius-lg:  13px;
+  /* Spacing */
+  --sp-1: 4px;   --sp-2: 8px;   --sp-3: 12px;  --sp-4: 16px;
+  --sp-5: 20px;  --sp-6: 24px;  --sp-8: 32px;  --sp-10: 40px;
+  --sp-12: 48px; --sp-16: 64px;
+
+  /* Radii */
+  --r-sm:   4px;   --r-md:  8px;   --r-lg:  12px;
+  --r-xl:   16px;  --r-2xl: 24px;  --r-full: 9999px;
 
   /* Shadows */
-  --shadow-sm:  0 1px 3px rgba(0,0,0,.07);
-  --shadow-md:  0 4px 16px rgba(0,0,0,.10);
-  --shadow-lg:  0 20px 60px rgba(0,0,0,.25);
+  --shadow-xs:  0 1px 2px rgba(15,22,41,0.06);
+  --shadow-sm:  0 1px 3px rgba(15,22,41,0.09), 0 1px 2px rgba(15,22,41,0.05);
+  --shadow-md:  0 4px 8px rgba(15,22,41,0.08), 0 2px 4px rgba(15,22,41,0.04);
+  --shadow-lg:  0 10px 20px rgba(15,22,41,0.09), 0 4px 8px rgba(15,22,41,0.04);
+  --shadow-xl:  0 20px 40px rgba(15,22,41,0.12), 0 8px 16px rgba(15,22,41,0.06);
+  --shadow-inner: inset 0 2px 4px rgba(15,22,41,0.06);
+  --shadow-gold:  0 0 0 3px rgba(254,224,20,0.30);
+  --shadow-focus: 0 0 0 3px rgba(0,82,155,0.25);
+  --shadow-card:  0 2px 8px rgba(15,22,41,0.07), 0 1px 2px rgba(15,22,41,0.04);
+  --shadow-card-hover: 0 6px 16px rgba(15,22,41,0.10), 0 2px 6px rgba(15,22,41,0.06);
 
-  /* Transitions */
-  --transition: all 0.14s ease;
+  /* Timing */
+  --ease:        cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-fast:   0.08s;
+  --t-base:   0.15s;
+  --t-slow:   0.25s;
+  --transition: var(--t-base) var(--ease);
+
+  /* Layout */
+  --topbar-h:  56px;
+  --sidebar-w: 240px;
+  --sidebar-collapsed-w: 58px;
 }
 
-/* ── BOX SIZING RESET ────────────────────────────────────── */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* ── Portal Themes ──────────────────────────────────────────────── */
+/* GSA / Agent Portal */
+[data-portal="gsa"], body:not([data-portal]) {
+  --portal-primary:      #00529B;
+  --portal-accent:       #FEE014;
+  --portal-sidebar-bg:   #001632;
+  --portal-sidebar-hover: rgba(254,224,20,0.07);
+  --portal-sidebar-active: rgba(254,224,20,0.13);
+  --portal-topbar-border: #FEE014;
+  --portal-highlight:    #FEE014;
 }
 
-/* ── BASE HTML / BODY ────────────────────────────────────── */
+/* Operations Portal — dark green, night-ops feel */
+[data-portal="ops"] {
+  --portal-primary:      #065F46;
+  --portal-accent:       #34D399;
+  --portal-sidebar-bg:   #031A14;
+  --portal-sidebar-hover: rgba(52,211,153,0.07);
+  --portal-sidebar-active: rgba(52,211,153,0.13);
+  --portal-topbar-border: #34D399;
+  --portal-highlight:    #34D399;
+}
+
+/* Commercial & Management Portal — deep indigo/purple */
+[data-portal="mgmt"] {
+  --portal-primary:      #312E81;
+  --portal-accent:       #818CF8;
+  --portal-sidebar-bg:   #0F0C29;
+  --portal-sidebar-hover: rgba(129,140,248,0.07);
+  --portal-sidebar-active: rgba(129,140,248,0.14);
+  --portal-topbar-border: #818CF8;
+  --portal-highlight:    #FEE014;
+}
+
+/* ── Reset ──────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 html {
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--font-base);
   -webkit-text-size-adjust: 100%;
-}
-
-body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: var(--smoke);
-  color: var(--dark);
-  overflow: hidden;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── TYPOGRAPHY ──────────────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Inter', sans-serif;
-  color: var(--dark);
-  line-height: 1.2;
+body {
+  font-family: var(--font);
+  font-size: var(--font-base);
+  line-height: var(--line-normal);
+  color: var(--heading);
+  background: var(--smoke);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-h1 { font-size: 24px; font-weight: 800; }
-h2 { font-size: 18px; font-weight: 800; }
-h3 { font-size: 14px; font-weight: 700; }
-h4 { font-size: 12px; font-weight: 700; }
+/* ── Typography ─────────────────────────────────────────────────── */
+h1 { font-size: var(--font-3xl); font-weight: 800; letter-spacing: -0.5px; line-height: var(--line-tight); color: var(--heading); }
+h2 { font-size: var(--font-2xl); font-weight: 700; letter-spacing: -0.3px; line-height: var(--line-tight); }
+h3 { font-size: var(--font-xl);  font-weight: 700; letter-spacing: -0.2px; }
+h4 { font-size: var(--font-lg);  font-weight: 600; }
+h5 { font-size: var(--font-md);  font-weight: 600; }
 
-p { line-height: 1.6; }
+p { line-height: var(--line-relaxed); color: var(--body); }
 
-a {
-  color: var(--navy);
-  text-decoration: none;
+a { color: var(--rw-navy); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--rw-navy-dark); }
+a:focus-visible { outline: 2px solid var(--portal-accent); outline-offset: 2px; border-radius: var(--r-sm); }
+
+/* Mono for codes */
+.mono, .awb, .flight, .iata {
+  font-family: var(--mono);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+.awb   { font-size: var(--font-sm); font-weight: 600; color: var(--rw-navy); }
+.iata  { font-size: var(--font-xl); font-weight: 800; letter-spacing: 0.08em; }
+.flight { font-size: var(--font-md); font-weight: 600; color: var(--heading); }
+
+/* ── Icons ──────────────────────────────────────────────────────── */
+.icon { display: inline-flex; flex-shrink: 0; vertical-align: middle; }
+
+/* ── Utilities ─────────────────────────────────────────────────── */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+
+.flex           { display: flex; }
+.flex-col       { display: flex; flex-direction: column; }
+.items-center   { align-items: center; }
+.items-start    { align-items: flex-start; }
+.justify-between{ justify-content: space-between; }
+.justify-center { justify-content: center; }
+.flex-1         { flex: 1; }
+.flex-shrink-0  { flex-shrink: 0; }
+.flex-wrap      { flex-wrap: wrap; }
+.gap-1 { gap: var(--sp-1); } .gap-2 { gap: var(--sp-2); }
+.gap-3 { gap: var(--sp-3); } .gap-4 { gap: var(--sp-4); }
+.gap-6 { gap: var(--sp-6); }
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-4); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-4); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-4); }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--sp-4); }
+
+.text-xs   { font-size: var(--font-xs); }
+.text-sm   { font-size: var(--font-sm); }
+.text-md   { font-size: var(--font-md); }
+.text-xl   { font-size: var(--font-xl); }
+.text-muted  { color: var(--mid); }
+.text-body   { color: var(--body); }
+.text-danger { color: var(--red); }
+.text-success{ color: var(--green); }
+.text-warning{ color: var(--amber); }
+.text-navy   { color: var(--rw-navy); }
+.font-medium { font-weight: 500; }
+.font-semi   { font-weight: 600; }
+.font-bold   { font-weight: 700; }
+.font-black  { font-weight: 800; }
+.uppercase   { text-transform: uppercase; letter-spacing: 0.06em; }
+.truncate    { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.mt-2 { margin-top: var(--sp-2); } .mt-4 { margin-top: var(--sp-4); } .mt-6 { margin-top: var(--sp-6); }
+.mb-2 { margin-bottom: var(--sp-2); } .mb-4 { margin-bottom: var(--sp-4); } .mb-6 { margin-bottom: var(--sp-6); }
+.p-4  { padding: var(--sp-4); }
+
+.divider { height: 1px; background: var(--border); margin-block: var(--sp-4); }
+
+/* ── Focus ──────────────────────────────────────────────────────── */
+:focus-visible { outline: 2px solid var(--portal-accent); outline-offset: 2px; border-radius: var(--r-sm); }
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--r-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--mid); }
+
+/* ── Print ──────────────────────────────────────────────────────── */
+@media print {
+  #topbar, #sidebar, #toast-container, #notif-panel,
+  #cmd-overlay, #modal-overlay, .no-print { display: none !important; }
+  #main-content { position: static !important; padding: 0 !important; overflow: visible !important; }
+  body { background: white !important; }
+  .card { break-inside: avoid; box-shadow: none !important; border: 1px solid #ddd !important; }
 }
 
-a:hover {
-  text-decoration: underline;
-}
-
-/* Monospace — for AWB numbers and codes only */
-.mono {
-  font-family: 'Space Mono', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--navy);
-  letter-spacing: -0.02em;
-}
-
-/* ── SCROLLBAR STYLING ───────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--mid);
-}
-
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
-
-/* ── ACCESSIBILITY FOCUS ─────────────────────────────────── */
-:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-/* ── UTILITY CLASSES ─────────────────────────────────────── */
-.text-right   { text-align: right; }
-.text-center  { text-align: center; }
-.text-muted   { color: var(--mid); }
-.text-green   { color: var(--green); }
-.text-red     { color: var(--red); }
-.text-amber   { color: var(--amber); }
-.text-teal    { color: var(--teal); }
-.text-navy    { color: var(--navy); }
-
-.font-bold    { font-weight: 700; }
-.font-800     { font-weight: 800; }
-
-.up           { color: var(--green); font-weight: 600; }
-.down         { color: var(--red);   font-weight: 600; }
-.neutral      { color: var(--amber); font-weight: 600; }
-
-.mt-4  { margin-top: 4px; }
-.mt-8  { margin-top: 8px; }
-.mt-12 { margin-top: 12px; }
-.mt-16 { margin-top: 16px; }
-.mb-8  { margin-bottom: 8px; }
-.mb-12 { margin-bottom: 12px; }
-.mb-16 { margin-bottom: 16px; }
-
-.gap-8  { gap: 8px; }
-.gap-12 { gap: 12px; }
-
-.w-full { width: 100%; }
-.hidden { display: none !important; }
-
-.flex        { display: flex; }
-.flex-col    { display: flex; flex-direction: column; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.flex-1      { flex: 1; }
-.flex-shrink-0 { flex-shrink: 0; }
-.flex-wrap   { flex-wrap: wrap; }
-
-/* Grid helpers */
-.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-
-/* Dwell time colours */
-.dwell-ok     { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--green); }
-.dwell-warn   { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--amber); }
-.dwell-alert  { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--red); }
-
-/* Chart wrappers */
-.chart-wrap     { position: relative; height: 200px; }
-.chart-wrap-md  { position: relative; height: 240px; }
-.chart-wrap-lg  { position: relative; height: 280px; }
-.chart-wrap-xl  { position: relative; height: 360px; }
-
-/* Sparkline */
-.sparkline {
-  width: 72px;
-  height: 24px;
-  position: absolute;
-  right: 12px;
-  bottom: 14px;
-  opacity: 0.85;
-}
-
-/* Divider */
-.divider {
-  height: 1px;
-  background: var(--border);
-  margin: 8px 0;
-}
-
-/* ── RESPONSIVE BREAKPOINTS ──────────────────────────────── */
+/* ── Responsive ─────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
+  .grid-5 { grid-template-columns: repeat(3, 1fr); }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
 }
-
 @media (max-width: 768px) {
-  body { overflow: auto; }
-  .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-5, .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); }
   .grid-2 { grid-template-columns: 1fr; }
+  .hide-mobile { display: none !important; }
 }
-
 @media (max-width: 480px) {
-  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .grid-5, .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
 }
 
-/* ── REDUCED MOTION ──────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+::selection { background: rgba(0,82,155,0.12); color: var(--heading); }

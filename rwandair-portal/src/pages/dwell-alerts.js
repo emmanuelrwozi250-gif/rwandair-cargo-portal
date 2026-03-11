@@ -7,6 +7,7 @@ import { STATIONS } from '../data/stations.js';
 import { formatDwell, esc, formatDate } from '../utils/format.js';
 import { barChart } from '../utils/charts.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 const DWELL_DATA = [
   { awb:'459-66271704', station:'NBO', commodity:'Pharma (PIL)', weight:320, dwellMin:3080, sla:2880, handler:'East Africa Cargo', flight:'WB204', origin:'LOS', dest:'LHR', assignee:'J. Kamau', severity:'critical' },
@@ -32,38 +33,63 @@ export function render() {
   const alertStations = STATIONS.filter(s => s.dwellAlerts > 0);
 
   return `
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Dwell Alerts</h1>
-      <p class="page-sub">SLA breach monitoring — ${DWELL_DATA.length} shipments under review</p>
-    </div>
-    <div class="page-actions">
-      <button class="btn btn-sec" id="bulk-esc-btn" style="display:none" onclick="bulkEscalate()">Escalate Selected</button>
-      <button class="btn btn-pri" onclick="showToast('Dwell report generated','success','PDF exported','3000')">Export Report</button>
-    </div>
-  </div>
+  <div class="page-wrap">
 
-  <!-- Stats -->
-  <div class="kpi-row">
-    <div class="kpi-card kpi-danger">
-      <div class="kpi-value">${critical}</div>
-      <div class="kpi-label">SLA Breached</div>
-      <div class="kpi-sub">Immediate action required</div>
+    <!-- Portal header bar -->
+    <div class="portal-header-bar">
+      <div class="portal-header-left">
+        <span class="portal-header-icon">${icon('alert-triangle', 18)}</span>
+        <div>
+          <div class="portal-header-title">Dwell Alerts</div>
+          <div class="portal-header-sub">SLA breach monitoring · ${DWELL_DATA.length} shipments · ${formatDate(new Date(),'short')}</div>
+        </div>
+      </div>
+      <div class="portal-header-right">
+        <button class="btn btn-ghost btn-sm" id="bulk-esc-btn" style="display:none" onclick="bulkEscalate()">
+          ${icon('alert-triangle',13)} Escalate Selected
+        </button>
+        <button class="btn btn-pri btn-sm" onclick="dwellExport()">
+          ${icon('download', 13)} Export Report
+        </button>
+      </div>
     </div>
-    <div class="kpi-card kpi-warning">
-      <div class="kpi-value">${warning}</div>
-      <div class="kpi-label">Approaching SLA</div>
-      <div class="kpi-sub">>75% of threshold</div>
+
+    <!-- ── 4-KPI strip ─────────────────────────────────────────────── -->
+    <div class="kpi-strip stagger" style="grid-template-columns:repeat(4,1fr)">
+
+      <div class="kpi-card kpi-red">
+        <div class="kpi-label">${icon('alert-circle', 11)} SLA Breached</div>
+        <div class="kpi-value kpi-sm">${critical}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta down">${icon('clock',12)} Immediate action required</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-amber">
+        <div class="kpi-label">${icon('clock', 11)} Approaching SLA</div>
+        <div class="kpi-value kpi-sm">${warning}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('activity',12)} &gt;75% of threshold</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-green">
+        <div class="kpi-label">${icon('check-circle', 11)} Within SLA</div>
+        <div class="kpi-value kpi-sm">${ok}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta up">${icon('check',12)} On schedule</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-navy">
+        <div class="kpi-label">${icon('package', 11)} kg Affected</div>
+        <div class="kpi-value kpi-sm">${totalKg.toLocaleString()}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('map-pin',12)} Across all stations</span>
+        </div>
+      </div>
+
     </div>
-    <div class="kpi-card kpi-ok">
-      <div class="kpi-value">${ok}</div>
-      <div class="kpi-label">Within SLA</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-value">${totalKg.toLocaleString()}</div>
-      <div class="kpi-label">kg Affected</div>
-    </div>
-  </div>
 
   <div class="two-col-layout">
     <!-- Table -->
@@ -132,10 +158,10 @@ export function render() {
       </div>
     </div>
   </div>
-  `;
+  </div>`;
 }
 
-export function init() {
+export function init(container) {
   barChart('dwell-trend-chart',
     ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
     [{
@@ -146,6 +172,11 @@ export function init() {
     }],
     { legend: false }
   );
+
+  window.dwellExport = () => {
+    showToast('Exporting…', 'info');
+    setTimeout(() => showToast('Dwell report downloaded', 'success'), 1600);
+  };
 }
 
 window.dwellToggle = function(awb, checked) {

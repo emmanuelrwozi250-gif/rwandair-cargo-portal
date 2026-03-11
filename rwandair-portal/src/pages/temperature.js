@@ -5,6 +5,7 @@
 import { formatNumber, formatDate, formatAWB, esc } from '../utils/format.js';
 import { buildLineChart } from '../utils/charts.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 // Simulated temperature-controlled shipments
 const TEMP_SHIPMENTS = [
@@ -56,42 +57,67 @@ export function render() {
   const nearLimit  = TEMP_SHIPMENTS.filter(s => s.status === 'NEAR LIMIT').length;
   const coolRoomsOcc = new Set(TEMP_SHIPMENTS.map(s => s.station)).size;
 
+  const pharmaCount = TEMP_SHIPMENTS.filter(s=>s.type==='PHA').length;
+  const perCount = TEMP_SHIPMENTS.filter(s=>s.type==='PER').length;
+
   return `
-  <div class="page">
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">🌡️ Temperature Control</h1>
-        <p class="page-sub">Pharma & perishable shipments — live monitoring</p>
+  <div class="page-wrap">
+
+    <!-- Portal header bar -->
+    <div class="portal-header-bar">
+      <div class="portal-header-left">
+        <span class="portal-header-icon">${icon('thermometer', 18)}</span>
+        <div>
+          <div class="portal-header-title">Temperature Control</div>
+          <div class="portal-header-sub">Pharma &amp; perishable shipments · live monitoring · ${formatDate(new Date(),'short')}</div>
+        </div>
       </div>
-      <div class="page-actions">
-        <button class="btn btn-sec" onclick="tempRefresh()">&#8635; Refresh</button>
-        <button class="btn btn-danger" style="display:${excursions>0?'inline-flex':'none'}" onclick="tempEscalate()">
-          ⚠ ${excursions} Excursion${excursions>1?'s':''}
+      <div class="portal-header-right">
+        <button class="btn btn-ghost btn-sm" onclick="tempRefresh()">
+          ${icon('refresh-cw', 13)} Refresh
         </button>
+        ${excursions > 0 ? `
+        <button class="btn btn-red btn-sm" onclick="tempEscalate()">
+          ${icon('alert-triangle',13)} ${excursions} Excursion${excursions>1?'s':''}
+        </button>` : ''}
       </div>
     </div>
 
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Active Temp Shipments</div>
-        <div class="kpi-value">${TEMP_SHIPMENTS.length}</div>
-        <div class="kpi-delta">${TEMP_SHIPMENTS.filter(s=>s.type==='PHA').length} pharma · ${TEMP_SHIPMENTS.filter(s=>s.type==='PER').length} perishable</div>
+    <!-- ── 4-KPI strip ─────────────────────────────────────────────── -->
+    <div class="kpi-strip stagger" style="grid-template-columns:repeat(4,1fr)">
+
+      <div class="kpi-card kpi-navy">
+        <div class="kpi-label">${icon('package', 11)} Active Temp Shipments</div>
+        <div class="kpi-value kpi-sm">${TEMP_SHIPMENTS.length}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('activity',12)} ${pharmaCount} pharma · ${perCount} perishable</span>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Cool Rooms Active</div>
-        <div class="kpi-value">${coolRoomsOcc}</div>
-        <div class="kpi-delta delta-up">Across ${coolRoomsOcc} stations</div>
+
+      <div class="kpi-card kpi-teal">
+        <div class="kpi-label">${icon('thermometer', 11)} Cool Rooms Active</div>
+        <div class="kpi-value kpi-sm">${coolRoomsOcc}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta up">${icon('check',12)} Across ${coolRoomsOcc} stations</span>
+        </div>
       </div>
-      <div class="kpi-card ${excursions>0?'kpi-alert':''}">
-        <div class="kpi-label">Temp Excursions (24hr)</div>
-        <div class="kpi-value" style="color:${excursions>0?'var(--red)':'var(--green)'}">${excursions}</div>
-        <div class="kpi-delta ${excursions>0?'delta-down':'delta-up'}">${excursions>0?'Immediate QA action needed':'All within range'}</div>
+
+      <div class="kpi-card ${excursions > 0 ? 'kpi-red' : 'kpi-green'}">
+        <div class="kpi-label">${icon('alert-circle', 11)} Temp Excursions (24hr)</div>
+        <div class="kpi-value kpi-sm">${excursions}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta ${excursions>0?'down':'up'}">${excursions>0?icon('alert-circle',12)+' Immediate QA action needed':icon('check',12)+' All within range'}</span>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Near-Limit Alerts</div>
-        <div class="kpi-value" style="color:${nearLimit>0?'var(--amber)':'var(--dark)'}">${nearLimit}</div>
-        <div class="kpi-delta">Monitor closely</div>
+
+      <div class="kpi-card ${nearLimit > 0 ? 'kpi-amber' : 'kpi-navy'}">
+        <div class="kpi-label">${icon('clock', 11)} Near-Limit Alerts</div>
+        <div class="kpi-value kpi-sm">${nearLimit}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('eye',12)} Monitor closely</span>
+        </div>
       </div>
+
     </div>
 
     <!-- Cool Room Temp Charts -->

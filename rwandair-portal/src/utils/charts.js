@@ -198,3 +198,4 @@ export function gaugeChart(id, value, color = '#00529B') {
   });
   return _charts[id];
 }
+

@@ -5,6 +5,7 @@
 
 import { formatDate, formatDwell, esc } from '../utils/format.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 // Mock transit shipments in warehouse
 const TRANSIT_AWBS = [
@@ -32,36 +33,63 @@ export function render() {
   const ok = TRANSIT_AWBS.filter(a => a.dwellMin <= 2160).length;
 
   return `
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Warehouse</h1>
-      <p class="page-sub">Transit cargo monitoring — dwell times update every 60s</p>
-    </div>
-    <div class="page-actions">
-      <button class="btn btn-sec" onclick="showToast('Warehouse report exported','success','CSV download ready','3000')">Export CSV</button>
-      <button class="btn btn-pri" onclick="openBookingModal()">+ Accept Cargo</button>
-    </div>
-  </div>
+  <div class="page-wrap">
 
-  <!-- Summary stats -->
-  <div class="kpi-row">
-    <div class="kpi-card">
-      <div class="kpi-value">${TRANSIT_AWBS.length}</div>
-      <div class="kpi-label">In Warehouse</div>
+    <!-- Portal header bar -->
+    <div class="portal-header-bar">
+      <div class="portal-header-left">
+        <span class="portal-header-icon">${icon('archive', 18)}</span>
+        <div>
+          <div class="portal-header-title">Warehouse</div>
+          <div class="portal-header-sub">Transit cargo monitoring · dwell times update every 60s · ${formatDate(new Date(),'short')}</div>
+        </div>
+      </div>
+      <div class="portal-header-right">
+        <button class="btn btn-ghost btn-sm" onclick="showToast('Warehouse report exported','success','CSV download ready','3000')">
+          ${icon('download', 13)} Export CSV
+        </button>
+        <button class="btn btn-pri btn-sm" onclick="openBookingModal()">
+          ${icon('plus', 13)} Accept Cargo
+        </button>
+      </div>
     </div>
-    <div class="kpi-card kpi-danger">
-      <div class="kpi-value">${alerts}</div>
-      <div class="kpi-label">SLA Breached (>48hr)</div>
+
+    <!-- ── 4-KPI strip ─────────────────────────────────────────────── -->
+    <div class="kpi-strip stagger" style="grid-template-columns:repeat(4,1fr)">
+
+      <div class="kpi-card kpi-navy">
+        <div class="kpi-label">${icon('archive', 11)} In Warehouse</div>
+        <div class="kpi-value kpi-sm">${TRANSIT_AWBS.length}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('package',12)} Active shipments</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-red">
+        <div class="kpi-label">${icon('alert-circle', 11)} SLA Breached (&gt;48hr)</div>
+        <div class="kpi-value kpi-sm">${alerts}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta down">${icon('clock',12)} Immediate action required</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-amber">
+        <div class="kpi-label">${icon('clock', 11)} Warning (&gt;36hr)</div>
+        <div class="kpi-value kpi-sm">${warning}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('activity',12)} Monitor closely</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-green">
+        <div class="kpi-label">${icon('check-circle', 11)} Within SLA</div>
+        <div class="kpi-value kpi-sm">${ok}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta up">${icon('check',12)} On schedule</span>
+        </div>
+      </div>
+
     </div>
-    <div class="kpi-card kpi-warning">
-      <div class="kpi-value">${warning}</div>
-      <div class="kpi-label">Warning (>36hr)</div>
-    </div>
-    <div class="kpi-card kpi-ok">
-      <div class="kpi-value">${ok}</div>
-      <div class="kpi-label">Within SLA</div>
-    </div>
-  </div>
 
   <!-- Tabs -->
   <div class="tabs-bar">
@@ -90,10 +118,10 @@ export function render() {
       <tbody id="warehouse-tbody"></tbody>
     </table>
   </div>
-  `;
+  </div>`;
 }
 
-export function init() {
+export function init(container) {
   _renderTable();
   // Update dwell times every 60 seconds
   if (_dwellInterval) clearInterval(_dwellInterval);

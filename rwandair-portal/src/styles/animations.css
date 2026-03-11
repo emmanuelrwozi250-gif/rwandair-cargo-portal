@@ -1,375 +1,299 @@
-/* ============================================================
-   RwandAir Cargo Intelligence Portal — Animations CSS
-   Skeleton loaders, transitions, count-up, loaders
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════════
+   RwandAir Cargo Intelligence — Animations & Micro-interactions
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* ── SHIMMER KEYFRAME ────────────────────────────────────── */
-@keyframes shimmer {
-  0%   { background-position: -600px 0; }
-  100% { background-position: 600px 0; }
-}
-
-/* ── SKELETON BASE ───────────────────────────────────────── */
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    #E8EDF5 25%,
-    #F1F4F9 50%,
-    #E8EDF5 75%
-  );
-  background-size: 600px 100%;
-  animation: shimmer 1.4s infinite linear;
-  border-radius: 4px;
-}
-
-/* Skeleton text line */
-.skeleton-text {
-  height: 12px;
-  margin-bottom: 6px;
-  border-radius: 4px;
-}
-
-.skeleton-text-sm {
-  height: 10px;
-  margin-bottom: 5px;
-}
-
-.skeleton-text-lg {
-  height: 18px;
-  margin-bottom: 8px;
-}
-
-/* Skeleton block heights */
-.skeleton-h8  { height: 8px; }
-.skeleton-h12 { height: 12px; }
-.skeleton-h16 { height: 16px; }
-.skeleton-h24 { height: 24px; }
-.skeleton-h32 { height: 32px; }
-.skeleton-h40 { height: 40px; }
-.skeleton-h60 { height: 60px; }
-.skeleton-h80 { height: 80px; }
-
-/* Skeleton circle */
-.skeleton-circle {
-  border-radius: 50%;
-}
-
-/* Skeleton stat card */
-.skeleton-stat-card {
-  background: var(--white);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  padding: 14px 16px;
-  overflow: hidden;
-}
-
-.skeleton-stat-label {
-  height: 10px;
-  width: 60%;
-  margin-bottom: 8px;
-}
-
-.skeleton-stat-value {
-  height: 28px;
-  width: 50%;
-  margin-bottom: 6px;
-}
-
-.skeleton-stat-change {
-  height: 10px;
-  width: 80%;
-}
-
-/* Skeleton table row */
-.skeleton-table-row td {
-  padding: 12px;
-}
-
-.skeleton-table-row .skeleton-cell {
-  height: 12px;
-  border-radius: 4px;
-}
-
-/* Full page skeleton loader */
-.page-skeleton {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 0;
-  animation: fadeIn 0.2s ease;
-}
-
-.page-skeleton-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.page-skeleton-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-.page-skeleton-table {
-  background: var(--white);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.page-skeleton-table-header {
-  height: 38px;
-  background: var(--smoke);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 0 16px;
-}
-
-.page-skeleton-table-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.page-skeleton-table-row:last-child {
-  border-bottom: none;
-}
-
-/* ── TOAST ANIMATIONS ────────────────────────────────────── */
-@keyframes toastSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes toastSlideOut {
-  to {
-    opacity: 0;
-    transform: translateX(24px);
-  }
-}
-
-/* ── COUNT-UP ANIMATION ──────────────────────────────────── */
-.count-up {
-  display: inline-block;
-}
-
-/* ── SPINNER ─────────────────────────────────────────────── */
+/* ── Keyframes ──────────────────────────────────────────────────── */
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--border);
-  border-top-color: var(--navy);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 currentColor; }
+  50% { opacity: 0.7; transform: scale(0.95); box-shadow: 0 0 6px currentColor; }
 }
 
-.spinner-sm {
-  width: 12px;
-  height: 12px;
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.spinner-lg {
-  width: 24px;
-  height: 24px;
-  border-width: 3px;
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.spinner-white {
-  border-color: rgba(255,255,255,0.3);
-  border-top-color: var(--white);
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Inline loading row */
-.loading-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 24px;
-  color: var(--mid);
-  font-size: 12px;
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-/* ── FADE ANIMATIONS ─────────────────────────────────────── */
-@keyframes fadeIn {
+@keyframes overlayIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(-10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.fade-in {
-  animation: fadeIn 0.2s ease;
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-/* ── SLIDE ANIMATIONS ────────────────────────────────────── */
-@keyframes slideInRight {
-  from { transform: translateX(20px); opacity: 0; }
-  to   { transform: translateX(0);    opacity: 1; }
+@keyframes toastSlideOut {
+  to { opacity: 0; transform: translateX(110%); }
 }
 
-@keyframes slideInUp {
-  from { transform: translateY(12px); opacity: 0; }
+@keyframes shimmer {
+  from { background-position: -600px 0; }
+  to   { background-position: 600px 0; }
+}
+
+@keyframes countUp {
+  from { transform: translateY(100%); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
 
-.slide-in-right { animation: slideInRight 0.18s ease; }
-.slide-in-up    { animation: slideInUp    0.2s ease; }
-
-/* ── PULSE ANIMATION (live dot) ──────────────────────────── */
-@keyframes pulseDot {
-  0%, 100% { opacity: 1;    transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.9); }
+@keyframes kpiFill {
+  from { width: 0; }
 }
 
-.pulse-dot {
-  animation: pulseDot 2s infinite;
-}
-
-/* ── CHECKMARK ANIMATION (booking success) ───────────────── */
-@keyframes drawCheck {
-  to { stroke-dashoffset: 0; }
-}
-
-.check-circle-svg .check-path {
-  stroke-dasharray: 80;
-  stroke-dashoffset: 80;
-  animation: drawCheck 0.5s 0.2s ease forwards;
-}
-
-.check-circle-svg .circle-path {
-  stroke-dasharray: 166;
-  stroke-dashoffset: 166;
-  animation: drawCheck 0.6s ease forwards;
-}
-
-/* ── COUNTDOWN TIMER ─────────────────────────────────────── */
-.countdown-timer {
-  font-family: 'Space Mono', monospace;
-  font-size: 13px;
-  font-weight: 700;
-  transition: color 0.3s;
-}
-
-.countdown-critical {
-  color: var(--red);
-  animation: flashRed 0.8s infinite;
-}
-
-@keyframes flashRed {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.6; }
-}
-
-/* ── BUTTON LOADING STATE ────────────────────────────────── */
-.btn-loading {
-  position: relative;
-  pointer-events: none;
-  opacity: 0.7;
-}
-
-.btn-loading::after {
-  content: '';
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 2px solid rgba(255,255,255,0.4);
-  border-top-color: var(--white);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-/* ── PROGRESS BAR ANIMATION ──────────────────────────────── */
-@keyframes progressFill {
-  from { width: 0%; }
-}
-
-.progress-animate {
-  animation: progressFill 0.6s ease;
-}
-
-/* ── REPORT GENERATE ANIMATION ───────────────────────────── */
-@keyframes reportGen {
+@keyframes bootProgress {
   0%   { width: 0%; }
-  80%  { width: 85%; }
+  30%  { width: 35%; }
+  60%  { width: 65%; }
+  85%  { width: 88%; }
   100% { width: 100%; }
 }
 
-.report-progress-bar {
-  height: 3px;
-  background: var(--navy);
-  border-radius: 2px;
-  animation: reportGen 1.2s ease forwards;
+@keyframes bootFadeOut {
+  to { opacity: 0; pointer-events: none; }
 }
 
-/* ── SKELETON FOR STATS ROW ──────────────────────────────── */
-.skeleton-stats-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+@keyframes planeFloat {
+  0%, 100% { transform: translateY(0) rotate(-15deg); }
+  50%       { transform: translateY(-12px) rotate(-10deg); }
 }
 
-/* ── TYPING INDICATOR (notifications) ───────────────────── */
-@keyframes typingBounce {
-  0%, 60%, 100% { transform: translateY(0); }
-  30%            { transform: translateY(-4px); }
+@keyframes pathDraw {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
 }
 
-.typing-dot {
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ── Skeleton Loaders ───────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, var(--mist) 25%, var(--border) 50%, var(--mist) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--r-md);
+}
+
+.skeleton-text  { height: 12px; width: 100%; margin-bottom: 6px; }
+.skeleton-title { height: 20px; width: 60%; margin-bottom: 8px; }
+.skeleton-label { height: 10px; width: 35%; margin-bottom: 4px; }
+.skeleton-num   { height: 36px; width: 50%; }
+.skeleton-bar   { height: 8px;  width: 100%; }
+.skeleton-circle { border-radius: 50%; }
+.skeleton-btn   { height: 32px; width: 100px; }
+.skeleton-card  { height: 100px; width: 100%; }
+
+/* KPI card skeleton */
+.skeleton-kpi {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5);
+}
+
+/* Table skeleton */
+.skeleton-row { display: flex; gap: 12px; padding: 12px 16px; align-items: center; border-bottom: 1px solid var(--border); }
+.skeleton-row .skeleton { flex: 1; height: 12px; }
+.skeleton-row .skeleton:first-child { flex: 0.4; }
+.skeleton-row .skeleton:last-child { flex: 0.6; }
+
+/* ── Page load animation ────────────────────────────────────────── */
+.page-wrap { animation: pageFadeIn 0.2s var(--ease); }
+
+/* Staggered children animation */
+.stagger > * { animation: fadeInUp 0.2s var(--ease) backwards; }
+.stagger > *:nth-child(1)  { animation-delay: 0.00s; }
+.stagger > *:nth-child(2)  { animation-delay: 0.04s; }
+.stagger > *:nth-child(3)  { animation-delay: 0.08s; }
+.stagger > *:nth-child(4)  { animation-delay: 0.12s; }
+.stagger > *:nth-child(5)  { animation-delay: 0.16s; }
+.stagger > *:nth-child(6)  { animation-delay: 0.20s; }
+
+/* ── Spinner ────────────────────────────────────────────────────── */
+.spinner {
   display: inline-block;
-  width: 4px;
-  height: 4px;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(0,82,155,0.15);
+  border-top-color: var(--rw-navy);
   border-radius: 50%;
-  background: var(--mid);
-  animation: typingBounce 1s infinite;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+.spinner-sm { width: 12px; height: 12px; border-width: 1.5px; }
+.spinner-lg { width: 24px; height: 24px; border-width: 3px; }
+.spinner-xl { width: 40px; height: 40px; border-width: 4px; }
+.spinner-white { border-color: rgba(255,255,255,0.2); border-top-color: white; }
+.spinner-gold  { border-color: rgba(254,224,20,0.2); border-top-color: var(--rw-gold); }
+
+/* ── Live indicator ─────────────────────────────────────────────── */
+.live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 2s ease-in-out infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.live-dot.amber { background: var(--amber); }
+.live-dot.red   { background: var(--red); animation: blink 1s step-start infinite; }
+
+/* ── Count-up number animation ──────────────────────────────────── */
+.count-up { animation: countUp 0.4s var(--ease-spring); }
+
+/* ── Hover lift ─────────────────────────────────────────────────── */
+.hover-lift { transition: transform var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease); }
+.hover-lift:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+/* ── Transitions for interactive elements ───────────────────────── */
+.transition-all   { transition: all var(--transition); }
+.transition-bg    { transition: background var(--transition); }
+.transition-color { transition: color var(--transition); }
+.transition-shadow{ transition: box-shadow var(--transition); }
+
+/* ── Boot screen ────────────────────────────────────────────────── */
+#boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: var(--rw-navy-night);
+  transition: opacity 0.5s var(--ease);
+}
+#boot-screen.fading { animation: bootFadeOut 0.5s var(--ease) 0.2s forwards; }
+#boot-screen.hidden { display: none; }
+
+.boot-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-5);
+  margin-bottom: var(--sp-12);
+}
+.boot-mark {
+  width: 88px; height: 88px;
+  background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(254,224,20,0.3);
+  border-radius: 22px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 10px;
+  box-shadow: 0 0 50px rgba(254,224,20,0.20), 0 8px 32px rgba(0,0,0,0.5);
+  animation: scaleIn 0.4s var(--ease-spring);
+}
+.boot-mark img { display: block; width: 64px; height: 64px; object-fit: contain; }
+.boot-mark span {
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--rw-gold);
+  letter-spacing: -1px;
+}
+.boot-airline {
+  text-align: center;
+  animation: fadeInUp 0.5s var(--ease) 0.2s backwards;
+}
+.boot-airline-name {
+  font-size: var(--font-3xl);
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -0.5px;
+}
+.boot-airline-sub {
+  font-size: var(--font-md);
+  color: var(--rw-gold);
+  font-weight: 500;
+  margin-top: var(--sp-1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.typing-dot:nth-child(2) { animation-delay: 0.15s; }
-.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+.boot-progress-wrap {
+  width: 280px;
+  animation: fadeInUp 0.5s var(--ease) 0.4s backwards;
+}
+.boot-progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.10);
+  border-radius: var(--r-full);
+  overflow: hidden;
+  margin-bottom: var(--sp-3);
+}
+.boot-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--rw-navy) 0%, var(--rw-gold) 100%);
+  border-radius: var(--r-full);
+  animation: bootProgress 2.2s var(--ease) forwards;
+}
+.boot-status {
+  font-size: var(--font-xs);
+  color: rgba(255,255,255,0.35);
+  text-align: center;
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+  min-height: 18px;
+}
 
-/* ── REDUCED MOTION OVERRIDES ────────────────────────────── */
+/* Floating plane decoration */
+.boot-plane {
+  position: absolute;
+  bottom: 15%;
+  right: 15%;
+  color: rgba(255,255,255,0.04);
+  animation: planeFloat 4s ease-in-out infinite;
+}
+
+/* ── Report generation animation ────────────────────────────────── */
+.report-progress .progress-fill {
+  animation: kpiFill 1.2s var(--ease) forwards;
+  width: 0;
+}
+
+/* ── Checkmark success animation ────────────────────────────────── */
+.check-anim {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: pathDraw 0.5s var(--ease) 0.1s forwards;
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .skeleton,
-  .spinner,
-  .countdown-critical,
-  .pulse-dot,
-  .live-dot {
-    animation: none !important;
-  }
-
-  .check-circle-svg .check-path,
-  .check-circle-svg .circle-path {
-    animation: none !important;
-    stroke-dashoffset: 0 !important;
-  }
-
-  .progress-animate,
-  .report-progress-bar {
-    animation: none !important;
-    width: 100% !important;
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }

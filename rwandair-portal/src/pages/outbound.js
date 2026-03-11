@@ -5,6 +5,7 @@
 
 import { formatNumber, esc } from '../utils/format.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 // Today's outbound flights from KGL hub
 const OUTBOUND_FLIGHTS = [
@@ -25,29 +26,52 @@ export function render() {
   const totalCargo = OUTBOUND_FLIGHTS.reduce((s, f) => s + f.cargo, 0);
   const avgLoad = Math.round(OUTBOUND_FLIGHTS.reduce((s, f) => s + (f.cargo / f.capacity * 100), 0) / OUTBOUND_FLIGHTS.length);
 
+  const nearCap = OUTBOUND_FLIGHTS.filter(f => f.cargo/f.capacity > 0.9).length;
   return `
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Outbound Flights</h1>
-      <p class="page-sub">11 Mar 2026 — ${OUTBOUND_FLIGHTS.length} departures from KGL</p>
+  <div class="page-wrap">
+
+  <div class="portal-header-bar">
+    <div class="portal-header-left">
+      <span class="portal-header-icon">${icon('plane-out', 18)}</span>
+      <div>
+        <div class="portal-header-title">Outbound Flights</div>
+        <div class="portal-header-sub">11 Mar 2026 · ${OUTBOUND_FLIGHTS.length} departures from KGL hub</div>
+      </div>
     </div>
-    <div class="page-actions">
-      <button class="btn btn-sec" onclick="showLateAccForm()">Late Acceptance</button>
-      <button class="btn btn-pri" onclick="showToast('Load plan exported','success','ULD load plan PDF ready','3000')">Export Load Plan</button>
+    <div class="portal-header-right">
+      <button class="btn btn-ghost btn-sm" onclick="showLateAccForm()">
+        ${icon('clock', 13)} Late Acceptance
+      </button>
+      <button class="btn btn-sec btn-sm" onclick="showToast('Load plan exported','success','ULD load plan PDF ready',3000)">
+        ${icon('download', 13)} Load Plan
+      </button>
     </div>
   </div>
 
-  <div class="kpi-row">
-    <div class="kpi-card"><div class="kpi-value">${openFlights}</div><div class="kpi-label">Open for Booking</div></div>
-    <div class="kpi-card"><div class="kpi-value">${formatNumber(totalCargo)}</div><div class="kpi-label">kg Booked</div></div>
-    <div class="kpi-card"><div class="kpi-value">${avgLoad}%</div><div class="kpi-label">Avg Load Factor</div></div>
-    <div class="kpi-card kpi-warning"><div class="kpi-value">${OUTBOUND_FLIGHTS.filter(f=>f.cargo/f.capacity>0.9).length}</div><div class="kpi-label">Near Capacity (>90%)</div></div>
+  <div class="kpi-strip stagger" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi-card kpi-green">
+      <div class="kpi-label">${icon('check-circle',11)} Open for Booking</div>
+      <div class="kpi-value kpi-sm">${openFlights}</div>
+    </div>
+    <div class="kpi-card kpi-navy">
+      <div class="kpi-label">${icon('package',11)} kg Booked</div>
+      <div class="kpi-value kpi-sm">${formatNumber(totalCargo)}</div>
+    </div>
+    <div class="kpi-card kpi-teal">
+      <div class="kpi-label">${icon('percent',11)} Avg Load Factor</div>
+      <div class="kpi-value kpi-sm">${avgLoad}%</div>
+    </div>
+    <div class="kpi-card ${nearCap>0?'kpi-amber':'kpi-teal'}">
+      <div class="kpi-label">${icon('alert-triangle',11)} Near Capacity &gt;90%</div>
+      <div class="kpi-value kpi-sm">${nearCap}</div>
+    </div>
   </div>
 
   <div class="outbound-cards" id="outbound-cards">
     ${OUTBOUND_FLIGHTS.map(f => _renderCard(f)).join('')}
   </div>
-  `;
+
+  </div>`;
 }
 
 function _renderCard(f) {

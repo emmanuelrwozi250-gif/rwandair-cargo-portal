@@ -5,6 +5,7 @@
 import { formatDate, esc, formatNumber } from '../utils/format.js';
 import { showToast } from '../components/toast.js';
 import { FY_TOTAL_TARGET } from '../data/revenue.js';
+import { icon } from '../utils/icons.js';
 
 const REPORT_CATALOGUE = [
   {
@@ -171,14 +172,23 @@ function renderPreview(id) {
 
 export function render() {
   return `
-  <div class="page">
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">📄 Reports</h1>
-        <p class="page-sub">Standard cargo reporting library — ${REPORT_CATALOGUE.length} reports available</p>
+  <div class="page-wrap">
+
+    <!-- Portal header bar -->
+    <div class="portal-header-bar">
+      <div class="portal-header-left">
+        <span class="portal-header-icon">${icon('file-text', 18)}</span>
+        <div>
+          <div class="portal-header-title">Reports</div>
+          <div class="portal-header-sub">Standard cargo reporting library · ${REPORT_CATALOGUE.length} reports available · ${formatDate(new Date(),'short')}</div>
+        </div>
       </div>
-      <div class="page-actions">
-        <input class="form-input search-input" placeholder="Search reports…" oninput="reportSearch(this.value)" style="width:220px">
+      <div class="portal-header-right">
+        <div style="position:relative">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--mid)">${icon('search',13)}</span>
+          <input class="form-input form-input-sm" placeholder="Search reports…" oninput="reportSearch(this.value)"
+            style="padding-left:30px;width:200px">
+        </div>
       </div>
     </div>
 

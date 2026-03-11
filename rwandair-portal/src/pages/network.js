@@ -4,8 +4,9 @@
 
 import { STATIONS, getStation } from '../data/stations.js';
 import { ROUTES } from '../data/flights.js';
-import { formatNumber, esc } from '../utils/format.js';
+import { formatNumber, formatDate, esc } from '../utils/format.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 // Station coordinate overrides (lat, lon) — real IATA coords
 const COORDS = {
@@ -61,20 +62,27 @@ export function render() {
   const alertStations = STATIONS.filter(s => s.dwellAlerts > 0).length;
 
   return `
-  <div class="page" style="height:100%;display:flex;flex-direction:column">
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">🗺️ Network Map</h1>
-        <p class="page-sub">${totalStations} stations · ${ROUTE_LINES.length} routes · RwandAir global cargo network</p>
-      </div>
-      <div class="page-actions">
-        <div style="display:flex;align-items:center;gap:12px;font-size:12px">
-          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#FEE014;margin-right:4px"></span>Hub (KGL)</span>
-          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#00529B;margin-right:4px"></span>Europe</span>
-          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#C0392B;margin-right:4px"></span>ME/Freighter</span>
-          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1EA2DC;margin-right:4px"></span>Africa</span>
+  <div class="page-wrap" style="display:flex;flex-direction:column">
+
+    <!-- Portal header bar -->
+    <div class="portal-header-bar">
+      <div class="portal-header-left">
+        <span class="portal-header-icon">${icon('globe', 18)}</span>
+        <div>
+          <div class="portal-header-title">Network Map</div>
+          <div class="portal-header-sub">${totalStations} stations · ${ROUTE_LINES.length} routes · RwandAir global cargo network · ${formatDate(new Date(),'short')}</div>
         </div>
-        <button class="btn btn-sec" onclick="networkResetView()">⊕ Reset View</button>
+      </div>
+      <div class="portal-header-right">
+        <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:rgba(255,255,255,0.7)">
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FEE014;margin-right:4px;vertical-align:middle"></span>Hub (KGL)</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#00529B;margin-right:4px;vertical-align:middle"></span>Europe</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#C0392B;margin-right:4px;vertical-align:middle"></span>ME/Freighter</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#1EA2DC;margin-right:4px;vertical-align:middle"></span>Africa</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="networkResetView()">
+          ${icon('crosshair', 13)} Reset View
+        </button>
       </div>
     </div>
 

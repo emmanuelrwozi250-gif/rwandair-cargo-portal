@@ -5,6 +5,7 @@
 
 import { formatDate, esc } from '../utils/format.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 const DG_CLASSES = {
   '1': { label:'Explosives', color:'#FF6B6B', bg:'#FF6B6B20' },
@@ -53,23 +54,63 @@ export function render() {
   const accepted = DG_SHIPMENTS.filter(d => d.status === 'Accepted').length;
 
   return `
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Dangerous Goods</h1>
-      <p class="page-sub">IATA DGR compliance — ${DG_SHIPMENTS.length} DG shipments active</p>
-    </div>
-    <div class="page-actions">
-      <button class="btn btn-sec" onclick="showDGMatrix()">DG Class Matrix</button>
-      <button class="btn btn-pri" onclick="showToast('DG report exported','success','IATA DGR compliance report PDF','3000')">Export Report</button>
-    </div>
-  </div>
+  <div class="page-wrap">
 
-  <div class="kpi-row">
-    <div class="kpi-card kpi-danger"><div class="kpi-value">${pending}</div><div class="kpi-label">Pending Acceptance</div></div>
-    <div class="kpi-card kpi-ok"><div class="kpi-value">${accepted}</div><div class="kpi-label">Accepted</div></div>
-    <div class="kpi-card"><div class="kpi-value">${DG_SHIPMENTS.filter(d=>!d.pax).length}</div><div class="kpi-label">CAO Only</div></div>
-    <div class="kpi-card kpi-warning"><div class="kpi-value">${DG_INCIDENTS.filter(i=>i.status==='Open').length}</div><div class="kpi-label">Open Incidents</div></div>
-  </div>
+    <!-- Portal header bar -->
+    <div class="portal-header-bar">
+      <div class="portal-header-left">
+        <span class="portal-header-icon">${icon('alert-octagon', 18)}</span>
+        <div>
+          <div class="portal-header-title">Dangerous Goods</div>
+          <div class="portal-header-sub">IATA DGR compliance · ${DG_SHIPMENTS.length} DG shipments active · ${formatDate(new Date(),'short')}</div>
+        </div>
+      </div>
+      <div class="portal-header-right">
+        <button class="btn btn-ghost btn-sm" onclick="showDGMatrix()">
+          ${icon('list', 13)} DG Class Matrix
+        </button>
+        <button class="btn btn-pri btn-sm" onclick="showToast('DG report exported','success','IATA DGR compliance report PDF','3000')">
+          ${icon('download', 13)} Export Report
+        </button>
+      </div>
+    </div>
+
+    <!-- ── 4-KPI strip ─────────────────────────────────────────────── -->
+    <div class="kpi-strip stagger" style="grid-template-columns:repeat(4,1fr)">
+
+      <div class="kpi-card kpi-red">
+        <div class="kpi-label">${icon('clock', 11)} Pending Acceptance</div>
+        <div class="kpi-value kpi-sm">${pending}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta down">${icon('alert-circle',12)} Requires DGR review</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-green">
+        <div class="kpi-label">${icon('check-circle', 11)} Accepted</div>
+        <div class="kpi-value kpi-sm">${accepted}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta up">${icon('check',12)} NOTOC issued</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-amber">
+        <div class="kpi-label">${icon('package', 11)} CAO Only</div>
+        <div class="kpi-value kpi-sm">${DG_SHIPMENTS.filter(d=>!d.pax).length}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('info',12)} Cargo aircraft only</span>
+        </div>
+      </div>
+
+      <div class="kpi-card ${DG_INCIDENTS.filter(i=>i.status==='Open').length > 0 ? 'kpi-red' : 'kpi-navy'}">
+        <div class="kpi-label">${icon('alert-triangle', 11)} Open Incidents</div>
+        <div class="kpi-value kpi-sm">${DG_INCIDENTS.filter(i=>i.status==='Open').length}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('file-text',12)} Under investigation</span>
+        </div>
+      </div>
+
+    </div>
 
   <!-- DG Shipments -->
   <div class="card">
@@ -162,10 +203,10 @@ export function render() {
       </tbody>
     </table>
   </div>
-  `;
+  </div>`;
 }
 
-export function init() {}
+export function init(container) {}
 
 window.toggleDGChecklist = function(awb) {
   if (_expandedChecklists.has(awb)) _expandedChecklists.delete(awb);

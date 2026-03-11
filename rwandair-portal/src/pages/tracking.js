@@ -6,17 +6,27 @@
 import { AWB_DATA, TRACKABLE_AWBS } from '../data/awbs.js';
 import { formatDate, formatDwell, ragClass, esc, debounce } from '../utils/format.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 const STATUS_STEPS = ['Booked','Accepted','ULD Build-up','Uplifted','In Transit','Connecting','Customs Clearance','Out for Delivery','Delivered'];
 
 export function render() {
   return `
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Track Shipment</h1>
-      <p class="page-sub">Real-time AWB tracking with timeline and dwell monitoring</p>
+  <div class="page-wrap">
+
+    <!-- Portal header bar -->
+    <div class="portal-header-bar">
+      <div class="portal-header-left">
+        <span class="portal-header-icon">${icon('map-pin', 18)}</span>
+        <div>
+          <div class="portal-header-title">Track Shipment</div>
+          <div class="portal-header-sub">Real-time AWB tracking with timeline and dwell monitoring · ${formatDate(new Date(),'short')}</div>
+        </div>
+      </div>
+      <div class="portal-header-right">
+        <span style="font-size:11px;color:rgba(255,255,255,0.55)">${icon('activity',12)} Live tracking enabled</span>
+      </div>
     </div>
-  </div>
 
   <!-- Search -->
   <div class="card track-search-card">
@@ -38,7 +48,7 @@ export function render() {
 
   <!-- Result -->
   <div id="track-result"></div>
-  `;
+  </div>`;
 }
 
 export function init() {

@@ -7,6 +7,7 @@ import { CLAIMS_DATA } from '../data/claims.js';
 import { formatDate, formatNumber, esc } from '../utils/format.js';
 import { doughnutChart } from '../utils/charts.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 const STATUS_ORDER = ['Filed', 'Under Investigation', 'Station Response', 'Resolved'];
 let _expanded = new Set();
@@ -22,35 +23,60 @@ export function render() {
   const highValue = CLAIMS_DATA.filter(c => c.valueUSD > 10000).length;
 
   return `
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Claims</h1>
-      <p class="page-sub">${CLAIMS_DATA.length} claims · Total exposure ${formatNumber(total, 'currency')}</p>
-    </div>
-    <div class="page-actions">
-      <button class="btn btn-pri" onclick="openFileClaimModal()">+ File Claim</button>
-    </div>
-  </div>
+  <div class="page-wrap">
 
-  <!-- KPI row -->
-  <div class="kpi-row">
-    <div class="kpi-card kpi-danger">
-      <div class="kpi-value">${open}</div>
-      <div class="kpi-label">Open Claims</div>
+    <!-- Portal header bar -->
+    <div class="portal-header-bar">
+      <div class="portal-header-left">
+        <span class="portal-header-icon">${icon('file-minus', 18)}</span>
+        <div>
+          <div class="portal-header-title">Claims Management</div>
+          <div class="portal-header-sub">${CLAIMS_DATA.length} claims · Total exposure ${formatNumber(total, 'currency')} · ${formatDate(new Date(),'short')}</div>
+        </div>
+      </div>
+      <div class="portal-header-right">
+        <button class="btn btn-pri btn-sm" onclick="openFileClaimModal()">
+          ${icon('plus', 13)} File Claim
+        </button>
+      </div>
     </div>
-    <div class="kpi-card kpi-ok">
-      <div class="kpi-value">${resolved}</div>
-      <div class="kpi-label">Resolved</div>
+
+    <!-- ── 4-KPI strip ─────────────────────────────────────────────── -->
+    <div class="kpi-strip stagger" style="grid-template-columns:repeat(4,1fr)">
+
+      <div class="kpi-card kpi-red">
+        <div class="kpi-label">${icon('alert-circle', 11)} Open Claims</div>
+        <div class="kpi-value kpi-sm">${open}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta down">${icon('clock',12)} Pending resolution</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-green">
+        <div class="kpi-label">${icon('check-circle', 11)} Resolved</div>
+        <div class="kpi-value kpi-sm">${resolved}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta up">${icon('check',12)} Closed successfully</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-navy">
+        <div class="kpi-label">${icon('dollar-sign', 11)} Total Exposure</div>
+        <div class="kpi-value kpi-sm">${formatNumber(total, 'currency')}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('bar-chart',12)} All claim types</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-amber">
+        <div class="kpi-label">${icon('alert-triangle', 11)} High Value (&gt;$10k)</div>
+        <div class="kpi-value kpi-sm">${highValue}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('eye',12)} Requires senior review</span>
+        </div>
+      </div>
+
     </div>
-    <div class="kpi-card">
-      <div class="kpi-value">${formatNumber(total, 'currency')}</div>
-      <div class="kpi-label">Total Exposure</div>
-    </div>
-    <div class="kpi-card kpi-warning">
-      <div class="kpi-value">${highValue}</div>
-      <div class="kpi-label">High Value (>$10k)</div>
-    </div>
-  </div>
 
   <div class="two-col-layout">
     <div style="flex:3">
@@ -141,10 +167,10 @@ export function render() {
       </div>
     </div>
   </div>
-  `;
+  </div>`;
 }
 
-export function init() {
+export function init(container) {
   const types = {};
   CLAIMS_DATA.forEach(c => { types[c.type] = (types[c.type] || 0) + c.valueUSD; });
   const labels = Object.keys(types);

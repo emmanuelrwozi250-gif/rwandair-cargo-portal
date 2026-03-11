@@ -7,6 +7,7 @@ import { FLIGHTS } from '../data/flights.js';
 import { formatDate, formatNumber, esc } from '../utils/format.js';
 import { getChecklist, setChecklist } from '../utils/storage.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 // Today's inbound flights (arriving 11 Mar 2026)
 const INBOUND_FLIGHTS = [
@@ -51,28 +52,48 @@ export function render() {
   const delayed = INBOUND_FLIGHTS.filter(f => f.status === 'Delayed').length;
 
   return `
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Inbound Flights</h1>
-      <p class="page-sub">11 Mar 2026 — ${INBOUND_FLIGHTS.length} arrivals · ${formatNumber(totalCargo)} kg inbound cargo</p>
+  <div class="page-wrap">
+
+  <div class="portal-header-bar">
+    <div class="portal-header-left">
+      <span class="portal-header-icon">${icon('plane-in', 18)}</span>
+      <div>
+        <div class="portal-header-title">Inbound Flights</div>
+        <div class="portal-header-sub">11 Mar 2026 · ${INBOUND_FLIGHTS.length} arrivals · ${formatNumber(totalCargo)} kg inbound cargo</div>
+      </div>
     </div>
-    <div class="page-actions">
-      <button class="btn btn-sec" onclick="showToast('Arrival report exported','success','PDF generated','3000')">Arrival Report</button>
+    <div class="portal-header-right">
+      <span class="badge-live">${icon('activity',12)} Live</span>
+      <button class="btn btn-ghost btn-sm" onclick="showToast('Arrival report exported','success','PDF generated',3000)">
+        ${icon('file-text',13)} Arrival Report
+      </button>
     </div>
   </div>
 
-  <div class="kpi-row">
-    <div class="kpi-card"><div class="kpi-value">${INBOUND_FLIGHTS.length}</div><div class="kpi-label">Arrivals Today</div></div>
-    <div class="kpi-card kpi-ok"><div class="kpi-value">${landed}</div><div class="kpi-label">Landed</div></div>
-    <div class="kpi-card kpi-danger"><div class="kpi-value">${delayed}</div><div class="kpi-label">Delayed</div></div>
-    <div class="kpi-card"><div class="kpi-value">${formatNumber(totalCargo)}</div><div class="kpi-label">Total kg</div></div>
+  <div class="kpi-strip stagger" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi-card kpi-navy">
+      <div class="kpi-label">${icon('plane-in',11)} Arrivals Today</div>
+      <div class="kpi-value kpi-sm">${INBOUND_FLIGHTS.length}</div>
+    </div>
+    <div class="kpi-card kpi-green">
+      <div class="kpi-label">${icon('check-circle',11)} Landed</div>
+      <div class="kpi-value kpi-sm">${landed}</div>
+    </div>
+    <div class="kpi-card ${delayed>0?'kpi-red':'kpi-teal'}">
+      <div class="kpi-label">${icon('alert-triangle',11)} Delayed</div>
+      <div class="kpi-value kpi-sm">${delayed}</div>
+    </div>
+    <div class="kpi-card kpi-teal">
+      <div class="kpi-label">${icon('package',11)} Total Cargo</div>
+      <div class="kpi-value kpi-sm">${formatNumber(totalCargo)} kg</div>
+    </div>
   </div>
 
-  <!-- Flight cards grid -->
   <div class="flight-cards-grid" id="inbound-cards">
     ${INBOUND_FLIGHTS.map(f => _renderFlightCard(f)).join('')}
   </div>
-  `;
+
+  </div>`;
 }
 
 function _renderFlightCard(f) {

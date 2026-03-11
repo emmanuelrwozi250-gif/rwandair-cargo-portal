@@ -6,6 +6,7 @@ import { FLIGHTS, ROUTES, AIRCRAFT_CAPACITY } from '../data/flights.js';
 import { formatNumber, formatDate, esc } from '../utils/format.js';
 import { buildBarChart } from '../utils/charts.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 // 7-day forward view (from today Mar 11, 2026)
 const DAYS = ['Wed Mar 11','Thu Mar 12','Fri Mar 13','Sat Mar 14','Sun Mar 15','Mon Mar 16','Tue Mar 17'];
@@ -48,44 +49,68 @@ export function render() {
   const weekCap     = DAY_CAPACITY.reduce((s,d) => s + d.totalCap, 0);
   const weekBooked  = DAY_CAPACITY.reduce((s,d) => s + d.booked, 0);
 
+  const loadColor2 = parseFloat(avgLoad) > 85 ? 'kpi-red' : parseFloat(avgLoad) > 70 ? 'kpi-amber' : 'kpi-green';
+
   return `
-  <div class="page">
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">✈️ Capacity Planning</h1>
-        <p class="page-sub">7-day forward belly capacity — ${FLIGHT_CAP.length} active flights today</p>
+  <div class="page-wrap">
+
+    <!-- Portal header bar -->
+    <div class="portal-header-bar">
+      <div class="portal-header-left">
+        <span class="portal-header-icon">${icon('send', 18)}</span>
+        <div>
+          <div class="portal-header-title">Capacity Planning</div>
+          <div class="portal-header-sub">7-day forward belly capacity · ${FLIGHT_CAP.length} active flights today · ${formatDate(new Date(),'short')}</div>
+        </div>
       </div>
-      <div class="page-actions">
-        <select class="form-select" style="width:160px" onchange="capFilterRoute(this.value)">
+      <div class="portal-header-right">
+        <select class="form-select form-select-sm" onchange="capFilterRoute(this.value)">
           <option value="">All Routes</option>
           ${ROUTES.slice(0,10).map(r=>`<option value="${r.id}">${r.label}</option>`).join('')}
         </select>
-        <button class="btn btn-sec" onclick="capExport()">⬇ Export LDM</button>
+        <button class="btn btn-ghost btn-sm" onclick="capExport()">
+          ${icon('download', 13)} Export LDM
+        </button>
       </div>
     </div>
 
-    <!-- KPIs -->
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Weekly Network Capacity</div>
-        <div class="kpi-value">${formatNumber(weekCap)} t</div>
-        <div class="kpi-delta">7-day forward view</div>
+    <!-- ── 4-KPI strip ─────────────────────────────────────────────── -->
+    <div class="kpi-strip stagger" style="grid-template-columns:repeat(4,1fr)">
+
+      <div class="kpi-card kpi-navy">
+        <div class="kpi-label">${icon('bar-chart-2', 11)} Weekly Capacity</div>
+        <div class="kpi-value kpi-sm">${formatNumber(weekCap)} t</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('calendar',12)} 7-day forward view</span>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Weekly Booked</div>
-        <div class="kpi-value">${formatNumber(weekBooked)} t</div>
-        <div class="kpi-delta delta-up">${(weekBooked/weekCap*100).toFixed(1)}% utilization</div>
+
+      <div class="kpi-card kpi-teal">
+        <div class="kpi-label">${icon('package', 11)} Weekly Booked</div>
+        <div class="kpi-value kpi-sm">${formatNumber(weekBooked)} t</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta up">${icon('trending-up',12)} ${(weekBooked/weekCap*100).toFixed(1)}% utilization</span>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Available Today</div>
-        <div class="kpi-value">${formatNumber(totalAvail)} kg</div>
-        <div class="kpi-delta">Across ${FLIGHT_CAP.length} flights</div>
+
+      <div class="kpi-card kpi-green">
+        <div class="kpi-label">${icon('inbox', 11)} Available Today</div>
+        <div class="kpi-value kpi-sm">${formatNumber(totalAvail)} kg</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('send',12)} Across ${FLIGHT_CAP.length} flights</span>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Avg Load Factor</div>
-        <div class="kpi-value" style="color:${parseFloat(avgLoad)>85?'var(--red)':parseFloat(avgLoad)>70?'var(--amber)':'var(--green)'}">${avgLoad}%</div>
-        <div class="kpi-delta">Target: 75%+</div>
+
+      <div class="kpi-card ${loadColor2}">
+        <div class="kpi-label">${icon('activity', 11)} Avg Load Factor</div>
+        <div class="kpi-value kpi-sm">${avgLoad}%</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('target',12)} Target: 75%+</span>
+          <span class="kpi-attain ${parseFloat(avgLoad)>=75?'over':'under'}">${avgLoad}%</span>
+        </div>
+        <div class="kpi-progress"><div class="kpi-progress-fill" style="width:${Math.min(parseFloat(avgLoad),100)}%"></div></div>
       </div>
+
     </div>
 
     <!-- 7-Day Stacked Bar Chart -->

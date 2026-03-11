@@ -6,6 +6,7 @@
 import { RATE_CARDS, SURCHARGES, CARGO_TYPES, calculateCharge } from '../data/rates.js';
 import { formatDate, formatNumber, esc } from '../utils/format.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 let _filtered = [...RATE_CARDS];
 let _editingId = null;
@@ -15,16 +16,26 @@ export function render() {
   const origins = [...new Set(RATE_CARDS.map(r => r.origin))].sort();
 
   return `
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Rate Cards</h1>
-      <p class="page-sub">Published rates effective W25 season · ${RATE_CARDS.length} routes</p>
+  <div class="page-wrap">
+
+    <!-- Portal header bar -->
+    <div class="portal-header-bar">
+      <div class="portal-header-left">
+        <span class="portal-header-icon">${icon('tag', 18)}</span>
+        <div>
+          <div class="portal-header-title">Rate Cards</div>
+          <div class="portal-header-sub">Published rates effective W25 season · ${RATE_CARDS.length} routes · ${formatDate(new Date(),'short')}</div>
+        </div>
+      </div>
+      <div class="portal-header-right">
+        <button class="btn btn-ghost btn-sm" onclick="showAddRateModal()">
+          ${icon('plus', 13)} Add Rate
+        </button>
+        <button class="btn btn-pri btn-sm" onclick="showToast('Rate file exported','success','XLSX download ready','3000')">
+          ${icon('download', 13)} Export
+        </button>
+      </div>
     </div>
-    <div class="page-actions">
-      <button class="btn btn-sec" onclick="showAddRateModal()">+ Add Rate</button>
-      <button class="btn btn-pri" onclick="showToast('Rate file exported','success','XLSX download ready','3000')">Export</button>
-    </div>
-  </div>
 
   <div class="rates-layout">
     <!-- Main rate table -->
@@ -100,7 +111,7 @@ export function render() {
       </div>
     </div>
   </div>
-  `;
+  </div>`;
 }
 
 export function init() {

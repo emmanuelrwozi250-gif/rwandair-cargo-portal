@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- Globe / horizon sweep arc — Sky Blue #1EA2DC -->
+  <ellipse cx="24" cy="28" rx="20" ry="8.5" fill="none" stroke="#1EA2DC" stroke-width="2.2"/>
+  <!-- Lower horizon fill -->
+  <path d="M4 28 Q24 38 44 28" fill="none" stroke="#1EA2DC" stroke-width="1.4" opacity="0.55"/>
+
+  <!-- Sun body — RwandAir Yellow #FEE014 -->
+  <circle cx="24" cy="21" r="7" fill="#FEE014"/>
+
+  <!-- Sun rays -->
+  <g stroke="#FEE014" stroke-width="1.8" stroke-linecap="round">
+    <line x1="24" y1="9"  x2="24" y2="12"/>
+    <line x1="24" y1="30" x2="24" y2="33"/>
+    <line x1="12" y1="21" x2="15" y2="21"/>
+    <line x1="33" y1="21" x2="36" y2="21"/>
+    <line x1="15.5" y1="12.5" x2="17.6" y2="14.6"/>
+    <line x1="30.4" y1="27.4" x2="32.5" y2="29.5"/>
+    <line x1="32.5" y1="12.5" x2="30.4" y2="14.6"/>
+    <line x1="17.6" y1="27.4" x2="15.5" y2="29.5"/>
+  </g>
+
+  <!-- Sun centre highlight -->
+  <circle cx="24" cy="21" r="3" fill="#C49A00" opacity="0.5"/>
+
+  <!-- Lime green Rwandan accent arc — #94C943 -->
+  <path d="M8 24 Q16 17 24 16 Q32 17 40 24" fill="none" stroke="#94C943" stroke-width="1.8" opacity="0.75"/>
+</svg>

@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "rwandair-portal",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "-s", "rwandair-portal", "--no-clipboard", "-p", "4040"],
+      "runtimeExecutable": "/usr/bin/python3",
+      "runtimeArgs": ["rwandair-portal/server.py"],
       "port": 4040
     },
     {

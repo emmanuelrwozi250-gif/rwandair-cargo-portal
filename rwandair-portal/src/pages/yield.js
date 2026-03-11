@@ -4,9 +4,10 @@
 
 import { ROUTES } from '../data/flights.js';
 import { RATE_CARDS } from '../data/rates.js';
-import { formatNumber, esc } from '../utils/format.js';
+import { formatNumber, formatDate, esc } from '../utils/format.js';
 import { buildBarChart, buildLineChart } from '../utils/charts.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../utils/icons.js';
 
 // Route yield data (real rates derived from Dec 2025 report + rate cards)
 const ROUTE_YIELDS = [
@@ -47,46 +48,66 @@ export function render() {
   const netRev     = ROUTE_YIELDS.reduce((s,r) => s + r.rev, 0);
 
   return `
-  <div class="page">
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">📈 Yield Analysis</h1>
-        <p class="page-sub">Revenue yield per kg — route &amp; commodity breakdown</p>
+  <div class="page-wrap">
+
+    <!-- Portal header bar -->
+    <div class="portal-header-bar">
+      <div class="portal-header-left">
+        <span class="portal-header-icon">${icon('trending-up', 18)}</span>
+        <div>
+          <div class="portal-header-title">Yield Analysis</div>
+          <div class="portal-header-sub">Revenue yield per kg · route &amp; commodity breakdown · ${formatDate(new Date(),'short')}</div>
+        </div>
       </div>
-      <div class="page-actions">
-        <select class="form-select" style="width:140px" onchange="yieldFilterPeriod(this.value)">
+      <div class="portal-header-right">
+        <select class="form-select form-select-sm" onchange="yieldFilterPeriod(this.value)">
           <option>Mar-26 (MTD)</option>
           <option>Dec-25</option>
           <option>Jan-26</option>
           <option>Feb-26</option>
           <option>FY 2025-26</option>
         </select>
-        <button class="btn btn-sec" onclick="yieldExport()">⬇ Export</button>
+        <button class="btn btn-ghost btn-sm" onclick="yieldExport()">
+          ${icon('download', 13)} Export
+        </button>
       </div>
     </div>
 
-    <!-- KPIs -->
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Network Avg Yield</div>
-        <div class="kpi-value">${formatNumber(parseFloat(avgYield),'yield')}</div>
-        <div class="kpi-delta delta-up">+$0.10 vs LY</div>
+    <!-- ── 4-KPI strip ─────────────────────────────────────────────── -->
+    <div class="kpi-strip stagger" style="grid-template-columns:repeat(4,1fr)">
+
+      <div class="kpi-card kpi-navy">
+        <div class="kpi-label">${icon('activity', 11)} Network Avg Yield</div>
+        <div class="kpi-value kpi-sm">${formatNumber(parseFloat(avgYield),'yield')}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta up">${icon('trending-up',12)} +$0.10 vs LY</span>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Best Route Yield</div>
-        <div class="kpi-value" style="color:var(--green)">${formatNumber(bestRoute.yield,'yield')}</div>
-        <div class="kpi-delta">${esc(bestRoute.label)}</div>
+
+      <div class="kpi-card kpi-green">
+        <div class="kpi-label">${icon('award', 11)} Best Route Yield</div>
+        <div class="kpi-value kpi-sm">${formatNumber(bestRoute.yield,'yield')}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('map-pin',12)} ${esc(bestRoute.route)}</span>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Lowest Route Yield</div>
-        <div class="kpi-value" style="color:var(--amber)">${formatNumber(worstRoute.yield,'yield')}</div>
-        <div class="kpi-delta">${esc(worstRoute.label)}</div>
+
+      <div class="kpi-card kpi-amber">
+        <div class="kpi-label">${icon('arrow-down', 11)} Lowest Route Yield</div>
+        <div class="kpi-value kpi-sm">${formatNumber(worstRoute.yield,'yield')}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('map-pin',12)} ${esc(worstRoute.route)}</span>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Total Route Revenue</div>
-        <div class="kpi-value">${formatNumber(netRev,'currency')}</div>
-        <div class="kpi-delta">All routes combined</div>
+
+      <div class="kpi-card kpi-teal">
+        <div class="kpi-label">${icon('dollar-sign', 11)} Total Route Revenue</div>
+        <div class="kpi-value kpi-sm">${formatNumber(netRev,'currency')}</div>
+        <div class="kpi-footer">
+          <span class="kpi-delta">${icon('bar-chart',12)} All routes combined</span>
+        </div>
       </div>
+
     </div>
 
     <!-- Charts Row -->

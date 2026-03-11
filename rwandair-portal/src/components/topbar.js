@@ -1,126 +1,254 @@
 // ═══════════════════════════════════════════════════════════════════
-// RwandAir Cargo Portal — Top Bar Component
+// RwandAir Cargo Intelligence — Topbar Component
+// Live UTC clock · 3-portal switcher · role badges · notifications
 // ═══════════════════════════════════════════════════════════════════
 
 import { showToast } from './toast.js';
+import { icon } from '../utils/icons.js';
 
-const ROLES = [
-  { id: 'agent',      label: 'GSA / Agent',     icon: '🤝' },
-  { id: 'warehouse',  label: 'Warehouse Ops',   icon: '📦' },
-  { id: 'commercial', label: 'HQ Commercial',   icon: '📈' },
-  { id: 'planning',   label: 'Planning',        icon: '✈' },
-  { id: 'management', label: 'Management',      icon: '👔' },
+// ── Portal definitions ─────────────────────────────────────────────
+export const PORTALS = [
+  {
+    id: 'gsa',
+    label: 'GSA & Agent',
+    short: 'GSA',
+    icon: 'gsa',
+    description: 'Space search, bookings, rates',
+    defaultRoute: 'space-search',
+    color: '#FEE014',
+    textColor: '#001632',
+  },
+  {
+    id: 'ops',
+    label: 'Operations',
+    short: 'OPS',
+    icon: 'plane',
+    description: 'Flights, warehouse, DG, temperature',
+    defaultRoute: 'inbound',
+    color: '#34D399',
+    textColor: '#031A14',
+  },
+  {
+    id: 'mgmt',
+    label: 'Commercial & Mgmt',
+    short: 'MGMT',
+    icon: 'bar-chart',
+    description: 'Revenue, yield, GSA, executive',
+    defaultRoute: 'executive',
+    color: '#818CF8',
+    textColor: '#0F0C29',
+  },
 ];
 
-let _currentRole = 'commercial';
+// ── Simulated users per portal ────────────────────────────────────
+const PORTAL_USERS = {
+  gsa:  { initials: 'AR', name: 'Al Rais Cargo', email: 'ops@alraiscargo.com',    role: 'GSA Manager',      level: 'L2' },
+  ops:  { initials: 'RK', name: 'R. Kagabo',     email: 'r.kagabo@rwandair.com',  role: 'Ops Controller',   level: 'L3' },
+  mgmt: { initials: 'JK', name: 'J. Kamau',      email: 'j.kamau@rwandair.com',   role: 'Commercial Mgr',   level: 'L4' },
+};
 
-/**
- * Render the topbar HTML string
- */
+let _currentPortal = localStorage.getItem('rw_portal') || 'mgmt';
+let _clockInterval = null;
+
+// ── Render ─────────────────────────────────────────────────────────
 export function renderTopbar() {
+  const user = PORTAL_USERS[_currentPortal];
+
   return `
   <div class="topbar">
-    <!-- Logo mark -->
-    <div class="topbar-brand" onclick="window.location.hash='space-search'" style="cursor:pointer">
-      <div class="wb-logo-mark">
-        <span class="wb-text">WB</span>
+
+    <!-- Brand -->
+    <a class="topbar-brand" href="#" onclick="event.preventDefault();window.navigate(getCurrentPortalDefault())" aria-label="RwandAir Cargo Home">
+      <div class="brand-mark">
+        <img src="/assets/rwandair-cargo-symbol.svg" alt="RwandAir Cargo" width="32" height="32" style="display:block">
       </div>
-      <div class="topbar-brand-text">
-        <span class="topbar-name">RwandAir Cargo</span>
-        <span class="topbar-sub">Intelligence Portal</span>
+      <div class="brand-text">
+        <span class="brand-name">RwandAir<span style="color:var(--rw-gold);font-weight:900"> Cargo</span></span>
+        <span class="brand-tagline">Intelligence Portal</span>
+      </div>
+    </a>
+
+    <!-- Portal switcher (centre) -->
+    <div class="topbar-centre">
+      <div class="portal-tabs" id="portal-tabs" role="tablist" aria-label="Portal selection">
+        ${PORTALS.map(p => `
+          <button class="portal-tab ${p.id === _currentPortal ? 'active' : ''}"
+                  data-portal="${p.id}"
+                  role="tab"
+                  aria-selected="${p.id === _currentPortal}"
+                  onclick="switchPortal('${p.id}')"
+                  title="${p.description}">
+            ${icon(p.icon, 14)}
+            <span>${p.label}</span>
+          </button>
+        `).join('')}
       </div>
     </div>
 
-    <!-- Role tabs -->
-    <div class="topbar-roles" id="topbar-roles">
-      ${ROLES.map(r => `
-        <button class="role-tab ${r.id === _currentRole ? 'active' : ''}"
-                data-role="${r.id}"
-                onclick="setRole('${r.id}')">
-          ${r.label}
-        </button>
-      `).join('')}
-    </div>
+    <!-- Right: clock + search + bell + user -->
+    <div class="topbar-right">
 
-    <!-- Actions -->
-    <div class="topbar-actions">
-      <!-- Cmd+K search -->
-      <button class="topbar-btn topbar-search-btn" id="topbar-search-btn" title="Search (Cmd+K)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-        </svg>
-        <span class="topbar-search-hint">Cmd+K</span>
+      <!-- Live UTC Clock -->
+      <div class="topbar-clock" id="topbar-clock" title="Current time in UTC">
+        <span class="clock-label">UTC</span>
+        <span class="clock-time" id="clock-time">--:--:--</span>
+        <span class="clock-date" id="clock-date"></span>
+      </div>
+
+      <!-- Cmd+K Search -->
+      <button class="topbar-search-btn" id="topbar-search-btn" title="Quick search (Cmd+K)" aria-label="Open search">
+        ${icon('search', 14)}
+        <span class="search-hint">⌘K</span>
       </button>
 
-      <!-- Bell / notifications -->
-      <button class="topbar-btn topbar-bell" id="topbar-bell" title="Notifications" onclick="toggleNotificationPanel()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-        </svg>
-        <span class="topbar-badge" id="notif-badge" style="display:none">0</span>
+      <!-- Notifications -->
+      <button class="topbar-icon-btn" id="topbar-bell" onclick="toggleNotificationPanel()" title="Notifications" aria-label="Notifications">
+        ${icon('bell', 18)}
+        <span class="notif-badge" id="notif-badge" style="display:none">0</span>
       </button>
 
-      <!-- User avatar -->
-      <div class="topbar-user" id="topbar-user" onclick="toggleUserMenu()">
-        <div class="topbar-avatar">JK</div>
-        <div class="topbar-user-info">
-          <span class="topbar-username">J. Kamau</span>
-          <span class="topbar-role-label" id="topbar-role-label">HQ Commercial</span>
+      <!-- User -->
+      <div class="topbar-user" id="topbar-user" onclick="toggleUserMenu()" aria-expanded="false" aria-haspopup="true">
+        <div class="user-avatar" id="user-avatar">${user.initials}</div>
+        <div class="user-info hide-mobile">
+          <span class="user-name" id="user-name">${user.name}</span>
+          <span class="user-role" id="user-role-lbl">${user.role}</span>
         </div>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
-      </div>
+        <span class="user-chevron">${icon('chevron-down', 12)}</span>
 
-      <!-- User dropdown -->
-      <div class="user-dropdown" id="user-dropdown" style="display:none">
-        <div class="user-dropdown-header">
-          <div class="topbar-avatar lg">JK</div>
-          <div>
-            <div class="font-600">J. Kamau</div>
-            <div class="text-mid text-sm">j.kamau@rwandair.com</div>
+        <!-- Dropdown -->
+        <div class="user-dropdown" id="user-dropdown">
+          <div class="dropdown-header">
+            <div class="d-name">${user.name}</div>
+            <div class="d-email">${user.email}</div>
+            <div class="d-role">
+              <span class="access-chip ${user.level.toLowerCase()}">${user.level}</span>
+              ${user.role}
+            </div>
+          </div>
+          <div class="dropdown-section">
+            <button class="dropdown-item" onclick="navigate('reports')">
+              ${icon('reports', 14)}
+              My Reports
+            </button>
+            <button class="dropdown-item" onclick="showPrefsModal()">
+              ${icon('settings', 14)}
+              Preferences
+            </button>
+            <button class="dropdown-item" onclick="showKeyboardHelp()">
+              ${icon('zap', 14)}
+              Keyboard Shortcuts
+            </button>
+          </div>
+          <div class="dropdown-section">
+            <div style="padding:8px 16px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid)">Switch Portal</div>
+            ${PORTALS.map(p => `
+              <button class="dropdown-item ${p.id === _currentPortal ? 'font-semi' : ''}" onclick="switchPortal('${p.id}')">
+                ${icon(p.icon, 14)}
+                ${p.label}
+                ${p.id === _currentPortal ? `<span style="margin-left:auto;font-size:10px;color:var(--mid)">Active</span>` : ''}
+              </button>
+            `).join('')}
+          </div>
+          <div class="dropdown-section">
+            <button class="dropdown-item danger" onclick="handleLogout()">
+              ${icon('log-out', 14)}
+              Sign Out
+            </button>
           </div>
         </div>
-        <hr class="dropdown-div">
-        <button class="dropdown-item" onclick="window.location.hash='reports'">My Reports</button>
-        <button class="dropdown-item" onclick="showPrefsModal()">Preferences</button>
-        <hr class="dropdown-div">
-        <button class="dropdown-item dropdown-item-danger" onclick="handleLogout()">Sign Out</button>
       </div>
+
     </div>
   </div>
   `;
 }
 
-// ── Global functions ──────────────────────────────────────────────
+// ── Live UTC Clock ─────────────────────────────────────────────────
+function startClock() {
+  if (_clockInterval) clearInterval(_clockInterval);
 
-window.setRole = function(roleId) {
-  _currentRole = roleId;
-  const role = ROLES.find(r => r.id === roleId);
+  function tick() {
+    const now = new Date();
+    const h = String(now.getUTCHours()).padStart(2, '0');
+    const m = String(now.getUTCMinutes()).padStart(2, '0');
+    const s = String(now.getUTCSeconds()).padStart(2, '0');
+    const timeEl = document.getElementById('clock-time');
+    const dateEl = document.getElementById('clock-date');
+    if (timeEl) timeEl.textContent = `${h}:${m}:${s}`;
+    if (dateEl) {
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      dateEl.textContent = `${days[now.getUTCDay()]} ${now.getUTCDate()} ${months[now.getUTCMonth()]}`;
+    }
+  }
+  tick();
+  _clockInterval = setInterval(tick, 1000);
+}
 
-  // Update tab UI
-  document.querySelectorAll('.role-tab').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.role === roleId);
+// ── Portal switching ───────────────────────────────────────────────
+window.switchPortal = function(portalId) {
+  const portal = PORTALS.find(p => p.id === portalId);
+  if (!portal || portalId === _currentPortal) return;
+
+  _currentPortal = portalId;
+  localStorage.setItem('rw_portal', portalId);
+
+  // Update body data attribute → triggers CSS portal theme
+  document.body.dataset.portal = portalId;
+
+  // Update portal tabs
+  document.querySelectorAll('.portal-tab').forEach(btn => {
+    const isActive = btn.dataset.portal === portalId;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive);
   });
 
-  // Update role label in user menu
-  const lbl = document.getElementById('topbar-role-label');
-  if (lbl && role) lbl.textContent = role.label;
+  // Update user pill
+  const user = PORTAL_USERS[portalId];
+  const avatarEl   = document.getElementById('user-avatar');
+  const nameEl     = document.getElementById('user-name');
+  const roleEl     = document.getElementById('user-role-lbl');
+  if (avatarEl) avatarEl.textContent = user.initials;
+  if (nameEl)   nameEl.textContent   = user.name;
+  if (roleEl)   roleEl.textContent   = user.role;
 
-  showToast(`Viewing as: ${role?.label || roleId}`, 'info', 'Dashboard updated for this role', 2500);
+  // Update sidebar nav for this portal
+  if (typeof window.renderSidebarForPortal === 'function') {
+    window.renderSidebarForPortal(portalId);
+  }
+
+  // Close dropdown
+  const dropdown = document.getElementById('user-dropdown');
+  if (dropdown) dropdown.classList.remove('open');
+  document.getElementById('topbar-user')?.setAttribute('aria-expanded', 'false');
+
+  // Navigate to portal's default page
+  window.navigate(portal.defaultRoute);
+
+  showToast(`${portal.label} Portal`, 'info', portal.description, 2500);
 };
 
+window.getCurrentPortalDefault = function() {
+  return PORTALS.find(p => p.id === _currentPortal)?.defaultRoute || 'space-search';
+};
+
+window.getCurrentPortal = function() { return _currentPortal; };
+
+// ── User menu ──────────────────────────────────────────────────────
 window.toggleUserMenu = function() {
-  const menu = document.getElementById('user-dropdown');
-  if (!menu) return;
-  const isOpen = menu.style.display !== 'none';
-  menu.style.display = isOpen ? 'none' : 'block';
+  const user  = document.getElementById('topbar-user');
+  const menu  = document.getElementById('user-dropdown');
+  if (!user || !menu) return;
+  const isOpen = menu.classList.contains('open');
+  menu.classList.toggle('open', !isOpen);
+  user.setAttribute('aria-expanded', String(!isOpen));
   if (!isOpen) {
     setTimeout(() => {
       document.addEventListener('click', function closeMenu(e) {
-        if (!document.getElementById('topbar-user')?.contains(e.target)) {
-          menu.style.display = 'none';
+        if (!user.contains(e.target)) {
+          menu.classList.remove('open');
+          user.setAttribute('aria-expanded', 'false');
           document.removeEventListener('click', closeMenu);
         }
       });
@@ -128,38 +256,55 @@ window.toggleUserMenu = function() {
   }
 };
 
+// ── Logout ────────────────────────────────────────────────────────
 window.handleLogout = function() {
-  showToast('Signing out…', 'info', '', 1500);
+  showToast('Signing out…', 'info', 'Session ended securely', 1500);
   setTimeout(() => {
-    document.getElementById('app').innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:var(--smoke)">
-        <div style="text-align:center">
-          <div class="wb-logo-mark" style="margin:0 auto 16px;width:56px;height:56px;font-size:20px">
-            <span class="wb-text">WB</span>
+    localStorage.removeItem('rw_portal');
+    window.location.hash = '';
+    document.body.innerHTML = `
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#001632;">
+        <div style="text-align:center;animation:pageFadeIn .3s ease">
+          <div style="width:72px;height:72px;background:#FEE014;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 0 30px rgba(254,224,20,.3)">
+            <span style="font-family:monospace;font-size:26px;font-weight:900;color:#001632">WB</span>
           </div>
-          <h2 style="color:var(--navy)">RwandAir Cargo Intelligence Portal</h2>
-          <p style="color:var(--mid);margin-top:8px">You have been signed out.</p>
-          <button class="btn btn-pri" style="margin-top:24px" onclick="window.location.reload()">Sign In Again</button>
+          <h2 style="color:white;font-family:Inter,sans-serif;font-size:22px;font-weight:800">RwandAir Cargo Intelligence</h2>
+          <p style="color:rgba(255,255,255,.45);margin-top:8px;font-family:Inter,sans-serif">You have been signed out securely.</p>
+          <button onclick="window.location.reload()" style="margin-top:28px;padding:10px 24px;background:#FEE014;color:#001632;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">
+            Sign In Again
+          </button>
         </div>
       </div>`;
   }, 1600);
 };
 
+// ── Preferences ───────────────────────────────────────────────────
 window.showPrefsModal = function() {
-  showToast('Preferences panel coming soon', 'info', 'Use keyboard shortcuts: ? for help', 3000);
+  showToast('Preferences', 'info', 'Settings panel coming soon', 2500);
 };
 
+window.showKeyboardHelp = function() {
+  showToast('Keyboard Shortcuts', 'info', 'S = Sidebar · ⌘K = Search · ? = Help', 4000);
+};
+
+// ── Notification panel ────────────────────────────────────────────
 window.toggleNotificationPanel = function() {
-  // Delegate to notification component
   document.dispatchEvent(new CustomEvent('toggle-notifications'));
 };
 
-// Open command palette from topbar button
-document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('topbar-search-btn');
-  if (btn) {
-    btn.addEventListener('click', () => {
-      import('./command-palette.js').then(m => m.openPalette());
+// ── Init (called once after DOM render) ───────────────────────────
+export function initTopbarInteractivity() {
+  // Start clock
+  startClock();
+
+  // Apply stored portal theme
+  document.body.dataset.portal = _currentPortal;
+
+  // Cmd+K
+  const searchBtn = document.getElementById('topbar-search-btn');
+  if (searchBtn) {
+    searchBtn.addEventListener('click', () => {
+      import('./command-palette.js').then(m => m.openPalette?.());
     });
   }
-});
+}
