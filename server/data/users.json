@@ -1,7 +1,52 @@
 [
-  { "id": "u1", "name": "Emmanuel Rwozi", "email": "e.rwozi@rwandair.com", "role": "mgmt", "station": "KGL", "initials": "ER" },
-  { "id": "u2", "name": "Marie Wanjiku", "email": "m.wanjiku@rwandair.com", "role": "warehouse", "station": "NBO", "initials": "MW" },
-  { "id": "u3", "name": "Emmanuel Mensah", "email": "e.mensah@rwandair.com", "role": "commercial", "station": "KGL", "initials": "EM" },
-  { "id": "u4", "name": "James Kayitare", "email": "j.kayitare@rwandair.com", "role": "planning", "station": "KGL", "initials": "JK" },
-  { "id": "u5", "name": "Amara Diallo", "email": "a.diallo@gsa-los.com", "role": "gsa", "station": "LOS", "initials": "AD" }
+  {
+    "id": "u1",
+    "name": "Emmanuel Rwozi",
+    "email": "admin@rwandair.com",
+    "password": "cargo2026",
+    "role": "mgmt",
+    "station": "KGL",
+    "initials": "ER",
+    "title": "Director Cargo · HQ Kigali"
+  },
+  {
+    "id": "u2",
+    "name": "Amara Diallo",
+    "email": "gsa.lagos@rwandair.com",
+    "password": "cargo2026",
+    "role": "gsa",
+    "station": "LOS",
+    "initials": "AD",
+    "title": "Senior GSA · Lagos"
+  },
+  {
+    "id": "u3",
+    "name": "Marie Wanjiku",
+    "email": "warehouse.nbo@rwandair.com",
+    "password": "cargo2026",
+    "role": "warehouse",
+    "station": "NBO",
+    "initials": "MW",
+    "title": "Warehouse Ops Manager · Nairobi"
+  },
+  {
+    "id": "u4",
+    "name": "James Kayitare",
+    "email": "planning@rwandair.com",
+    "password": "cargo2026",
+    "role": "planning",
+    "station": "KGL",
+    "initials": "JK",
+    "title": "Network Planning Analyst · KGL"
+  },
+  {
+    "id": "u5",
+    "name": "Emmanuel Mensah",
+    "email": "commercial@rwandair.com",
+    "password": "cargo2026",
+    "role": "commercial",
+    "station": "KGL",
+    "initials": "EM",
+    "title": "HQ Commercial Manager · KGL"
+  }
 ]

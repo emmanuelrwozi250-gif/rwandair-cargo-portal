@@ -1,1 +1,8 @@
-/* /portal.html 200
+# RwandAir Cargo Portal — Netlify Redirects
+/               /login.html         200
+/portal         /portal.html        200
+/gsa            /portal-gsa.html    200
+/warehouse      /portal-warehouse.html  200
+/management     /portal-management.html 200
+/planning       /portal-planning.html   200
+/*              /login.html         200

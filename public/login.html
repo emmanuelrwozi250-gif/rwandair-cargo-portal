@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RwandAir Cargo · Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#00529B;--navy2:#003D73;--navy3:#002B52;
+  --gold:#FEE014;--teal:#1EA2DC;--lime:#94C943;
+  --red:#C0392B;--smoke:#F1F4F9;--dark:#1A2340;
+  --mid:#6B7A99;--border:#DDE3EE;
+}
+html,body{height:100%;font-family:'Lato',sans-serif}
+body{display:flex;min-height:100vh;overflow:hidden}
+
+/* ── Left panel ── */
+.left{
+  flex:0 0 55%;background:var(--navy3);
+  display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+}
+.left-inner{
+  flex:1;display:flex;flex-direction:column;
+  justify-content:center;padding:60px 64px;
+  position:relative;z-index:2;
+}
+/* Decorative circles */
+.left::before,.left::after{content:'';position:absolute;border-radius:50%;pointer-events:none}
+.left::before{width:480px;height:480px;background:radial-gradient(circle,rgba(0,82,155,.55) 0%,transparent 70%);top:-120px;right:-120px}
+.left::after{width:380px;height:380px;background:radial-gradient(circle,rgba(30,162,220,.2) 0%,transparent 70%);bottom:-80px;left:-80px}
+
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:52px}
+.brand-icon{width:44px;height:44px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:var(--navy3);letter-spacing:-.5px;flex-shrink:0}
+.brand-text{line-height:1.2}
+.brand-name{font-size:14px;font-weight:700;color:#fff}
+.brand-sub{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.06em}
+
+.hero-title{font-size:36px;font-weight:900;color:#fff;line-height:1.15;margin-bottom:16px}
+.hero-title span{color:var(--gold)}
+.hero-desc{font-size:14px;color:rgba(255,255,255,.5);line-height:1.7;max-width:400px;margin-bottom:44px}
+
+/* Feature pills */
+.features{display:flex;flex-direction:column;gap:12px}
+.feat{display:flex;align-items:center;gap:12px}
+.feat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.feat-text{font-size:12px;color:rgba(255,255,255,.65);line-height:1.35}
+.feat-text strong{color:rgba(255,255,255,.9);display:block;font-weight:700;margin-bottom:1px}
+
+/* Route animation strip */
+.route-strip{
+  position:absolute;bottom:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--navy2) 0%,var(--teal) 40%,var(--gold) 70%,var(--lime) 100%);
+  z-index:3
+}
+
+/* ── Right panel ── */
+.right{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  background:#fff;padding:40px 40px;overflow-y:auto;
+}
+.form-box{width:100%;max-width:400px}
+
+.form-title{font-size:24px;font-weight:900;color:var(--dark);margin-bottom:6px}
+.form-sub{font-size:13px;color:var(--mid);margin-bottom:32px}
+
+.tabs{display:flex;background:var(--smoke);border-radius:10px;padding:3px;margin-bottom:28px;gap:2px}
+.tab{flex:1;padding:8px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;border-radius:7px;color:var(--mid);transition:all .15s;border:none;background:none;font-family:'Lato',sans-serif}
+.tab.active{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+label{display:block;font-size:11.5px;font-weight:700;color:var(--dark);margin-bottom:5px}
+.input-wrap{position:relative;margin-bottom:18px}
+.input-wrap input{
+  width:100%;padding:11px 14px;border:1.5px solid var(--border);
+  border-radius:9px;font-family:'Lato',sans-serif;font-size:14px;
+  color:var(--dark);outline:none;transition:border-color .15s,box-shadow .15s;
+  background:#fff;
+}
+.input-wrap input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(0,82,155,.1)}
+.input-wrap input.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.1)}
+.input-wrap .eye{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font-size:14px;cursor:pointer;color:var(--mid);user-select:none;
+}
+.field-err{font-size:11px;color:var(--red);margin-top:-12px;margin-bottom:14px;display:none}
+.field-err.show{display:block}
+
+.alert-box{
+  padding:11px 14px;border-radius:9px;font-size:12.5px;margin-bottom:18px;display:none;
+  align-items:center;gap:10px;font-weight:600;
+}
+.alert-box.show{display:flex}
+.alert-box.error{background:#FEF2F2;color:var(--red);border:1px solid #FECACA}
+.alert-box.success{background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0}
+
+.forgot{text-align:right;margin-top:-10px;margin-bottom:18px}
+.forgot a{font-size:11.5px;color:var(--navy);text-decoration:none;font-weight:600}
+.forgot a:hover{text-decoration:underline}
+
+.btn-submit{
+  width:100%;padding:13px;background:var(--navy);color:#fff;
+  border:none;border-radius:9px;font-family:'Lato',sans-serif;
+  font-size:14px;font-weight:700;cursor:pointer;
+  transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-submit:hover:not(:disabled){background:var(--navy2)}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed}
+.btn-submit .spin{
+  width:16px;height:16px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none;
+}
+.btn-submit.loading .spin{display:block}
+.btn-submit.loading .btn-label{display:none}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.divider{display:flex;align-items:center;gap:12px;margin:22px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{font-size:11px;color:var(--mid);white-space:nowrap}
+
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.demo-card{
+  padding:9px 10px;border:1.5px solid var(--border);border-radius:9px;
+  cursor:pointer;transition:all .13s;background:#fff;
+}
+.demo-card:hover{border-color:var(--navy);background:rgba(0,82,155,.03)}
+.demo-card:active{transform:scale(.97)}
+.demo-name{font-size:11px;font-weight:700;color:var(--dark)}
+.demo-role{font-size:10px;color:var(--mid);margin-top:1px}
+.demo-email{font-size:9.5px;color:var(--teal);margin-top:3px;font-family:monospace}
+
+.form-footer{margin-top:28px;text-align:center;font-size:12px;color:var(--mid)}
+.form-footer a{color:var(--navy);font-weight:700;text-decoration:none}
+
+/* Responsive */
+@media(max-width:768px){
+  body{flex-direction:column}
+  .left{flex:0 0 auto;padding:0}
+  .left-inner{padding:28px 24px;flex-direction:row;align-items:center;gap:20px;justify-content:space-between}
+  .hero-title{font-size:20px;margin-bottom:4px}
+  .hero-desc,.features{display:none}
+  .brand{margin-bottom:0}
+  .right{padding:28px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Left: Brand Panel -->
+<div class="left">
+  <div class="left-inner">
+    <div class="brand">
+      <div class="brand-icon">WB</div>
+      <div class="brand-text">
+        <div class="brand-name">RwandAir Cargo</div>
+        <div class="brand-sub">CARGO OPERATIONS PORTAL</div>
+      </div>
+    </div>
+
+    <h1 class="hero-title">Africa's Smart<br><span>Cargo Intelligence</span><br>Platform</h1>
+    <p class="hero-desc">Real-time visibility across our entire network — from booking to final delivery across 30+ destinations.</p>
+
+    <div class="features">
+      <div class="feat">
+        <div class="feat-icon" style="background:rgba(254,224,20,.12)">📦</div>
+        <div class="feat-text"><strong>Live Shipment Tracking</strong>Full AWB timeline, customs status & ETA</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon" style="background:rgba(30,162,220,.12)">✈️</div>
+        <div class="feat-text"><strong>Network Operations</strong>Capacity, load factors & route analytics</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon" style="background:rgba(148,201,67,.12)">📊</div>
+        <div class="feat-text"><strong>Revenue Intelligence</strong>Yield management & forecasting dashboards</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon" style="background:rgba(0,82,155,.2)">🏭</div>
+        <div class="feat-text"><strong>Warehouse Operations</strong>Acceptance, ULD build-up & dwell alerts</div>
+      </div>
+    </div>
+  </div>
+  <div class="route-strip"></div>
+</div>
+
+<!-- Right: Login Form -->
+<div class="right">
+  <div class="form-box">
+    <div class="form-title">Welcome back</div>
+    <div class="form-sub">Sign in to access your operations portal</div>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="tab" id="tab-demo" onclick="switchTab('demo')">Demo Access</button>
+    </div>
+
+    <!-- Sign In Form -->
+    <div id="panel-login">
+      <div class="alert-box error" id="login-error">
+        <span>⚠️</span><span id="login-error-msg">Invalid credentials</span>
+      </div>
+      <div class="alert-box success" id="login-success">
+        <span>✓</span><span>Authenticated — redirecting…</span>
+      </div>
+
+      <form id="login-form" onsubmit="doLogin(event)">
+        <div class="input-wrap">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="you@rwandair.com" autocomplete="email" required>
+        </div>
+        <div class="field-err" id="email-err">Please enter a valid email address</div>
+
+        <div class="input-wrap">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+          <span class="eye" onclick="togglePwd()" id="eye-icon" title="Show password">👁</span>
+        </div>
+        <div class="field-err" id="pwd-err">Password is required</div>
+
+        <div class="forgot"><a href="#" onclick="showForgot(event)">Forgot password?</a></div>
+
+        <button class="btn-submit" type="submit" id="login-btn">
+          <div class="spin"></div>
+          <span class="btn-label">Sign In →</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Demo Access Panel -->
+    <div id="panel-demo" style="display:none">
+      <p style="font-size:12px;color:var(--mid);margin-bottom:14px;line-height:1.6">
+        Click any demo account to sign in instantly. All use password <code style="background:var(--smoke);padding:1px 5px;border-radius:4px;font-size:11px">cargo2026</code>.
+      </p>
+      <div class="demo-grid" id="demo-grid">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <div class="form-footer">
+      Need help? <a href="mailto:cargo@rwandair.com">cargo@rwandair.com</a> &nbsp;·&nbsp; +250 738 306 074
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:3001/api';
+let apiOnline = false;
+
+// Demo accounts
+const DEMOS = [
+  { name:'Emmanuel Rwozi', role:'Management', email:'admin@rwandair.com', icon:'👔', color:'#00529B' },
+  { name:'Amara Diallo',   role:'GSA · Lagos', email:'gsa.lagos@rwandair.com', icon:'🤝', color:'#1EA2DC' },
+  { name:'Marie Wanjiku', role:'Warehouse · NBO', email:'warehouse.nbo@rwandair.com', icon:'🏭', color:'#94C943' },
+  { name:'James Kayitare', role:'Network Planning', email:'planning@rwandair.com', icon:'📊', color:'#FEE014' },
+  { name:'Emmanuel Mensah', role:'HQ Commercial', email:'commercial@rwandair.com', icon:'💹', color:'#7C3AED' },
+];
+
+// Role → portal file map
+const PORTALS = {
+  mgmt:       'portal-management.html',
+  gsa:        'portal-gsa.html',
+  warehouse:  'portal-warehouse.html',
+  planning:   'portal-planning.html',
+  commercial: 'portal.html',
+};
+
+// ── Check server ───────────────────────────────────────────────
+async function checkServer() {
+  try {
+    const r = await fetch(`${API}/health`, { signal: AbortSignal.timeout(2000) });
+    apiOnline = r.ok;
+  } catch { apiOnline = false; }
+  if (!apiOnline) {
+    const box = document.getElementById('login-error');
+    const msg = document.getElementById('login-error-msg');
+    box.classList.add('show');
+    msg.textContent = 'Server offline — authentication unavailable. Start: npm run server';
+  }
+}
+
+// ── Check existing session ─────────────────────────────────────
+async function checkExistingSession() {
+  const token = localStorage.getItem('wb_token');
+  if (!token) return;
+  try {
+    const r = await fetch(`${API}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(2000)
+    });
+    if (r.ok) {
+      const data = await r.json();
+      redirect(data.session.role);
+    } else {
+      localStorage.removeItem('wb_token');
+      localStorage.removeItem('wb_user');
+    }
+  } catch { /* offline — let user log in */ }
+}
+
+// ── Tab switching ──────────────────────────────────────────────
+function switchTab(t) {
+  document.getElementById('panel-login').style.display = t === 'login' ? '' : 'none';
+  document.getElementById('panel-demo').style.display  = t === 'demo'  ? '' : 'none';
+  document.getElementById('tab-login').classList.toggle('active', t === 'login');
+  document.getElementById('tab-demo').classList.toggle('active', t === 'demo');
+}
+
+// ── Build demo grid ────────────────────────────────────────────
+function buildDemoGrid() {
+  const grid = document.getElementById('demo-grid');
+  grid.innerHTML = DEMOS.map(d => `
+    <div class="demo-card" onclick="quickLogin('${d.email}')">
+      <div style="font-size:18px;margin-bottom:4px">${d.icon}</div>
+      <div class="demo-name">${d.name}</div>
+      <div class="demo-role">${d.role}</div>
+      <div class="demo-email">${d.email}</div>
+    </div>
+  `).join('');
+}
+
+// ── Quick login from demo card ─────────────────────────────────
+async function quickLogin(email) {
+  document.getElementById('email').value = email;
+  document.getElementById('password').value = 'cargo2026';
+  switchTab('login');
+  await doLogin({ preventDefault: () => {} });
+}
+
+// ── Toggle password visibility ─────────────────────────────────
+function togglePwd() {
+  const inp = document.getElementById('password');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+// ── Show forgot password ───────────────────────────────────────
+function showForgot(e) {
+  e.preventDefault();
+  const box = document.getElementById('login-error');
+  const msg = document.getElementById('login-error-msg');
+  box.classList.remove('show');
+  // reuse success box
+  const sbox = document.getElementById('login-success');
+  sbox.classList.add('show');
+  sbox.querySelector('span:last-child').textContent = 'Contact IT: cargo-it@rwandair.com';
+  setTimeout(() => sbox.classList.remove('show'), 4000);
+}
+
+// ── Redirect after login ───────────────────────────────────────
+function redirect(role) {
+  const portal = PORTALS[role] || 'portal.html';
+  window.location.href = portal;
+}
+
+// ── Main login ─────────────────────────────────────────────────
+async function doLogin(e) {
+  e.preventDefault();
+
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const errBox   = document.getElementById('login-error');
+  const errMsg   = document.getElementById('login-error-msg');
+  const sucBox   = document.getElementById('login-success');
+  const btn      = document.getElementById('login-btn');
+
+  // Clear prev errors
+  errBox.classList.remove('show');
+  sucBox.classList.remove('show');
+  document.getElementById('email-err').classList.remove('show');
+  document.getElementById('pwd-err').classList.remove('show');
+  document.getElementById('email').classList.remove('err');
+  document.getElementById('password').classList.remove('err');
+
+  // Client-side validation
+  let valid = true;
+  if (!email || !email.includes('@')) {
+    document.getElementById('email-err').classList.add('show');
+    document.getElementById('email').classList.add('err');
+    valid = false;
+  }
+  if (!password) {
+    document.getElementById('pwd-err').classList.add('show');
+    document.getElementById('password').classList.add('err');
+    valid = false;
+  }
+  if (!valid) return;
+
+  if (!apiOnline) {
+    errBox.classList.add('show');
+    errMsg.textContent = 'Server is offline. Please start: npm run server';
+    return;
+  }
+
+  // Loading state
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      signal: AbortSignal.timeout(8000)
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      errBox.classList.add('show');
+      errMsg.textContent = data.error || 'Invalid credentials. Please try again.';
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      return;
+    }
+
+    // Store session
+    localStorage.setItem('wb_token', data.token);
+    localStorage.setItem('wb_user', JSON.stringify(data.user));
+
+    // Success state
+    sucBox.classList.add('show');
+    sucBox.querySelector('span:last-child').textContent = `Welcome back, ${data.user.name} — redirecting…`;
+
+    // Redirect after brief delay
+    setTimeout(() => redirect(data.user.role), 800);
+
+  } catch (err) {
+    errBox.classList.add('show');
+    errMsg.textContent = err.name === 'TimeoutError'
+      ? 'Connection timed out. Is the server running?'
+      : 'Network error. Please check your connection.';
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+// ── Init ───────────────────────────────────────────────────────
+buildDemoGrid();
+checkServer();
+checkExistingSession();
+</script>
+</body>
+</html>

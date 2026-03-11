@@ -386,7 +386,10 @@ body{font-family:'Lato',sans-serif;background:var(--smoke);color:var(--dark);ove
     <div class="ni" tabindex="0" role="button" onclick="sp('reports')"><span class="ic" aria-hidden="true">📊</span>All Reports</div>
   </div>
   <div class="sfooter">
-    <div class="sft">CargoFlash API · All systems online<br><strong style="color:rgba(255,255,255,.3)">Last sync: 2 min ago</strong></div>
+    <div class="sft" id="footer-user-label" style="margin-bottom:8px">RwandAir Cargo · v2.0</div>
+    <button onclick="doLogout()" style="width:100%;padding:6px 10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:7px;color:rgba(255,255,255,.5);font-family:'Lato',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .13s;text-align:left;display:flex;align-items:center;gap:6px" onmouseover="this.style.background='rgba(192,57,43,.2)';this.style.color='#f87171'" onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.color='rgba(255,255,255,.5)'">
+      <span>→</span> Sign Out
+    </button>
   </div>
 </div>
 <!-- MAIN CONTENT -->
@@ -1337,7 +1340,144 @@ body{font-family:'Lato',sans-serif;background:var(--smoke);color:var(--dark);ove
 
 const API_BASE = 'http://localhost:3001/api';
 let apiOnline = false;
+let currentUser = null;
 const charts = {};
+
+// ── TOAST NOTIFICATION SYSTEM ──────────────────────────────
+(function injectToastStyles() {
+  const s = document.createElement('style');
+  s.textContent = `
+    #toast-container{position:fixed;top:60px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+    .toast{
+      display:flex;align-items:flex-start;gap:10px;padding:11px 15px;border-radius:10px;
+      font-family:'Lato',sans-serif;font-size:12.5px;font-weight:600;max-width:340px;
+      box-shadow:0 4px 18px rgba(0,0,0,.14);pointer-events:all;
+      animation:toastIn .22s cubic-bezier(.22,1,.36,1);
+    }
+    .toast.removing{animation:toastOut .2s ease forwards}
+    .toast-icon{font-size:15px;flex-shrink:0;margin-top:1px}
+    .toast-body{flex:1;line-height:1.45}
+    .toast-title{font-weight:700;margin-bottom:1px}
+    .toast-sub{font-size:11px;opacity:.75;font-weight:400}
+    .toast-close{cursor:pointer;opacity:.5;font-size:14px;line-height:1;padding:0 2px;flex-shrink:0;margin-top:-1px}
+    .toast-close:hover{opacity:1}
+    .toast.success{background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0}
+    .toast.error{background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA}
+    .toast.warning{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A}
+    .toast.info{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+    .toast.primary{background:#002B52;color:#FEE014;border:1px solid #003D73}
+    @keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+    #live-indicator{position:fixed;bottom:12px;right:12px;z-index:8888;
+      display:flex;align-items:center;gap:5px;padding:4px 10px;
+      background:rgba(0,43,82,.85);border-radius:20px;font-size:10px;
+      color:rgba(255,255,255,.6);font-family:'Lato',sans-serif;pointer-events:none;
+      backdrop-filter:blur(4px)}
+    #live-dot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  `;
+  document.head.appendChild(s);
+  const c = document.createElement('div');
+  c.id = 'toast-container';
+  document.body.appendChild(c);
+  const li = document.createElement('div');
+  li.id = 'live-indicator';
+  li.innerHTML = '<div id="live-dot"></div><span id="live-label">Live</span>';
+  document.body.appendChild(li);
+})();
+
+let _toastId = 0;
+function showToast(msg, type = 'info', sub = '', duration = 4000) {
+  const container = document.getElementById('toast-container');
+  const icons = { success:'✓', error:'✕', warning:'⚠', info:'ℹ', primary:'✈' };
+  const id = ++_toastId;
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.id = `toast-${id}`;
+  t.innerHTML = `
+    <div class="toast-icon">${icons[type] || 'ℹ'}</div>
+    <div class="toast-body">
+      <div class="toast-title">${msg}</div>
+      ${sub ? `<div class="toast-sub">${sub}</div>` : ''}
+    </div>
+    <div class="toast-close" onclick="dismissToast(${id})">✕</div>
+  `;
+  container.appendChild(t);
+  if (duration > 0) setTimeout(() => dismissToast(id), duration);
+  return id;
+}
+function dismissToast(id) {
+  const t = document.getElementById(`toast-${id}`);
+  if (!t) return;
+  t.classList.add('removing');
+  setTimeout(() => t.remove(), 200);
+}
+
+// ── AUTH GUARD ─────────────────────────────────────────────
+async function initAuth() {
+  const token = localStorage.getItem('wb_token');
+  const stored = localStorage.getItem('wb_user');
+  if (stored) {
+    try { currentUser = JSON.parse(stored); } catch { currentUser = null; }
+  }
+  if (!token) {
+    window.location.href = 'login.html';
+    return false;
+  }
+  try {
+    const r = await fetch(`${API_BASE}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(3000)
+    });
+    if (!r.ok) {
+      localStorage.removeItem('wb_token');
+      localStorage.removeItem('wb_user');
+      window.location.href = 'login.html';
+      return false;
+    }
+    const data = await r.json();
+    currentUser = data.session;
+    localStorage.setItem('wb_user', JSON.stringify(currentUser));
+    applyUserToUI();
+  } catch {
+    // Server offline — use stored session if available
+    if (currentUser) {
+      applyUserToUI();
+    } else {
+      window.location.href = 'login.html';
+      return false;
+    }
+  }
+  return true;
+}
+
+function applyUserToUI() {
+  if (!currentUser) return;
+  const uinfo  = document.getElementById('uinfo');
+  const udot   = document.getElementById('udot');
+  const footer = document.getElementById('footer-user-label');
+  if (uinfo)  uinfo.textContent  = currentUser.title || currentUser.name;
+  if (udot)   udot.textContent   = currentUser.initials || (currentUser.name||'').slice(0,2).toUpperCase();
+  if (footer) footer.textContent = currentUser.name + ' · ' + (currentUser.station || '');
+  // Auto-switch to user's role tab if not already
+  const roleTabMap = { gsa:0, warehouse:1, commercial:2, planning:3, mgmt:4 };
+  const idx = roleTabMap[currentUser.role];
+  if (idx !== undefined) {
+    const tabs = document.querySelectorAll('.rtab');
+    if (tabs[idx]) switchRole(currentUser.role, tabs[idx]);
+  }
+}
+
+function doLogout() {
+  const token = localStorage.getItem('wb_token');
+  if (token) {
+    fetch(`${API_BASE}/auth/logout`, { method:'POST', headers:{ Authorization:`Bearer ${token}` } }).catch(()=>{});
+  }
+  localStorage.removeItem('wb_token');
+  localStorage.removeItem('wb_user');
+  showToast('Signed out successfully', 'primary', 'Redirecting to login…', 2000);
+  setTimeout(() => { window.location.href = 'login.html'; }, 1200);
+}
 
 // ── API CONNECTIVITY CHECK ─────────────────────────────────
 async function checkAPI() {
@@ -1359,7 +1499,49 @@ async function checkAPI() {
     console.log('[API] Local server offline — using browser storage');
   }
 }
-checkAPI();
+
+// ── AUTO-REFRESH (polls /api/live every 30s) ───────────────
+let liveTimer = null;
+async function startLivePolling() {
+  async function poll() {
+    if (!apiOnline) return;
+    try {
+      const token = localStorage.getItem('wb_token');
+      const r = await fetch(`${API_BASE}/live`, {
+        headers: token ? { Authorization:`Bearer ${token}` } : {},
+        signal: AbortSignal.timeout(3000)
+      });
+      if (r.ok) {
+        const d = await r.json();
+        const label = document.getElementById('live-label');
+        if (label) {
+          const t = new Date(d.serverTime);
+          label.textContent = `Live · ${t.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})} UTC`;
+        }
+        // Surface new events as toasts
+        if (d.recentEvents && d.recentEvents.length) {
+          const last = d.recentEvents[0];
+          if (last && last.action === 'booking_created') {
+            // Only show if it's very recent (within last 35s) and not ours
+            const age = Date.now() - new Date(last.time).getTime();
+            if (age < 35000) {
+              showToast('New booking created', 'info', `AWB: ${last.data?.awb || '—'}  Route: ${last.data?.route || '—'}`, 6000);
+            }
+          }
+        }
+      }
+    } catch { /* silent fail */ }
+  }
+  await poll();
+  liveTimer = setInterval(poll, 30000);
+}
+
+// ── BOOTSTRAP ─────────────────────────────────────────────
+(async function boot() {
+  await checkAPI();
+  await initAuth();
+  startLivePolling();
+})();
 
 // ── NAVIGATION ────────────────────────────────────────────
 function sp(id) {
@@ -1469,8 +1651,10 @@ async function confirmBook() {
   }
 
   closeModal();
-  const storageMsg = savedToServer ? '💾 Saved to your local PC server.' : '💾 Saved to browser storage (start local server to persist).';
-  alert(`✓ Booking Confirmed!\n\nAWB: ${awb}\nRoute: LOS → LHR via NBO\nLeg 1: WB101 · 22:30 LOS\nLeg 2: WB204 · 09:15 NBO (+1)\nShipper: ${shipper}\n\n${storageMsg}\n\nVisible in My Bookings immediately.`);
+  const storageMsg = savedToServer ? 'Saved to local PC server' : 'Saved to browser storage';
+  showToast(`Booking Confirmed — AWB: ${awb}`, 'success', `Route: LOS → LHR via NBO · ${storageMsg}`, 7000);
+  // Also refresh bookings list if visible
+  setTimeout(renderMyBookings, 400);
 }
 
 // ── MY BOOKINGS (API → localStorage → mock) ───────────────
@@ -1684,7 +1868,7 @@ function closeSearchDelay() { setTimeout(() => { const d = document.getElementBy
 // ── CSV EXPORT ────────────────────────────────────────────
 function exportCSV(tableId) {
   const table = document.getElementById(tableId);
-  if (!table) { alert('Table not found'); return; }
+  if (!table) { showToast('Export failed', 'error', 'Table not found on this page', 4000); return; }
   const rows = [...table.querySelectorAll('tr')];
   const csv = rows.map(row => [...row.querySelectorAll('th,td')].map(c => {
     const t = c.textContent.trim().replace(/\s+/g,' ').replace(/"/g,'""');
