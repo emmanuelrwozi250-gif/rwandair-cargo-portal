@@ -1,0 +1,375 @@
+/* ============================================================
+   RwandAir Cargo Intelligence Portal — Animations CSS
+   Skeleton loaders, transitions, count-up, loaders
+   ============================================================ */
+
+/* ── SHIMMER KEYFRAME ────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+/* ── SKELETON BASE ───────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #E8EDF5 25%,
+    #F1F4F9 50%,
+    #E8EDF5 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 4px;
+}
+
+/* Skeleton text line */
+.skeleton-text {
+  height: 12px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+}
+
+.skeleton-text-sm {
+  height: 10px;
+  margin-bottom: 5px;
+}
+
+.skeleton-text-lg {
+  height: 18px;
+  margin-bottom: 8px;
+}
+
+/* Skeleton block heights */
+.skeleton-h8  { height: 8px; }
+.skeleton-h12 { height: 12px; }
+.skeleton-h16 { height: 16px; }
+.skeleton-h24 { height: 24px; }
+.skeleton-h32 { height: 32px; }
+.skeleton-h40 { height: 40px; }
+.skeleton-h60 { height: 60px; }
+.skeleton-h80 { height: 80px; }
+
+/* Skeleton circle */
+.skeleton-circle {
+  border-radius: 50%;
+}
+
+/* Skeleton stat card */
+.skeleton-stat-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  overflow: hidden;
+}
+
+.skeleton-stat-label {
+  height: 10px;
+  width: 60%;
+  margin-bottom: 8px;
+}
+
+.skeleton-stat-value {
+  height: 28px;
+  width: 50%;
+  margin-bottom: 6px;
+}
+
+.skeleton-stat-change {
+  height: 10px;
+  width: 80%;
+}
+
+/* Skeleton table row */
+.skeleton-table-row td {
+  padding: 12px;
+}
+
+.skeleton-table-row .skeleton-cell {
+  height: 12px;
+  border-radius: 4px;
+}
+
+/* Full page skeleton loader */
+.page-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0;
+  animation: fadeIn 0.2s ease;
+}
+
+.page-skeleton-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.page-skeleton-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.page-skeleton-table {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.page-skeleton-table-header {
+  height: 38px;
+  background: var(--smoke);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+}
+
+.page-skeleton-table-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-skeleton-table-row:last-child {
+  border-bottom: none;
+}
+
+/* ── TOAST ANIMATIONS ────────────────────────────────────── */
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastSlideOut {
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+/* ── COUNT-UP ANIMATION ──────────────────────────────────── */
+.count-up {
+  display: inline-block;
+}
+
+/* ── SPINNER ─────────────────────────────────────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--navy);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.spinner-sm {
+  width: 12px;
+  height: 12px;
+}
+
+.spinner-lg {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+.spinner-white {
+  border-color: rgba(255,255,255,0.3);
+  border-top-color: var(--white);
+}
+
+/* Inline loading row */
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  color: var(--mid);
+  font-size: 12px;
+}
+
+/* ── FADE ANIMATIONS ─────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.fade-in {
+  animation: fadeIn 0.2s ease;
+}
+
+/* ── SLIDE ANIMATIONS ────────────────────────────────────── */
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.slide-in-right { animation: slideInRight 0.18s ease; }
+.slide-in-up    { animation: slideInUp    0.2s ease; }
+
+/* ── PULSE ANIMATION (live dot) ──────────────────────────── */
+@keyframes pulseDot {
+  0%, 100% { opacity: 1;    transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.9); }
+}
+
+.pulse-dot {
+  animation: pulseDot 2s infinite;
+}
+
+/* ── CHECKMARK ANIMATION (booking success) ───────────────── */
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+.check-circle-svg .check-path {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: drawCheck 0.5s 0.2s ease forwards;
+}
+
+.check-circle-svg .circle-path {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: drawCheck 0.6s ease forwards;
+}
+
+/* ── COUNTDOWN TIMER ─────────────────────────────────────── */
+.countdown-timer {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  transition: color 0.3s;
+}
+
+.countdown-critical {
+  color: var(--red);
+  animation: flashRed 0.8s infinite;
+}
+
+@keyframes flashRed {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* ── BUTTON LOADING STATE ────────────────────────────────── */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: var(--white);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ── PROGRESS BAR ANIMATION ──────────────────────────────── */
+@keyframes progressFill {
+  from { width: 0%; }
+}
+
+.progress-animate {
+  animation: progressFill 0.6s ease;
+}
+
+/* ── REPORT GENERATE ANIMATION ───────────────────────────── */
+@keyframes reportGen {
+  0%   { width: 0%; }
+  80%  { width: 85%; }
+  100% { width: 100%; }
+}
+
+.report-progress-bar {
+  height: 3px;
+  background: var(--navy);
+  border-radius: 2px;
+  animation: reportGen 1.2s ease forwards;
+}
+
+/* ── SKELETON FOR STATS ROW ──────────────────────────────── */
+.skeleton-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* ── TYPING INDICATOR (notifications) ───────────────────── */
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%            { transform: translateY(-4px); }
+}
+
+.typing-dot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--mid);
+  animation: typingBounce 1s infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* ── REDUCED MOTION OVERRIDES ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .spinner,
+  .countdown-critical,
+  .pulse-dot,
+  .live-dot {
+    animation: none !important;
+  }
+
+  .check-circle-svg .check-path,
+  .check-circle-svg .circle-path {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .progress-animate,
+  .report-progress-bar {
+    animation: none !important;
+    width: 100% !important;
+  }
+}

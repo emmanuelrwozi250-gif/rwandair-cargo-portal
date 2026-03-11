@@ -1,0 +1,22 @@
+// ═══════════════════════════════════════════════════════════════════
+// RwandAir Cargo Portal — Notifications Data
+// 15 notifications of varied types: DWELL, BOOKING, ALERT, INFO
+// ═══════════════════════════════════════════════════════════════════
+
+export const NOTIFICATIONS = [
+  { id:1, type:'DWELL', title:'Dwell Alert — NBO', message:'AWB 459-66271704 (Pharma) exceeded 48hr SLA at Nairobi. 51hr 20min. Immediate action required.', time: new Date(Date.now()-8*60000).toISOString(), read:false, station:'NBO', severity:'critical', link:'#warehouse' },
+  { id:2, type:'BOOKING', title:'New Booking Confirmed', message:'WB-45964809765 DWC→KGL confirmed. GENERAL CARGO 45kg. Shepherd International LLC.', time: new Date(Date.now()-22*60000).toISOString(), read:false, station:'DWC', severity:'info', link:'#bookings' },
+  { id:3, type:'ALERT', title:'Flight Delay — WB710', message:'WB710 KGL→LHR delayed 35 minutes. New departure 23:15. Cutoff extended to 19:45.', time: new Date(Date.now()-45*60000).toISOString(), read:false, station:'KGL', severity:'warning', link:'#outbound' },
+  { id:4, type:'DWELL', title:'Dwell Alert — ADD', message:'AWB 459-64668321 (DG Class 3) at 39hr dwell. Connecting WB701 departs in 5hr.', time: new Date(Date.now()-1.5*3600000).toISOString(), read:true, station:'ADD', severity:'warning', link:'#dwell-alerts' },
+  { id:5, type:'INFO', title:'CASS Settlement Due', message:'Network Airline Services BV CASS balance $318,383 outstanding. Settlement due 15-Jan-26.', time: new Date(Date.now()-2*3600000).toISOString(), read:true, station:'KGL', severity:'warning', link:'#gsa-performance' },
+  { id:6, type:'BOOKING', title:'Booking Confirmed — LHR', message:'AWB 459-64791101 NBO→LHR 1,240kg Perishables confirmed. Network Airline Services.', time: new Date(Date.now()-3*3600000).toISOString(), read:true, station:'NBO', severity:'info', link:'#bookings' },
+  { id:7, type:'ALERT', title:'Temperature Excursion — NBO Cool Room', message:'Pharma shipment AWB 459-66278540 recorded 9.4°C. Exceeds 8°C limit. Immediate QA review needed.', time: new Date(Date.now()-4*3600000).toISOString(), read:false, station:'NBO', severity:'critical', link:'#temperature' },
+  { id:8, type:'DWELL', title:'Dwell Alert — KGL', message:'3 shipments in KGL transit exceed 36hr threshold. Total weight 2,840kg. See warehouse page.', time: new Date(Date.now()-5*3600000).toISOString(), read:true, station:'KGL', severity:'warning', link:'#warehouse' },
+  { id:9, type:'INFO', title:'New Rate Effective — SHJ→EBB', message:'Published rate updated to $0.95/kg effective Nov-1-25. All new bookings reflect updated rate.', time: new Date(Date.now()-8*3600000).toISOString(), read:true, station:'SHJ', severity:'info', link:'#rates' },
+  { id:10, type:'ALERT', title:'DG Compliance — NOTOC Missing', message:'AWB 459-64792880 DG Class 2.2 on WB304. NOTOC not yet submitted. Cutoff in 2hr.', time: new Date(Date.now()-10*3600000).toISOString(), read:false, station:'KGL', severity:'critical', link:'#dangerous-goods' },
+  { id:11, type:'BOOKING', title:'Booking Request — Late Acceptance', message:'AL RAIS CARGO requesting late acceptance for 380kg ELI after cutoff. WB9316 DWC→KGL. Approval needed.', time: new Date(Date.now()-14*3600000).toISOString(), read:true, station:'DWC', severity:'warning', link:'#outbound' },
+  { id:12, type:'INFO', title:'Revenue Target Update', message:'Dubai market MTD revenue $731,398. On track at 102% of monthly target. Strong Q3 performance.', time: new Date(Date.now()-24*3600000).toISOString(), read:true, station:'DXB', severity:'info', link:'#commercial' },
+  { id:13, type:'ALERT', title:'Claim Filed — AWB 459-64668321', message:'Damage claim filed by Kigali Convention Center Ltd. Estimated value $4,200. Station: KGL. Assigned to Ops.', time: new Date(Date.now()-48*3600000).toISOString(), read:true, station:'KGL', severity:'warning', link:'#claims' },
+  { id:14, type:'INFO', title:'WB444 ZNZ Route — First Flight', message:'New Zanzibar route WB444 KGL→ZNZ successfully operated. 1,840kg uplift. Strong commercial performance.', time: new Date(Date.now()-72*3600000).toISOString(), read:true, station:'ZNZ', severity:'info', link:'#commercial' },
+  { id:15, type:'DWELL', title:'Station Alert — DLA', message:'Douala warehouse at 55% capacity. 2 shipments >36hr. Connecting flight WB211 departs 16:00.', time: new Date(Date.now()-96*3600000).toISOString(), read:true, station:'DLA', severity:'warning', link:'#warehouse' },
+];

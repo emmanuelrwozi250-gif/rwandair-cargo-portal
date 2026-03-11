@@ -1,0 +1,236 @@
+/* ============================================================
+   RwandAir Cargo Intelligence Portal — Global CSS
+   Brand colours, resets, typography
+   ============================================================ */
+
+/* ── BRAND CSS VARIABLES ─────────────────────────────────── */
+:root {
+  /* Primary brand colours */
+  --navy:    #00529B;
+  --navy2:   #003D73;
+  --navy3:   #002B52;
+
+  /* Gold accent */
+  --gold:    #FEE014;
+  --gold2:   #D4B200;
+  --gold-lt: #FFF5B0;
+
+  /* Semantic colours */
+  --teal:    #1EA2DC;
+  --lime:    #94C943;
+  --red:     #C0392B;
+  --green:   #1A8A4A;
+  --amber:   #D97706;
+  --purple:  #7C3AED;
+
+  /* Neutrals */
+  --smoke:   #F1F4F9;
+  --white:   #FFFFFF;
+  --mid:     #6B7A99;
+  --dark:    #1A2340;
+  --border:  #DDE3EE;
+
+  /* Layout */
+  --topbar-height: 52px;
+  --sidebar-width: 220px;
+  --sidebar-collapsed: 56px;
+
+  /* Radius */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  13px;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,.07);
+  --shadow-md:  0 4px 16px rgba(0,0,0,.10);
+  --shadow-lg:  0 20px 60px rgba(0,0,0,.25);
+
+  /* Transitions */
+  --transition: all 0.14s ease;
+}
+
+/* ── BOX SIZING RESET ────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── BASE HTML / BODY ────────────────────────────────────── */
+html {
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--smoke);
+  color: var(--dark);
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── TYPOGRAPHY ──────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif;
+  color: var(--dark);
+  line-height: 1.2;
+}
+
+h1 { font-size: 24px; font-weight: 800; }
+h2 { font-size: 18px; font-weight: 800; }
+h3 { font-size: 14px; font-weight: 700; }
+h4 { font-size: 12px; font-weight: 700; }
+
+p { line-height: 1.6; }
+
+a {
+  color: var(--navy);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Monospace — for AWB numbers and codes only */
+.mono {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+}
+
+/* ── SCROLLBAR STYLING ───────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--mid);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* ── ACCESSIBILITY FOCUS ─────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── UTILITY CLASSES ─────────────────────────────────────── */
+.text-right   { text-align: right; }
+.text-center  { text-align: center; }
+.text-muted   { color: var(--mid); }
+.text-green   { color: var(--green); }
+.text-red     { color: var(--red); }
+.text-amber   { color: var(--amber); }
+.text-teal    { color: var(--teal); }
+.text-navy    { color: var(--navy); }
+
+.font-bold    { font-weight: 700; }
+.font-800     { font-weight: 800; }
+
+.up           { color: var(--green); font-weight: 600; }
+.down         { color: var(--red);   font-weight: 600; }
+.neutral      { color: var(--amber); font-weight: 600; }
+
+.mt-4  { margin-top: 4px; }
+.mt-8  { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mb-8  { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+
+.gap-8  { gap: 8px; }
+.gap-12 { gap: 12px; }
+
+.w-full { width: 100%; }
+.hidden { display: none !important; }
+
+.flex        { display: flex; }
+.flex-col    { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.flex-1      { flex: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+.flex-wrap   { flex-wrap: wrap; }
+
+/* Grid helpers */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+/* Dwell time colours */
+.dwell-ok     { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--green); }
+.dwell-warn   { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--amber); }
+.dwell-alert  { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--red); }
+
+/* Chart wrappers */
+.chart-wrap     { position: relative; height: 200px; }
+.chart-wrap-md  { position: relative; height: 240px; }
+.chart-wrap-lg  { position: relative; height: 280px; }
+.chart-wrap-xl  { position: relative; height: 360px; }
+
+/* Sparkline */
+.sparkline {
+  width: 72px;
+  height: 24px;
+  position: absolute;
+  right: 12px;
+  bottom: 14px;
+  opacity: 0.85;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0;
+}
+
+/* ── RESPONSIVE BREAKPOINTS ──────────────────────────────── */
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  body { overflow: auto; }
+  .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+/* ── REDUCED MOTION ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

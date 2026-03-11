@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RwandAir Cargo Intelligence Portal — Internal operations, commercial and executive visibility">
+  <title>RwandAir Cargo Intelligence Portal</title>
+
+  <!-- ── Fonts ─────────────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- ── Styles (order matters) ────────────────────────────── -->
+  <link rel="stylesheet" href="src/styles/global.css">
+  <link rel="stylesheet" href="src/styles/layout.css">
+  <link rel="stylesheet" href="src/styles/components.css">
+  <link rel="stylesheet" href="src/styles/animations.css">
+
+  <!-- ── Leaflet (network map) ─────────────────────────────── -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- ── Inline boot styles ────────────────────────────────── -->
+  <style>
+    /* Loading screen */
+    #boot-screen {
+      position: fixed; inset: 0;
+      background: #00529B;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    #boot-screen.hidden { opacity: 0; pointer-events: none; }
+
+    .boot-logo {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 32px;
+    }
+    .boot-wb-mark {
+      width: 56px; height: 56px;
+      background: #FEE014;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 18px; color: #00529B;
+      letter-spacing: -1px;
+    }
+    .boot-title { color: #fff; }
+    .boot-title h1 { font-size: 22px; font-weight: 700; letter-spacing: -.5px; }
+    .boot-title p  { font-size: 13px; opacity: .7; margin-top: 2px; }
+
+    .boot-bar-wrap {
+      width: 240px; height: 3px;
+      background: rgba(255,255,255,.2);
+      border-radius: 2px; overflow: hidden;
+    }
+    .boot-bar {
+      height: 3px;
+      background: #FEE014;
+      border-radius: 2px;
+      animation: bootProgress 1.2s ease forwards;
+    }
+    @keyframes bootProgress {
+      0%   { width: 0% }
+      60%  { width: 70% }
+      100% { width: 100% }
+    }
+
+    /* App shell — hidden until boot complete */
+    #topbar, #body-wrap { visibility: hidden; }
+    body.ready #topbar,
+    body.ready #body-wrap { visibility: visible; }
+
+    /* Print styles */
+    @media print {
+      #topbar, #sidebar, .page-actions, .row-actions,
+      .filter-bar, .topbar, #boot-screen { display: none !important; }
+      #main-content { margin: 0 !important; padding: 20px !important; overflow: visible !important; }
+      body { overflow: visible !important; height: auto !important; }
+      .card { break-inside: avoid; }
+    }
+
+    /* Dwell alert KPI card highlight */
+    .kpi-alert {
+      border: 1px solid var(--red) !important;
+      background: #FFF0EE !important;
+    }
+
+    /* Button size variants */
+    .btn-sm { padding: 4px 10px !important; font-size: 11px !important; }
+
+    /* KPI unit */
+    .kpi-unit { font-size: 14px; font-weight: 500; color: var(--mid); }
+
+    /* Chart wrap */
+    .chart-wrap { position: relative; }
+    .chart-wrap canvas { max-height: 100%; }
+
+    /* Sidebar group labels */
+    .nav-group-label {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .8px;
+      color: rgba(255,255,255,.4);
+      padding: 14px 16px 4px;
+    }
+
+    /* Topbar role tabs */
+    .role-tab {
+      background: none; border: none;
+      padding: 4px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 500;
+      color: rgba(255,255,255,.65);
+      cursor: pointer; transition: var(--transition);
+    }
+    .role-tab.active,
+    .role-tab:hover { background: rgba(255,255,255,.15); color: #fff; }
+
+    /* Live indicator dot */
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #94C943;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: .5; transform: scale(1.4); }
+    }
+
+    /* Notif panel */
+    .notif-panel {
+      position: fixed; top: var(--topbar-height); right: 0; bottom: 0;
+      width: 360px; background: var(--white);
+      border-left: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      transform: translateX(100%);
+      transition: transform 0.22s ease;
+      z-index: 200; overflow-y: auto;
+    }
+    .notif-panel.open { transform: translateX(0); }
+
+    /* Command palette overlay */
+    .cmd-overlay {
+      position: fixed; inset: 0;
+      background: rgba(26,35,64,.6);
+      backdrop-filter: blur(4px);
+      z-index: 500; display: none;
+      align-items: flex-start; justify-content: center;
+      padding-top: 15vh;
+    }
+    .cmd-overlay.open { display: flex; }
+    .cmd-box {
+      width: 540px; background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+    .cmd-input {
+      width: 100%; border: none; outline: none;
+      padding: 16px 20px; font-size: 15px;
+      font-family: inherit; border-bottom: 1px solid var(--border);
+    }
+    .cmd-results { max-height: 360px; overflow-y: auto; }
+    .cmd-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 20px; cursor: pointer;
+      transition: background .1s;
+    }
+    .cmd-item:hover, .cmd-item.selected { background: var(--smoke); }
+    .cmd-item-icon { font-size: 16px; width: 24px; text-align: center; }
+    .cmd-item-label { font-size: 13px; font-weight: 500; }
+    .cmd-item-sub { font-size: 11px; color: var(--mid); }
+
+    /* Modal overlay */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(26,35,64,.6);
+      backdrop-filter: blur(4px);
+      z-index: 400; display: none;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      width: 600px; max-width: 95vw;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-title { font-size: 16px; font-weight: 700; }
+    .modal-close { background:none;border:none;font-size:20px;cursor:pointer;color:var(--mid); }
+    .modal-body { padding: 24px; }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: flex-end; gap: 10px;
+    }
+
+    /* WB Logo mark in topbar */
+    .wb-logo-mark {
+      width: 30px; height: 30px; border-radius: 6px;
+      background: #FEE014;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .wb-text { font-weight: 800; font-size: 11px; color: #00529B; letter-spacing: -0.5px; }
+
+    /* Toast container */
+    #toast-container {
+      position: fixed; bottom: 24px; right: 24px;
+      z-index: 1000; display: flex; flex-direction: column; gap: 10px;
+      pointer-events: none;
+    }
+
+    /* Delta indicators */
+    .delta-up { color: var(--green) !important; }
+    .delta-down { color: var(--red) !important; }
+
+    /* Page sub-header */
+    .page-sub { font-size: 13px; color: var(--mid); margin-top: 2px; }
+
+    /* Empty state */
+    .empty-state, .error-state {
+      text-align: center; padding: 60px 20px;
+    }
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .empty-sub { font-size: 13px; color: var(--mid); margin-bottom: 16px; }
+
+    /* Topbar search hint */
+    .topbar-search-hint {
+      font-size: 10px; background: rgba(255,255,255,.15);
+      padding: 2px 6px; border-radius: 4px; margin-left: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Boot / loading screen ─────────────────────────────── -->
+  <div id="boot-screen">
+    <div class="boot-logo">
+      <div class="boot-wb-mark">WB</div>
+      <div class="boot-title">
+        <h1>RwandAir Cargo</h1>
+        <p>Intelligence Portal</p>
+      </div>
+    </div>
+    <div class="boot-bar-wrap">
+      <div class="boot-bar"></div>
+    </div>
+    <p style="color:rgba(255,255,255,.5);font-size:12px;margin-top:16px">Loading…</p>
+  </div>
+
+  <!-- ── Top Bar ────────────────────────────────────────────── -->
+  <div id="topbar"></div>
+
+  <!-- ── App Shell: Sidebar + Main ─────────────────────────── -->
+  <div id="body-wrap">
+    <nav id="sidebar"></nav>
+    <main id="main-content"></main>
+  </div>
+
+  <!-- ── Toast Container (populated by toast.js) ───────────── -->
+  <div id="toast-container"></div>
+
+  <!-- ── Notification Panel (populated by notifications.js) ── -->
+  <div id="notif-panel" class="notif-panel"></div>
+
+  <!-- ── Command Palette (populated by command-palette.js) ──── -->
+  <div id="cmd-overlay" class="cmd-overlay">
+    <div class="cmd-box">
+      <input id="cmd-input" class="cmd-input" type="text" placeholder="Search pages, flights, AWBs…" autocomplete="off">
+      <div id="cmd-results" class="cmd-results"></div>
+      <div style="padding:8px 20px;font-size:11px;color:var(--mid);border-top:1px solid var(--border);display:flex;gap:16px">
+        <span>↑↓ Navigate</span><span>↵ Open</span><span>Esc Close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Booking Modal (populated by modals.js) ────────────── -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div id="modal-box" class="modal-box"></div>
+  </div>
+
+  <!-- ── CDN Libraries (must load before app.js module) ───── -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- ── App Entry Point ───────────────────────────────────── -->
+  <script type="module" src="src/app.js?v=2"></script>
+
+  <!-- ── Boot screen dismiss ───────────────────────────────── -->
+  <script>
+    // Dismiss boot screen once module is loaded
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const boot = document.getElementById('boot-screen');
+        if (boot) {
+          boot.classList.add('hidden');
+          document.body.classList.add('ready');
+          setTimeout(() => boot.remove(), 600);
+        }
+      }, 1400);
+    });
+
+    // Fallback: dismiss after 3s even if load event stalls
+    setTimeout(() => {
+      const boot = document.getElementById('boot-screen');
+      if (boot && !boot.classList.contains('hidden')) {
+        boot.classList.add('hidden');
+        document.body.classList.add('ready');
+      }
+    }, 3000);
+  </script>
+
+</body>
+</html>
