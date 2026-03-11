@@ -1,0 +1,39 @@
+plugins = []
+headers = []
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "/Users/emmanuelrwozi/rwandair-cargo-portal/.claude/worktrees/compassionate-varahamihira/build"
+publishOrigin = "ui"
+commandOrigin = "ui"
+base = "/Users/emmanuelrwozi/rwandair-cargo-portal/.claude/worktrees/compassionate-varahamihira"
+command = "npm run build"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[[redirects]]
+from = "/*"
+to = "/portal.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]

@@ -1,0 +1,31 @@
+[
+  {
+    "awb": "206-81234",
+    "status": "In Transit",
+    "origin": "LOS",
+    "destination": "LHR",
+    "shipper": "Dangote Cement Ltd",
+    "weight": 340,
+    "timeline": [
+      { "stage": "Booked", "time": "2026-03-08T06:15:00Z", "location": "LOS", "note": "Booking confirmed via GSA" },
+      { "stage": "Collected", "time": "2026-03-08T18:00:00Z", "location": "LOS", "note": "Cargo accepted at LOS warehouse" },
+      { "stage": "In Transit", "time": "2026-03-08T22:30:00Z", "location": "WB101", "note": "Departed LOS on WB101" }
+    ]
+  },
+  {
+    "awb": "206-74521",
+    "status": "Delivered",
+    "origin": "NBO",
+    "destination": "CDG",
+    "shipper": "East Africa Fresh",
+    "weight": 120,
+    "timeline": [
+      { "stage": "Booked", "time": "2026-03-05T06:00:00Z", "location": "NBO", "note": "Booking confirmed" },
+      { "stage": "Collected", "time": "2026-03-05T14:00:00Z", "location": "NBO", "note": "Cargo accepted" },
+      { "stage": "In Transit", "time": "2026-03-05T21:00:00Z", "location": "WB204", "note": "Departed NBO" },
+      { "stage": "Customs Clearance", "time": "2026-03-06T06:30:00Z", "location": "CDG", "note": "Arrived CDG, customs processing" },
+      { "stage": "Out for Delivery", "time": "2026-03-06T10:00:00Z", "location": "CDG", "note": "Cleared customs, out for delivery" },
+      { "stage": "Delivered", "time": "2026-03-06T14:00:00Z", "location": "CDG", "note": "Delivered to consignee" }
+    ]
+  }
+]

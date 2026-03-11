@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RwandAir Cargo · Warehouse Ops Portal</title>
+<title>RwandAir Cargo · Warehouse Ops</title>
 <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
@@ -1235,3 +1235,562 @@ body{font-family:'Lato',sans-serif;background:var(--smoke);color:var(--dark);ove
     </div>
   </div>
 </div>
+
+</div><!-- /main -->
+</div><!-- /body -->
+
+<!-- ══════════════════════════════════════
+     BOOKING MODAL
+══════════════════════════════════════ -->
+<div class="mov" id="modal" role="dialog" aria-modal="true" aria-label="Confirm Booking">
+  <div class="mbox">
+    <div class="mhd">
+      <div><div style="font-size:13px;font-weight:700;color:#fff">Confirm Booking</div><div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:2px">LOS → LHR via NBO · WB101 + WB204</div></div>
+      <button onclick="closeModal()" style="background:rgba(255,255,255,.1);border:none;color:#fff;border-radius:6px;padding:3px 9px;cursor:pointer;font-size:11px;font-family:'Lato',sans-serif" aria-label="Close">✕ Close</button>
+    </div>
+    <div class="mbd">
+      <div style="background:var(--smoke);border-radius:8px;padding:11px 13px">
+        <div style="font-size:9.5px;font-weight:700;color:var(--mid);margin-bottom:7px">BOOKING SUMMARY</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:11px">
+          <div><span class="muted">Route:</span> <strong>LOS → LHR via NBO</strong></div>
+          <div><span class="muted">Date:</span> <strong id="m-date">—</strong></div>
+          <div><span class="muted">Leg 1:</span> <strong>WB101 · 22:30 LOS</strong></div>
+          <div><span class="muted">Leg 2:</span> <strong>WB204 · 09:15 NBO</strong></div>
+          <div><span class="muted">Weight:</span> <strong>450 kg</strong></div>
+          <div><span class="muted">Through Rate:</span> <strong style="color:var(--green)">USD 3.85/kg</strong></div>
+        </div>
+      </div>
+      <div id="api-status-badge" style="display:none;font-size:10px;padding:5px 10px;border-radius:6px;font-weight:600"></div>
+      <div class="fw2"><label>SHIPPER NAME</label><input type="text" id="m-shipper" placeholder="e.g. Dangote Cement Ltd" aria-label="Shipper name"></div>
+      <div class="fw2"><label>CONSIGNEE NAME</label><input type="text" id="m-consignee" placeholder="e.g. UK Construction Co" aria-label="Consignee name"></div>
+      <div class="fw2"><label>COMMODITY DESCRIPTION</label><input type="text" id="m-commodity" placeholder="e.g. Industrial spare parts — non-hazardous" aria-label="Commodity"></div>
+      <div class="fw2"><label>SPECIAL HANDLING</label>
+        <select id="m-handling" aria-label="Special handling">
+          <option>None — General cargo</option>
+          <option>Perishable (COL/EAT)</option>
+          <option>Dangerous Goods (DGR)</option>
+          <option>Valuable Cargo (VAL)</option>
+          <option>Live Animals (AVI)</option>
+          <option>Human Remains (HUM)</option>
+          <option>Pharmaceuticals (PIL)</option>
+        </select>
+      </div>
+      <div class="fw2"><label>NOTES TO STATION</label><textarea id="m-notes" rows="2" style="resize:none" placeholder="Any special instructions..." aria-label="Notes"></textarea></div>
+      <div class="as asg"><div class="ai">✅</div><div><div class="at2">Space confirmed on both legs</div><div class="am">AWB generated on submission · Saved locally · Visible in My Bookings immediately.</div></div></div>
+      <div style="display:flex;gap:7px;justify-content:flex-end">
+        <button class="btn bout" onclick="closeModal()">Cancel</button>
+        <button class="btn bgold" onclick="confirmBook()" style="color:var(--navy3)">Confirm Booking →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     REPORT VIEWER
+══════════════════════════════════════ -->
+<div class="rv" id="rviewer" role="dialog" aria-modal="true" aria-label="Report Viewer">
+  <div class="rvbox">
+    <div class="rvh">
+      <div><div style="font-size:14px;font-weight:800;color:var(--dark)" id="rv-title">Report</div><div style="font-size:10px;color:var(--mid);margin-top:2px" id="rv-sub">Generated today</div></div>
+      <div style="display:flex;gap:7px">
+        <button class="btn bout bsm">📥 Download PDF</button>
+        <button class="btn bout bsm">📧 Email Report</button>
+        <button class="btn bpri bsm" onclick="closeRV()">✕ Close</button>
+      </div>
+    </div>
+    <div class="rvb"><div id="rv-body"></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     NOTIFICATIONS PANEL
+══════════════════════════════════════ -->
+<div class="notif-panel" id="notif-panel" role="dialog" aria-label="Notifications" aria-modal="true">
+  <div class="notif-hd">
+    <div><div class="notif-hd-t">🔔 Notifications</div><div class="notif-hd-s" id="notif-count-label">7 items require attention</div></div>
+    <button class="notif-close" onclick="toggleNotifications()" aria-label="Close notifications">✕ Close</button>
+  </div>
+  <div class="notif-body">
+    <div class="ni2 nt-r" onclick="sp('dwell');toggleNotifications()"><div class="ni2-title">⏱ CRITICAL Dwell — NBO</div><div class="ni2-desc">AWB 206-71234 · 73 hours in transit · Pharma shipment</div><div class="ni2-time">4 min ago · Action required</div></div>
+    <div class="ni2 nt-r" onclick="sp('dwell');toggleNotifications()"><div class="ni2-title">⏱ CRITICAL Dwell — KGL</div><div class="ni2-desc">AWB 206-63891 · 61 hours · Perishable cargo · SLA breach imminent</div><div class="ni2-time">9 min ago · Action required</div></div>
+    <div class="ni2 nt-r" onclick="sp('dg');toggleNotifications()"><div class="ni2-title">☢ DG Acceptance Pending</div><div class="ni2-desc">WB101 · 2 DG shipments await acceptance · Cutoff in 45 min</div><div class="ni2-time">15 min ago · NBO Ops</div></div>
+    <div class="ni2 nt-a" onclick="sp('capacity-route');toggleNotifications()"><div class="ni2-title">✈ NBO→LHR Near Capacity</div><div class="ni2-desc">WB204 tomorrow · 91% loaded · Consider offload risk</div><div class="ni2-time">22 min ago · Planning</div></div>
+    <div class="ni2 nt-a" onclick="sp('claims');toggleNotifications()"><div class="ni2-title">⚠ New Claim Filed — LOS</div><div class="ni2-desc">Claim #CLM-0391 · Suspected pilferage · USD 4,200</div><div class="ni2-time">1 hr ago · GSA LOS</div></div>
+    <div class="ni2 nt-b" onclick="sp('gsa-bookings');toggleNotifications()"><div class="ni2-title">📋 New Booking Confirmed</div><div class="ni2-desc">AWB 206-59821 · LOS→LHR · 340 kg · General cargo</div><div class="ni2-time">2 hrs ago</div></div>
+    <div class="ni2 nt-g" onclick="sp('reports');toggleNotifications()"><div class="ni2-title">📊 Monthly Report Ready</div><div class="ni2-desc">March 2026 Revenue Report · Revenue up 12.3% YoY</div><div class="ni2-time">6 hrs ago · CargoFlash</div></div>
+  </div>
+  <div class="notif-footer"><button class="btn bout bsm" onclick="document.getElementById('bell-count').textContent='0';toggleNotifications()">Mark all as read</button></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     GLOBAL SEARCH DROPDOWN
+══════════════════════════════════════ -->
+<div class="srch-drop" id="srch-drop" role="listbox"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ══════════════════════════════════════════════════════════
+//  RwandAir Cargo Portal · JavaScript
+//  Local API: http://localhost:3001/api  (fallback: localStorage)
+// ══════════════════════════════════════════════════════════
+
+const API_BASE = 'http://localhost:3001/api';
+let apiOnline = false;
+const charts = {};
+
+// ── API CONNECTIVITY CHECK ─────────────────────────────────
+async function checkAPI() {
+  try {
+    const r = await fetch(API_BASE + '/health', { signal: AbortSignal.timeout(1500) });
+    if (r.ok) {
+      apiOnline = true;
+      const badge = document.getElementById('api-status-badge');
+      if (badge) {
+        badge.style.display = 'block';
+        badge.style.background = '#E8F8EE';
+        badge.style.color = '#1A8A4A';
+        badge.textContent = '✓ Connected to local server — bookings saved to your PC';
+      }
+      console.log('[API] Local server online ✓');
+    }
+  } catch {
+    apiOnline = false;
+    console.log('[API] Local server offline — using browser storage');
+  }
+}
+checkAPI();
+
+// ── NAVIGATION ────────────────────────────────────────────
+function sp(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  document.querySelectorAll('.ni').forEach(n => {
+    const oc = n.getAttribute('onclick');
+    if (oc && oc.includes("'" + id + "'")) n.classList.add('active');
+  });
+  // Lazy inits
+  if (id === 'mgmt') setTimeout(initMgmtCharts, 80);
+  else if (id === 'commercial') setTimeout(initCommercialCharts, 80);
+  else if (id === 'yield') setTimeout(initYieldChart, 80);
+  else if (id === 'seasonal') setTimeout(initSeasonalChart, 80);
+  else if (id === 'forecast') setTimeout(initForecastChart, 80);
+  else if (id === 'network') setTimeout(initMap, 80);
+  else if (id === 'gsa-bookings') renderMyBookings();
+}
+
+function switchRole(role, btn) {
+  document.querySelectorAll('.rtab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  ['gsa','warehouse','commercial','planning','mgmt'].forEach(r => {
+    const el = document.getElementById('nav-' + r);
+    if (el) el.style.display = 'none';
+  });
+  const nav = document.getElementById('nav-' + role);
+  if (nav) nav.style.display = 'block';
+  const um = {gsa:'Lagos GSA · LOS', warehouse:'NBO Warehouse Ops', commercial:'HQ Commercial · KGL', planning:'Network Planning · KGL', mgmt:'Director Cargo · HQ'};
+  const ui = {gsa:'AD', warehouse:'MW', commercial:'EM', planning:'JK', mgmt:'ER'};
+  document.getElementById('uinfo').textContent = um[role] || role;
+  document.getElementById('udot').textContent = ui[role] || 'WB';
+  const pm = {gsa:'gsa-search', warehouse:'warehouse', commercial:'commercial', planning:'cap-plan', mgmt:'mgmt'};
+  sp(pm[role]);
+  const items = nav ? nav.querySelectorAll('.ni') : [];
+  items.forEach(n => n.classList.remove('active'));
+  if (items[0]) items[0].classList.add('active');
+}
+
+function flashSearch() {
+  const r = document.getElementById('sresults');
+  if (!r) return;
+  r.style.opacity = '.4';
+  setTimeout(() => { r.style.opacity = '1'; r.style.transition = 'opacity .35s'; }, 550);
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+function openModal() {
+  document.getElementById('modal').style.display = 'flex';
+  const d = document.getElementById('m-date');
+  if (d) d.textContent = new Date().toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+  // Show API status
+  checkAPI().then(() => {
+    const badge = document.getElementById('api-status-badge');
+    if (badge) {
+      badge.style.display = 'block';
+      if (apiOnline) {
+        badge.style.background = '#E8F8EE'; badge.style.color = '#1A8A4A';
+        badge.textContent = '✓ Local server online — booking saved to your PC';
+      } else {
+        badge.style.background = '#FEF3E2'; badge.style.color = '#D97706';
+        badge.textContent = '⚠ Local server offline — saving to browser storage';
+      }
+    }
+  });
+}
+function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+// ── BOOKING (API → localStorage fallback) ─────────────────
+async function confirmBook() {
+  const shipper = document.getElementById('m-shipper').value.trim() || 'Unnamed Shipper';
+  const consignee = document.getElementById('m-consignee').value.trim() || '';
+  const commodity = document.getElementById('m-commodity').value.trim() || 'General Cargo';
+  const specialHandling = document.getElementById('m-handling').value;
+  const notes = document.getElementById('m-notes').value.trim();
+
+  const payload = {
+    origin: 'LOS', destination: 'LHR',
+    weight: 450, volume: 2.4,
+    shipper, consignee, commodity, specialHandling, notes,
+    flight: 'WB101', createdBy: document.getElementById('uinfo').textContent
+  };
+
+  let awb, savedToServer = false;
+
+  if (apiOnline) {
+    try {
+      const res = await fetch(API_BASE + '/bookings', {
+        method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        awb = data.awb;
+        savedToServer = true;
+      }
+    } catch (e) { console.warn('API save failed, falling back to localStorage'); }
+  }
+
+  if (!awb) {
+    // Fallback: localStorage
+    awb = '206-' + Math.floor(Math.random() * 90000 + 10000);
+    const bookings = JSON.parse(localStorage.getItem('wb_bookings') || '[]');
+    bookings.unshift({ awb, route: 'LOS→LHR', status: 'Booked', date: new Date().toISOString().slice(0,10), weight: 450, commodity, shipper });
+    localStorage.setItem('wb_bookings', JSON.stringify(bookings));
+  }
+
+  closeModal();
+  const storageMsg = savedToServer ? '💾 Saved to your local PC server.' : '💾 Saved to browser storage (start local server to persist).';
+  alert(`✓ Booking Confirmed!\n\nAWB: ${awb}\nRoute: LOS → LHR via NBO\nLeg 1: WB101 · 22:30 LOS\nLeg 2: WB204 · 09:15 NBO (+1)\nShipper: ${shipper}\n\n${storageMsg}\n\nVisible in My Bookings immediately.`);
+}
+
+// ── MY BOOKINGS (API → localStorage → mock) ───────────────
+async function renderMyBookings() {
+  const tbody = document.getElementById('bookings-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--mid)">Loading bookings…</td></tr>';
+
+  let allBookings = [];
+
+  if (apiOnline) {
+    try {
+      const res = await fetch(API_BASE + '/bookings');
+      if (res.ok) {
+        const data = await res.json();
+        allBookings = data.bookings || [];
+      }
+    } catch (e) { console.warn('Could not load from API'); }
+  }
+
+  // Merge localStorage bookings
+  const stored = JSON.parse(localStorage.getItem('wb_bookings') || '[]');
+  const storedAWBs = new Set(allBookings.map(b => b.awb));
+  stored.forEach(b => { if (!storedAWBs.has(b.awb)) allBookings.unshift(b); });
+
+  // Fallback mock if both empty
+  if (allBookings.length === 0) {
+    allBookings = [
+      {awb:'206-81234', route:'LOS→LHR', status:'In Transit', date:'2026-03-08', weight:340, shipper:'Dangote Cement Ltd'},
+      {awb:'206-74521', route:'NBO→CDG', status:'Delivered', date:'2026-03-05', weight:120, shipper:'East Africa Fresh'},
+      {awb:'206-63891', route:'JNB→AMS', status:'Customs Clearance', date:'2026-03-09', weight:280, shipper:'SA Exporters Ltd'},
+    ];
+  }
+
+  const sc = {Booked:'pb','In Transit':'pt','Customs Clearance':'pa',Delivered:'pg',Cancelled:'pr'};
+  tbody.innerHTML = allBookings.map(b => `
+    <tr>
+      <td><span class="mono">${b.awb}</span></td>
+      <td style="font-weight:600">${b.route || (b.origin+'→'+b.destination)}</td>
+      <td><span class="pill ${sc[b.status]||'pn'}">${b.status}</span></td>
+      <td>${(b.date||'').substring(0,10)}</td>
+      <td>${b.weight} kg</td>
+      <td>${b.shipper}</td>
+      <td><button class="btn bout bsm" onclick="doTrack('${b.awb}')">Track →</button></td>
+    </tr>`).join('');
+}
+
+// ── AWB TRACKING (API → localStorage → mock) ──────────────
+function doTrack(awb) {
+  sp('gsa-tracking');
+  const inp = document.getElementById('track-input');
+  if (inp) inp.value = awb;
+  showTracking(awb);
+}
+
+async function showTracking(awb) {
+  if (!awb) awb = (document.getElementById('track-input') || {}).value || '';
+  awb = awb.trim();
+  if (!awb) return;
+
+  const resultEl = document.getElementById('track-result');
+  const detailEl = document.getElementById('track-detail');
+  if (resultEl) resultEl.style.display = 'block';
+  if (detailEl) detailEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--mid)">Loading tracking data…</div>';
+  document.getElementById('track-awb-num').textContent = awb;
+
+  let shipment = null;
+
+  if (apiOnline) {
+    try {
+      const res = await fetch(`${API_BASE}/track/${awb}`);
+      if (res.ok) shipment = await res.json();
+    } catch (e) {}
+  }
+
+  if (!shipment) {
+    // Check localStorage
+    const stored = JSON.parse(localStorage.getItem('wb_bookings') || '[]');
+    const found = stored.find(b => b.awb === awb);
+    if (found) {
+      shipment = { awb: found.awb, status: found.status || 'Booked', origin: found.origin || 'LOS', destination: found.destination || 'LHR', shipper: found.shipper, weight: found.weight, timeline: [{stage: found.status || 'Booked', time: found.date, location: found.origin || 'LOS', note: 'Booking confirmed'}] };
+    }
+  }
+
+  if (!shipment) {
+    // Mock fallback
+    shipment = { awb, status: 'In Transit', origin: 'LOS', destination: 'LHR', shipper: 'Shipper', weight: 450, timeline: [{stage:'Booked',time:'2026-03-08T06:15:00Z',location:'LOS',note:'Booking confirmed'},{stage:'Collected',time:'2026-03-08T18:00:00Z',location:'LOS',note:'Accepted at warehouse'},{stage:'In Transit',time:'2026-03-08T22:30:00Z',location:'WB101',note:'Departed LOS'}] };
+  }
+
+  const stages = ['Booked','Collected','In Transit','Customs Clearance','Out for Delivery','Delivered'];
+  const icons =  ['📋','📦','✈','🛃','🚚','✅'];
+  const si = Math.max(0, stages.indexOf(shipment.status));
+
+  let tlHTML = `
+    <div style="background:var(--smoke);border-radius:8px;padding:11px 13px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:11px">
+        <div><div style="font-size:9px;color:var(--mid)">AWB</div><div class="mono">${shipment.awb}</div></div>
+        <div><div style="font-size:9px;color:var(--mid)">ROUTE</div><div style="font-weight:700">${shipment.origin}→${shipment.destination}</div></div>
+        <div><div style="font-size:9px;color:var(--mid)">SHIPPER</div><div style="font-weight:600">${shipment.shipper||'—'}</div></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:0;margin-bottom:16px">`;
+
+  stages.forEach((s, i) => {
+    const done = i < si, active = i === si;
+    const bg = done ? 'var(--green)' : active ? 'var(--gold)' : 'var(--border)';
+    const tc = (done || active) ? '#fff' : 'var(--mid)';
+    const labelCol = done ? 'var(--green)' : active ? 'var(--amber)' : 'var(--mid)';
+    const tev = shipment.timeline ? shipment.timeline.find(t => t.stage === s) : null;
+    const timeStr = tev ? new Date(tev.time).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+
+    tlHTML += `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0">
+      <div style="width:28px;height:28px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:${done?'10':'12'}px;color:${active?'var(--navy3)':tc};font-weight:700;flex-shrink:0">${done?'✓':icons[i]}</div>
+      <div style="font-size:8px;color:${labelCol};font-weight:600;text-align:center;max-width:60px;line-height:1.3">${s}</div>
+      <div style="font-size:8px;color:var(--mid);text-align:center">${timeStr}</div>
+    </div>`;
+    if (i < stages.length - 1) {
+      tlHTML += `<div style="flex:1;height:2px;background:${i<si?'var(--green)':'var(--border)'};margin-top:13px"></div>`;
+    }
+  });
+
+  tlHTML += '</div>';
+
+  if (shipment.timeline && shipment.timeline.length) {
+    tlHTML += `<div class="card"><div class="ch"><div class="ct">Journey Events</div></div><div class="cb" style="padding:0"><table class="dt"><thead><tr><th>TIME</th><th>STAGE</th><th>LOCATION</th><th>NOTE</th></tr></thead><tbody>`;
+    [...shipment.timeline].reverse().forEach(ev => {
+      const t = new Date(ev.time).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      tlHTML += `<tr><td style="white-space:nowrap">${t}</td><td><span class="pill pb">${ev.stage}</span></td><td style="font-weight:600">${ev.location||'—'}</td><td>${ev.note||'—'}</td></tr>`;
+    });
+    tlHTML += '</tbody></table></div></div>';
+  }
+
+  if (detailEl) detailEl.innerHTML = tlHTML;
+}
+
+// ── MODAL / REPORT VIEWER ─────────────────────────────────
+function viewReport(name, desc) {
+  document.getElementById('rv-title').textContent = name;
+  document.getElementById('rv-sub').textContent = 'Generated: ' + new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) + ' · Source: CargoFlash · All stations';
+  document.getElementById('rv-body').innerHTML = `
+    <div style="background:#F1F4F9;border-radius:9px;padding:14px 16px;margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:#6B7A99;margin-bottom:4px">REPORT DESCRIPTION</div><div style="font-size:12px;color:#1A2340;line-height:1.6">${desc}</div></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+      <div style="background:#fff;border:1px solid #DDE3EE;border-radius:9px;padding:11px 13px"><div style="font-size:9.5px;color:#6B7A99;font-weight:600;margin-bottom:4px">PERIOD</div><div style="font-size:13px;font-weight:800">Mar 2026</div></div>
+      <div style="background:#fff;border:1px solid #DDE3EE;border-radius:9px;padding:11px 13px"><div style="font-size:9.5px;color:#6B7A99;font-weight:600;margin-bottom:4px">SOURCE</div><div style="font-size:13px;font-weight:800">CargoFlash</div></div>
+      <div style="background:#fff;border:1px solid #DDE3EE;border-radius:9px;padding:11px 13px"><div style="font-size:9.5px;color:#6B7A99;font-weight:600;margin-bottom:4px">GENERATED</div><div style="font-size:13px;font-weight:800">Today 06:00</div></div>
+      <div style="background:#fff;border:1px solid #DDE3EE;border-radius:9px;padding:11px 13px"><div style="font-size:9.5px;color:#6B7A99;font-weight:600;margin-bottom:4px">EXPORT</div><div style="font-size:13px;font-weight:800">PDF · XLS · CSV</div></div>
+    </div>
+    <div style="background:#E8F8EE;border-radius:8px;padding:11px 13px;font-size:11px;color:#1A2340">💡 <strong>Insight:</strong> ADD continues to underperform vs target (−8.6%). LOS outperforming (+4.2%). Recommend capacity review on NBO→LHR weeks 12–13.</div>`;
+  document.getElementById('rviewer').style.display = 'flex';
+}
+function closeRV() { document.getElementById('rviewer').style.display = 'none'; }
+
+// ── NOTIFICATIONS ─────────────────────────────────────────
+function toggleNotifications() {
+  const panel = document.getElementById('notif-panel');
+  const btn = document.getElementById('bell-btn');
+  const open = panel.classList.toggle('open');
+  if (btn) btn.setAttribute('aria-expanded', open);
+}
+
+// ── GLOBAL SEARCH ─────────────────────────────────────────
+const SEARCH_INDEX = [
+  {type:'awb', code:'206-81234', desc:'LOS→LHR · In Transit · Dangote Cement', page:'gsa-tracking', awb:'206-81234'},
+  {type:'awb', code:'206-74521', desc:'NBO→CDG · Delivered · East Africa Fresh', page:'gsa-tracking', awb:'206-74521'},
+  {type:'awb', code:'206-63891', desc:'JNB→AMS · Customs Clearance · SA Exporters', page:'gsa-tracking', awb:'206-63891'},
+  {type:'awb', code:'206-48763', desc:'KGL→DXB · In Transit · RwandAir Cargo', page:'gsa-tracking', awb:'206-48763'},
+  {type:'station', code:'KGL', desc:'Kigali, Rwanda · HQ Hub', page:'network'},
+  {type:'station', code:'NBO', desc:'Nairobi, Kenya · Transit Hub', page:'network'},
+  {type:'station', code:'LOS', desc:'Lagos, Nigeria · Largest market', page:'network'},
+  {type:'station', code:'JNB', desc:'Johannesburg, South Africa', page:'network'},
+  {type:'station', code:'LHR', desc:'London Heathrow · Top destination', page:'network'},
+  {type:'station', code:'DXB', desc:'Dubai International', page:'network'},
+  {type:'station', code:'CDG', desc:'Paris Charles de Gaulle', page:'network'},
+  {type:'station', code:'ADD', desc:'Addis Ababa, Ethiopia', page:'network'},
+  {type:'page', code:'Space & Availability', desc:'Check route capacity and book', page:'gsa-search'},
+  {type:'page', code:'My Bookings', desc:'View and track all bookings', page:'gsa-bookings'},
+  {type:'page', code:'Dwell Alerts', desc:'Shipments approaching threshold', page:'dwell'},
+  {type:'page', code:'Reports Hub', desc:'All analytics reports', page:'reports'},
+  {type:'page', code:'Network Map', desc:'Interactive station map', page:'network'},
+  {type:'page', code:'Rate Calculator', desc:'Pricing by route and commodity', page:'rates'},
+];
+
+function globalSearch(q) {
+  const drop = document.getElementById('srch-drop');
+  if (!drop) return;
+  if (!q || q.length < 2) { drop.innerHTML = ''; drop.classList.remove('open'); return; }
+  const lq = q.toLowerCase();
+  const results = SEARCH_INDEX.filter(i => i.code.toLowerCase().includes(lq) || i.desc.toLowerCase().includes(lq));
+  if (!results.length) { drop.innerHTML = '<div class="srch-empty">No results found</div>'; drop.classList.add('open'); return; }
+  const groups = {};
+  results.forEach(r => { if (!groups[r.type]) groups[r.type] = []; groups[r.type].push(r); });
+  const labels = {awb:'AWB NUMBERS', station:'STATIONS', page:'PAGES'};
+  let html = '';
+  Object.entries(groups).forEach(([type, items]) => {
+    html += `<div class="srch-sec">${labels[type] || type.toUpperCase()}</div>`;
+    items.slice(0,4).forEach(item => {
+      html += `<div class="srch-item" onclick="handleSrch('${item.page}','${item.awb||''}')"><span class="srch-code">${item.code}</span><span class="srch-desc">${item.desc}</span></div>`;
+    });
+  });
+  drop.innerHTML = html;
+  drop.classList.add('open');
+}
+function handleSrch(page, awb) {
+  document.getElementById('srch-drop').classList.remove('open');
+  const inp = document.getElementById('gsearch');
+  if (inp) inp.value = '';
+  if (awb) doTrack(awb); else sp(page);
+}
+function closeSearchDelay() { setTimeout(() => { const d = document.getElementById('srch-drop'); if(d) d.classList.remove('open'); }, 200); }
+
+// ── CSV EXPORT ────────────────────────────────────────────
+function exportCSV(tableId) {
+  const table = document.getElementById(tableId);
+  if (!table) { alert('Table not found'); return; }
+  const rows = [...table.querySelectorAll('tr')];
+  const csv = rows.map(row => [...row.querySelectorAll('th,td')].map(c => {
+    const t = c.textContent.trim().replace(/\s+/g,' ').replace(/"/g,'""');
+    return (t.includes(',') || t.includes('"')) ? `"${t}"` : t;
+  }).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = tableId + '-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+// ── LEAFLET MAP ───────────────────────────────────────────
+let leafletMap = null;
+function initMap() {
+  if (leafletMap) return;
+  const mc = document.getElementById('map-container');
+  if (!mc || typeof L === 'undefined') return;
+  leafletMap = L.map('map-container').setView([5, 25], 3);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap', maxZoom:12}).addTo(leafletMap);
+  const stations = [
+    {c:'KGL',city:'Kigali · HQ Hub',lat:-1.97,lng:30.10,load:68,alerts:3,col:'#D97706'},
+    {c:'NBO',city:'Nairobi · Transit Hub',lat:-1.29,lng:36.82,load:84,alerts:4,col:'#C0392B'},
+    {c:'LOS',city:'Lagos, Nigeria',lat:6.52,lng:3.38,load:72,alerts:0,col:'#1A8A4A'},
+    {c:'JNB',city:'Johannesburg',lat:-26.20,lng:28.05,load:65,alerts:0,col:'#1A8A4A'},
+    {c:'ADD',city:'Addis Ababa',lat:9.01,lng:38.76,load:41,alerts:4,col:'#1EA2DC'},
+    {c:'LHR',city:'London Heathrow',lat:51.51,lng:-0.13,load:88,alerts:1,col:'#C0392B'},
+    {c:'CDG',city:'Paris CDG',lat:49.01,lng:2.55,load:71,alerts:0,col:'#1A8A4A'},
+    {c:'AMS',city:'Amsterdam',lat:52.37,lng:4.90,load:63,alerts:0,col:'#1A8A4A'},
+    {c:'DXB',city:'Dubai International',lat:25.20,lng:55.27,load:79,alerts:1,col:'#D97706'},
+    {c:'DAR',city:'Dar es Salaam',lat:-6.78,lng:39.27,load:58,alerts:2,col:'#D97706'},
+    {c:'EBB',city:'Entebbe, Uganda',lat:0.04,lng:32.44,load:51,alerts:0,col:'#1A8A4A'},
+  ];
+  const routes = [[[-1.97,30.10],[-1.29,36.82]],[[-1.29,36.82],[51.51,-0.13]],[[-1.29,36.82],[25.20,55.27]],[[6.52,3.38],[-1.29,36.82]],[[-26.20,28.05],[49.01,2.55]],[[-1.97,30.10],[49.01,2.55]],[[-1.29,36.82],[52.37,4.90]]];
+  routes.forEach(r => L.polyline(r, {color:'#00529B', weight:1.5, opacity:.4, dashArray:'5,5'}).addTo(leafletMap));
+  stations.forEach(s => {
+    const m = L.circleMarker([s.lat,s.lng], {radius:s.c==='KGL'?12:s.c==='NBO'?10:8, color:s.col, fillColor:s.col, fillOpacity:.8, weight:2}).addTo(leafletMap);
+    m.bindPopup(`<div style="font-family:Lato,sans-serif;min-width:160px"><div style="font-size:16px;font-weight:800;color:#1A2340">${s.c}</div><div style="font-size:11px;color:#6B7A99;margin-bottom:6px">${s.city}</div><div style="font-size:11px"><strong>Load:</strong> ${s.load}% | <strong>Alerts:</strong> ${s.alerts}</div></div>`);
+  });
+}
+
+// ── CHART.JS HELPERS ──────────────────────────────────────
+function mkChart(id, type, data, extraOpts) {
+  if (charts[id]) return;
+  const el = document.getElementById(id);
+  if (!el || typeof Chart === 'undefined') return;
+  charts[id] = new Chart(el.getContext('2d'), {type, data, options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{labels:{font:{family:'Lato',size:10}}}}, ...extraOpts}});
+}
+
+function initMgmtCharts() {
+  mkChart('ch-rev','line',{labels:['Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[{label:'Revenue (USD 000s)',data:[1420,1380,1650,1540,1610,1890],borderColor:'#00529B',backgroundColor:'rgba(0,82,155,.08)',fill:true,tension:.4,pointBackgroundColor:'#FEE014',pointBorderColor:'#00529B',pointRadius:4}]},{plugins:{legend:{display:false}},scales:{y:{grid:{color:'#DDE3EE'},ticks:{font:{family:'Lato',size:10}}},x:{grid:{display:false},ticks:{font:{family:'Lato',size:10}}}}});
+  mkChart('ch-lf','bar',{labels:['LOS-NBO','NBO-LHR','KGL-CDG','JNB-LHR','ADD-NBO','NBO-DXB'],datasets:[{data:[72,78,65,84,41,79],backgroundColor:['#1A8A4A','#D97706','#1A8A4A','#C0392B','#1EA2DC','#D97706'],borderRadius:4}]},{plugins:{legend:{display:false}},scales:{y:{max:100,grid:{color:'#DDE3EE'},ticks:{font:{family:'Lato',size:10}}},x:{grid:{display:false},ticks:{font:{family:'Lato',size:9}}}}});
+  mkChart('ch-com','doughnut',{labels:['General','Perishable','Pharma','DG','Valuable','Other'],datasets:[{data:[45,18,12,8,5,12],backgroundColor:['#00529B','#1A8A4A','#1EA2DC','#C0392B','#FEE014','#6B7A99'],borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'right',labels:{font:{family:'Lato',size:10},boxWidth:12,padding:8}}},cutout:'65%'});
+}
+
+function initCommercialCharts() {
+  mkChart('ch-comm-rev','bar',{labels:['LOS','NBO','JNB','KGL','ADD','CPT','DAR'],datasets:[{label:'Revenue USD 000s',data:[312,284,199,156,124,97,72],backgroundColor:'#00529B',borderRadius:4},{label:'Target',data:[300,280,205,150,136,92,68],backgroundColor:'#DDE3EE',borderRadius:4}]},{scales:{y:{grid:{color:'#DDE3EE'},ticks:{font:{family:'Lato',size:10}}},x:{grid:{display:false},ticks:{font:{family:'Lato',size:9}}}}});
+}
+
+function initYieldChart() {
+  mkChart('ch-yield','bar',{labels:['LOS-LHR','NBO-CDG','JNB-AMS','KGL-DXB','ADD-LHR','LOS-DXB'],datasets:[{label:'Achieved $/kg',data:[3.85,4.20,4.10,3.65,3.90,3.50],backgroundColor:'#00529B',borderRadius:4},{label:'Target $/kg',data:[3.70,4.00,4.25,3.80,3.75,3.65],backgroundColor:'#DDE3EE',borderRadius:4}]},{scales:{y:{grid:{color:'#DDE3EE'},ticks:{font:{family:'Lato',size:10}}},x:{grid:{display:false},ticks:{font:{family:'Lato',size:9}}}}});
+}
+
+function initSeasonalChart() {
+  mkChart('ch-seasonal','line',{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],datasets:[{label:'2026',data:[1540,1610,1890,null,null,null,null,null,null,null,null,null],borderColor:'#00529B',tension:.4,pointRadius:4},{label:'2025',data:[1280,1310,1420,1380,1490,1560,1480,1390,1440,1420,1380,1650],borderColor:'#DDE3EE',borderDash:[5,5],tension:.4,pointRadius:2}]},{scales:{y:{grid:{color:'#DDE3EE'},ticks:{font:{family:'Lato',size:10}}},x:{grid:{display:false},ticks:{font:{family:'Lato',size:10}}}}});
+}
+
+function initForecastChart() {
+  mkChart('ch-forecast','line',{labels:['Wk 9','Wk 10','Wk 11','Wk 12','Wk 13','Wk 14','Wk 15'],datasets:[{label:'Forecast (t)',data:[420,435,450,480,510,490,520],borderColor:'#1EA2DC',backgroundColor:'rgba(30,162,220,.08)',fill:true,tension:.4,borderDash:[5,3],pointRadius:4},{label:'Actual (t)',data:[418,441,null,null,null,null,null],borderColor:'#1A8A4A',tension:.4,pointRadius:4}]},{scales:{y:{grid:{color:'#DDE3EE'},ticks:{font:{family:'Lato',size:10}}},x:{grid:{display:false},ticks:{font:{family:'Lato',size:10}}}}});
+}
+
+// ── INIT ──────────────────────────────────────────────────
+window.addEventListener('load',()=>{const b=document.querySelectorAll('.rtab')[1];switchRole('warehouse',b);document.querySelector('.rtab').classList.remove('active');});
+const sdEl = document.getElementById('sdate');
+if (sdEl) sdEl.valueAsDate = new Date();
+
+// Position search dropdown
+const gsEl = document.getElementById('gsearch');
+if (gsEl) {
+  const drop = document.getElementById('srch-drop');
+  gsEl.addEventListener('focus', () => { if (gsEl.value.length >= 2) drop.classList.add('open'); });
+  gsEl.addEventListener('blur', closeSearchDelay);
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('.tsearch') && !e.target.closest('#srch-drop')) {
+    const d = document.getElementById('srch-drop');
+    if (d) d.classList.remove('open');
+  }
+  if (!e.target.closest('.notif-panel') && !e.target.closest('#bell-btn')) {
+    const p = document.getElementById('notif-panel');
+    if (p) p.classList.remove('open');
+  }
+});
+
+// Position search dropdown below the input
+const tsearchEl = document.querySelector('.tsearch');
+const srchDropEl = document.getElementById('srch-drop');
+if (tsearchEl && srchDropEl) {
+  const rect = tsearchEl.getBoundingClientRect();
+  srchDropEl.style.position = 'fixed';
+  srchDropEl.style.top = '56px';
+  srchDropEl.style.left = rect.left + 'px';
+  srchDropEl.style.width = '300px';
+  srchDropEl.style.zIndex = '9999';
+}
+</script>
+</body>
+</html>
