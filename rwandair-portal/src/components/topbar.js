@@ -60,7 +60,7 @@ export function renderTopbar() {
     <!-- Brand -->
     <a class="topbar-brand" href="#" onclick="event.preventDefault();window.navigate(getCurrentPortalDefault())" aria-label="RwandAir Cargo Home">
       <div class="brand-mark">
-        <img src="/assets/rwandair-cargo-symbol.svg" alt="RwandAir Cargo" width="32" height="32" style="display:block">
+        <img src="assets/rwandair-cargo-symbol.svg" alt="RwandAir Cargo" width="32" height="32" style="display:block">
       </div>
       <div class="brand-text">
         <span class="brand-name"><em style="font-style:italic;font-weight:700;letter-spacing:-.01em">RwandAir</em><span style="color:var(--rw-gold);font-weight:900;font-style:italic;letter-spacing:.04em;margin-left:5px">CARGO</span></span>
@@ -266,7 +266,7 @@ window.handleLogout = function() {
       <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#001632;">
         <div style="text-align:center;animation:pageFadeIn .3s ease">
           <div style="width:72px;height:72px;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 0 30px rgba(0,82,155,.35)">
-            <img src="/assets/rwandair-cargo-symbol.svg" alt="RwandAir Cargo" width="64" height="64" style="display:block">
+            <img src="assets/rwandair-cargo-symbol.svg" alt="RwandAir Cargo" width="64" height="64" style="display:block">
           </div>
           <h2 style="color:white;font-family:'Lato',sans-serif;font-size:22px;font-weight:700;font-style:italic"><em>RwandAir</em> <span style="color:#FEE014;font-weight:900;letter-spacing:.04em">CARGO</span></h2>
           <p style="color:rgba(255,255,255,.45);margin-top:8px;font-family:'Lato',sans-serif;font-weight:300">You have been signed out securely.</p>
