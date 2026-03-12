@@ -1,27 +1,53 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <!-- Globe / horizon sweep arc — Sky Blue #1EA2DC -->
-  <ellipse cx="24" cy="28" rx="20" ry="8.5" fill="none" stroke="#1EA2DC" stroke-width="2.2"/>
-  <!-- Lower horizon fill -->
-  <path d="M4 28 Q24 38 44 28" fill="none" stroke="#1EA2DC" stroke-width="1.4" opacity="0.55"/>
+  <defs>
+    <!-- Clip to the oval shape so rays don't bleed outside -->
+    <clipPath id="oval-clip">
+      <ellipse cx="24" cy="24" rx="20" ry="18" transform="rotate(-8 24 24)"/>
+    </clipPath>
+  </defs>
 
-  <!-- Sun body — RwandAir Yellow #FEE014 -->
-  <circle cx="24" cy="21" r="7" fill="#FEE014"/>
+  <!-- Dark blue oval background -->
+  <ellipse cx="24" cy="24" rx="20" ry="18" transform="rotate(-8 24 24)" fill="#00529B"/>
 
-  <!-- Sun rays -->
-  <g stroke="#FEE014" stroke-width="1.8" stroke-linecap="round">
-    <line x1="24" y1="9"  x2="24" y2="12"/>
-    <line x1="24" y1="30" x2="24" y2="33"/>
-    <line x1="12" y1="21" x2="15" y2="21"/>
-    <line x1="33" y1="21" x2="36" y2="21"/>
-    <line x1="15.5" y1="12.5" x2="17.6" y2="14.6"/>
-    <line x1="30.4" y1="27.4" x2="32.5" y2="29.5"/>
-    <line x1="32.5" y1="12.5" x2="30.4" y2="14.6"/>
-    <line x1="17.6" y1="27.4" x2="15.5" y2="29.5"/>
+  <!-- Sun rays (16 pointed triangles) — clipped to oval -->
+  <g clip-path="url(#oval-clip)">
+    <g fill="#FEE014">
+      <!-- 16 rays radiating from centre (22.5° apart) -->
+      <polygon points="24,22 22.4,8 25.6,8"/>
+      <polygon points="24,22 29.4,9.2 31.8,10.8"/>
+      <polygon points="24,22 35,13.4 36.4,15.8"/>
+      <polygon points="24,22 38.8,19.4 38.8,22"/>
+      <polygon points="24,22 38.8,26 38.8,28.6"/>
+      <polygon points="24,22 36.4,32.2 35,34.6"/>
+      <polygon points="24,22 31.8,37.2 29.4,38.8"/>
+      <polygon points="24,22 25.6,40 22.4,40"/>
+      <polygon points="24,22 18.6,38.8 16.2,37.2"/>
+      <polygon points="24,22 13,34.6 11.6,32.2"/>
+      <polygon points="24,22 9.2,28.6 9.2,26"/>
+      <polygon points="24,22 9.2,22 9.2,19.4"/>
+      <polygon points="24,22 11.6,15.8 13,13.4"/>
+      <polygon points="24,22 16.2,10.8 18.6,9.2"/>
+      <!-- Intermediate thinner rays for density -->
+      <polygon points="24,22 23,9 25,9"/>
+      <polygon points="24,22 25,39 23,39"/>
+    </g>
+
+    <!-- Sun body — golden circle -->
+    <circle cx="24" cy="22" r="7.5" fill="#FEE014"/>
+
+    <!-- Sun centre highlight -->
+    <circle cx="24" cy="22" r="3.2" fill="#FFEB3B" opacity="0.6"/>
   </g>
 
-  <!-- Sun centre highlight -->
-  <circle cx="24" cy="21" r="3" fill="#C49A00" opacity="0.5"/>
+  <!-- Sky-blue arc — sweeping across upper portion (7 o'clock to 1 o'clock) -->
+  <path d="M6,30 Q4,18 14,10 Q20,6 28,6 Q36,6.5 40,12"
+        fill="none" stroke="#1EA2DC" stroke-width="3.5" stroke-linecap="round" opacity="0.9"/>
 
-  <!-- Lime green Rwandan accent arc — #94C943 -->
-  <path d="M8 24 Q16 17 24 16 Q32 17 40 24" fill="none" stroke="#94C943" stroke-width="1.8" opacity="0.75"/>
+  <!-- Inner sky-blue arc highlight -->
+  <path d="M8,28 Q6,19 14,12 Q19,8 26,7.5"
+        fill="none" stroke="#1EA2DC" stroke-width="1.8" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Lime green swoosh — bottom-left to lower-right -->
+  <path d="M14,36 Q20,30 28,30 Q36,30.5 42,34"
+        fill="none" stroke="#94C943" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
 </svg>

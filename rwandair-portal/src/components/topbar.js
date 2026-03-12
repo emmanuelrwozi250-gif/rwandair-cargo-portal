@@ -25,8 +25,8 @@ export const PORTALS = [
     icon: 'plane',
     description: 'Flights, warehouse, DG, temperature',
     defaultRoute: 'inbound',
-    color: '#34D399',
-    textColor: '#031A14',
+    color: '#1EA2DC',
+    textColor: '#001A2E',
   },
   {
     id: 'mgmt',
@@ -35,8 +35,8 @@ export const PORTALS = [
     icon: 'bar-chart',
     description: 'Revenue, yield, GSA, executive',
     defaultRoute: 'executive',
-    color: '#818CF8',
-    textColor: '#0F0C29',
+    color: '#94C943',
+    textColor: '#0A1A00',
   },
 ];
 
@@ -63,7 +63,7 @@ export function renderTopbar() {
         <img src="/assets/rwandair-cargo-symbol.svg" alt="RwandAir Cargo" width="32" height="32" style="display:block">
       </div>
       <div class="brand-text">
-        <span class="brand-name">RwandAir<span style="color:var(--rw-gold);font-weight:900"> Cargo</span></span>
+        <span class="brand-name"><em style="font-style:italic;font-weight:700;letter-spacing:-.01em">RwandAir</em><span style="color:var(--rw-gold);font-weight:900;font-style:italic;letter-spacing:.04em;margin-left:5px">CARGO</span></span>
         <span class="brand-tagline">Intelligence Portal</span>
       </div>
     </a>
@@ -265,12 +265,12 @@ window.handleLogout = function() {
     document.body.innerHTML = `
       <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#001632;">
         <div style="text-align:center;animation:pageFadeIn .3s ease">
-          <div style="width:72px;height:72px;background:#FEE014;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 0 30px rgba(254,224,20,.3)">
-            <span style="font-family:monospace;font-size:26px;font-weight:900;color:#001632">WB</span>
+          <div style="width:72px;height:72px;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 0 30px rgba(0,82,155,.35)">
+            <img src="/assets/rwandair-cargo-symbol.svg" alt="RwandAir Cargo" width="64" height="64" style="display:block">
           </div>
-          <h2 style="color:white;font-family:Inter,sans-serif;font-size:22px;font-weight:800">RwandAir Cargo Intelligence</h2>
-          <p style="color:rgba(255,255,255,.45);margin-top:8px;font-family:Inter,sans-serif">You have been signed out securely.</p>
-          <button onclick="window.location.reload()" style="margin-top:28px;padding:10px 24px;background:#FEE014;color:#001632;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">
+          <h2 style="color:white;font-family:'Lato',sans-serif;font-size:22px;font-weight:700;font-style:italic"><em>RwandAir</em> <span style="color:#FEE014;font-weight:900;letter-spacing:.04em">CARGO</span></h2>
+          <p style="color:rgba(255,255,255,.45);margin-top:8px;font-family:'Lato',sans-serif;font-weight:300">You have been signed out securely.</p>
+          <button onclick="window.location.reload()" style="margin-top:28px;padding:10px 24px;background:#FEE014;color:#001632;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Lato',sans-serif">
             Sign In Again
           </button>
         </div>
