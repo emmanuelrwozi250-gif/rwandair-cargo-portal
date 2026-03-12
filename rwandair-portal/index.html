@@ -140,8 +140,14 @@
        Boot screen orchestration
        ══════════════════════════════════════════════════════════ -->
   <script>
-    // Apply stored portal theme immediately
+    // Apply stored portal theme immediately (supports ?portal=gsa|ops|mgmt deep links)
     (function() {
+      const params = new URLSearchParams(window.location.search);
+      const urlPortal = params.get('portal');
+      const validPortals = ['gsa', 'ops', 'mgmt'];
+      if (urlPortal && validPortals.includes(urlPortal)) {
+        localStorage.setItem('rw_portal', urlPortal);
+      }
       const portal = localStorage.getItem('rw_portal') || 'mgmt';
       document.documentElement.dataset.portal = portal;
       document.body.dataset.portal = portal;

@@ -59,13 +59,21 @@ const ROUTES = [
 ROUTES.forEach(([hash, handler]) => registerRoute(hash, handler));
 
 // ── Determine active portal & default route ───────────────────────
+// Supports deep-link params: ?portal=gsa&route=tracking
+const _urlParams = new URLSearchParams(window.location.search);
+const _urlPortal = _urlParams.get('portal');
+const _validPortals = ['gsa', 'ops', 'mgmt'];
+if (_urlPortal && _validPortals.includes(_urlPortal)) {
+  localStorage.setItem('rw_portal', _urlPortal);
+}
 const activePortal = localStorage.getItem('rw_portal') || 'mgmt';
 const portalDefaults = {
   gsa:  'space-search',
   ops:  'inbound',
   mgmt: 'executive',
 };
-const defaultRoute = portalDefaults[activePortal] || 'executive';
+const _urlRoute = _urlParams.get('route');
+const defaultRoute = _urlRoute || portalDefaults[activePortal] || 'executive';
 
 // Apply portal theme to DOM
 document.body.dataset.portal = activePortal;
