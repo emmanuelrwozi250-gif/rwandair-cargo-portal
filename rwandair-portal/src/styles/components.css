@@ -94,7 +94,21 @@
 .btn-xs { padding: 4px 10px; font-size: var(--font-xs); border-radius: var(--r-sm); gap: 4px; }
 .btn-sm { padding: 5px 12px; font-size: var(--font-sm); }
 .btn-lg { padding: 10px 22px; font-size: var(--font-md); border-radius: var(--r-lg); }
-.btn-xl { padding: 12px 28px; font-size: var(--font-lg); border-radius: var(--r-lg); }
+/* Shorthand aliases (used across 18+ JS files) */
+.btn-pri {
+  background: var(--rw-navy);
+  color: var(--white);
+  border-color: var(--rw-navy);
+  box-shadow: 0 1px 3px rgba(0,38,74,0.30);
+}
+.btn-pri:hover { background: var(--rw-navy-dark); border-color: var(--rw-navy-dark); box-shadow: 0 3px 8px rgba(0,38,74,0.35); }
+.btn-sec {
+  background: var(--white);
+  color: var(--rw-navy);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-xs);
+}
+.btn-sec:hover { background: var(--smoke); border-color: var(--rw-navy); }
 .btn-icon { padding: 7px; width: 32px; height: 32px; }
 .btn-icon.btn-sm { padding: 5px; width: 28px; height: 28px; }
 .btn-icon.btn-lg { padding: 10px; width: 40px; height: 40px; }
@@ -166,7 +180,10 @@
   overflow: hidden;
   transition: box-shadow var(--transition), transform var(--transition);
 }
-.kpi-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.kpi-card:hover { box-shadow: var(--shadow-lg); }
+.kpi-card[onclick] { cursor: pointer; }
+.kpi-link-hint { margin-left: auto; opacity: 0; transition: opacity var(--transition); color: var(--mid); }
+.kpi-card:hover .kpi-link-hint { opacity: 0.6; }
 
 /* Colored top accent bar */
 .kpi-card::before {
@@ -702,7 +719,7 @@ tbody td.td-center { text-align: center; }
   padding: var(--sp-4) var(--sp-5);
   border-bottom: 1px solid var(--border);
   background: var(--smoke);
-  gap: var(--sp-4);
+  gap: var(--sp-3);
 }
 .flight-number {
   font-family: var(--mono);
@@ -760,7 +777,7 @@ tbody td.td-center { text-align: center; }
   box-shadow: var(--shadow-card);
   transition: all var(--transition);
 }
-.station-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.station-card:hover { box-shadow: var(--shadow-lg); }
 .station-iata {
   width: 48px; height: 48px;
   background: var(--rw-navy);

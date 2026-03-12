@@ -96,48 +96,50 @@ export function render() {
     <!-- ── 5-KPI Strip ─────────────────────────────────────────────── -->
     <div class="kpi-strip stagger">
 
-      <div class="kpi-card kpi-navy">
+      <div class="kpi-card kpi-navy" onclick="navigate('commercial')" title="View Commercial Dashboard">
         <div class="kpi-label">Network Revenue MTD</div>
         <div class="kpi-value">${formatNumber(EXEC_DATA.mtdRevenue, 'currency')}</div>
         <div class="kpi-footer">
           <span class="kpi-delta up">${icon('trending-up', 12)} ${attain}% of target</span>
-          <span class="kpi-attain ${parseFloat(attain) >= 100 ? 'over' : 'under'}">${attain}%</span>
+          <span class="kpi-link-hint">${icon('arrow-right', 10)}</span>
         </div>
         <div class="kpi-progress"><div class="kpi-progress-fill" style="width:${Math.min(parseFloat(attain),100)}%"></div></div>
       </div>
 
-      <div class="kpi-card kpi-green">
+      <div class="kpi-card kpi-green" onclick="navigate('yield')" title="View Yield Analysis">
         <div class="kpi-label">Network Load Factor</div>
         <div class="kpi-value">${EXEC_DATA.netLoadFactor}%</div>
         <div class="kpi-footer">
           <span class="kpi-delta up">${icon('trending-up', 12)} ${EXEC_DATA.lfVsLY} vs LY</span>
+          <span class="kpi-link-hint">${icon('arrow-right', 10)}</span>
         </div>
         <div class="kpi-progress"><div class="kpi-progress-fill" style="width:${EXEC_DATA.netLoadFactor}%"></div></div>
       </div>
 
-      <div class="kpi-card kpi-teal">
+      <div class="kpi-card kpi-teal" onclick="navigate('tracking')" title="View Shipment Tracking">
         <div class="kpi-label">Active Shipments</div>
         <div class="kpi-value">${formatNumber(EXEC_DATA.activeShipments)}</div>
         <div class="kpi-footer">
           <span class="kpi-delta">${icon('package', 12)} In transit &amp; warehouse</span>
+          <span class="kpi-link-hint">${icon('arrow-right', 10)}</span>
         </div>
       </div>
 
-      <div class="kpi-card ${dwellHigh ? 'kpi-red' : 'kpi-amber'}">
+      <div class="kpi-card ${dwellHigh ? 'kpi-red' : 'kpi-amber'}" onclick="navigate('dwell-alerts')" title="View Dwell Alerts">
         <div class="kpi-label">Dwell Alerts</div>
         <div class="kpi-value">${EXEC_DATA.dwellAlerts}</div>
         <div class="kpi-footer">
           <span class="kpi-delta ${dwellHigh ? 'down' : ''}">${icon('alert-triangle', 12)} SLA breaches</span>
-          ${dwellHigh ? `<span class="kpi-attain under">High</span>` : ''}
+          <span class="kpi-link-hint">${icon('arrow-right', 10)}</span>
         </div>
       </div>
 
-      <div class="kpi-card ${cassHigh ? 'kpi-red' : 'kpi-purple'}">
+      <div class="kpi-card ${cassHigh ? 'kpi-red' : 'kpi-purple'}" onclick="navigate('gsa-performance')" title="View GSA Performance">
         <div class="kpi-label">CASS Outstanding</div>
         <div class="kpi-value">${formatNumber(EXEC_DATA.cassOutstanding, 'currency')}</div>
         <div class="kpi-footer">
           <span class="kpi-delta ${cassHigh ? 'down' : ''}">${icon('credit-card', 12)} GSA receivables</span>
-          ${cassHigh ? `<span class="kpi-attain under">Review</span>` : ''}
+          <span class="kpi-link-hint">${icon('arrow-right', 10)}</span>
         </div>
       </div>
 
@@ -264,28 +266,6 @@ export function render() {
           <span>Jun 2026</span>
         </div>
       </div>
-    </div>
-
-    <!-- ── YTD Summary Row ─────────────────────────────────────────── -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-      ${[
-        { label:'YTD Revenue',     val: formatNumber(EXEC_DATA.ytdRevenue,'currency'), sub:'vs $17.2M LY',    icon:'dollar-sign', clr:'var(--portal-primary)', delta:'+8.2%', up:true  },
-        { label:'Avg LF MTD',      val: EXEC_DATA.netLoadFactor+'%',                  sub:'vs 76.1% LY',     icon:'percent',     clr:'var(--green)',          delta:'+3.1pp',up:true  },
-        { label:'YTD Shipments',   val: '14,280',                                     sub:'+6.4% vs LY',     icon:'package',     clr:'var(--teal)',           delta:'+6.4%', up:true  },
-        { label:'FY Attainment',   val: fyPct+'%',                                    sub:'on track',        icon:'target',      clr:'var(--amber)',          delta:'On track',up:true },
-      ].map(k => `
-        <div class="data-row" style="padding:14px 16px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg)">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <span style="color:${k.clr}">${icon(k.icon, 14)}</span>
-            <span style="font-size:11px;color:var(--mid);font-weight:500">${k.label}</span>
-          </div>
-          <div style="font-size:20px;font-weight:800;color:var(--dark)">${k.val}</div>
-          <div style="margin-top:4px;display:flex;align-items:center;gap:6px">
-            <span style="font-size:11px;color:var(--mid)">${k.sub}</span>
-            <span class="kpi-delta ${k.up ? 'up' : 'down'}" style="font-size:10px">${k.delta}</span>
-          </div>
-        </div>
-      `).join('')}
     </div>
 
   </div>`;

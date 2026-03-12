@@ -156,34 +156,23 @@ body {
   flex-shrink: 0;
 }
 
-/* Live UTC Clock */
-.topbar-clock {
+/* Compact UTC Clock */
+.topbar-clock-compact {
   display: flex;
   align-items: center;
-  gap: var(--sp-2);
-  padding: 5px 12px;
+  gap: 2px;
+  padding: 4px 10px;
   border-radius: var(--r-md);
   background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
-}
-.clock-label {
-  font-size: var(--font-xs);
-  color: rgba(255,255,255,0.4);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-.clock-time {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--portal-accent);
-  letter-spacing: 0.04em;
-  min-width: 58px;
+  color: rgba(255,255,255,0.55);
 }
-.clock-date {
-  font-size: var(--font-xs);
+.clock-utc {
+  font-size: 10px;
   color: rgba(255,255,255,0.35);
+  margin-left: 1px;
 }
 
 /* Cmd+K search */

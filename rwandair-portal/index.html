@@ -54,13 +54,6 @@
        ══════════════════════════════════════════════════════════ -->
   <div id="boot-screen" role="status" aria-label="Loading RwandAir Cargo Intelligence Portal">
 
-    <!-- Floating plane decoration -->
-    <div class="boot-plane">
-      <svg width="280" height="280" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19.5 2.5S18 1 16.5 2.5L13 6 4.8 4.2a.5.5 0 0 0-.5.3l-.9 2.6a1 1 0 0 0 .1.9l6.8 5.4-3.2 3.2-2.7-.9-1.2 1.2 2.5 2.5 2.5 2.5 1.2-1.2-.9-2.7 3.2-3.2 5.4 6.8a1 1 0 0 0 .9.1l2.6-.9a.5.5 0 0 0 .3-.5z"/>
-      </svg>
-    </div>
-
     <!-- Logo & wordmark -->
     <div class="boot-logo">
       <div class="boot-mark">
@@ -77,7 +70,7 @@
       <div class="boot-progress-bar">
         <div class="boot-progress-fill" id="boot-fill"></div>
       </div>
-      <div class="boot-status" id="boot-status">Initialising systems…</div>
+      <div class="boot-status" id="boot-status">Loading…</div>
     </div>
 
   </div>
@@ -153,43 +146,23 @@
       document.body.dataset.portal = portal;
     })();
 
-    // Boot status messages
-    const bootMessages = [
-      'Connecting to cargo network…',
-      'Loading flight schedules…',
-      'Fetching revenue data…',
-      'Preparing dashboards…',
-      'All systems operational.',
-    ];
-    let msgIdx = 0;
-    const statusEl = document.getElementById('boot-status');
-    const msgInterval = setInterval(() => {
-      if (statusEl && msgIdx < bootMessages.length) {
-        statusEl.textContent = bootMessages[msgIdx++];
-      } else {
-        clearInterval(msgInterval);
-      }
-    }, 400);
-
     // Dismiss boot screen
     function dismissBoot() {
       const boot = document.getElementById('boot-screen');
       if (!boot || boot._dismissed) return;
       boot._dismissed = true;
-      clearInterval(msgInterval);
-      if (statusEl) statusEl.textContent = 'All systems operational.';
       setTimeout(() => {
         boot.style.opacity = '0';
-        boot.style.transition = 'opacity 0.45s ease';
+        boot.style.transition = 'opacity 0.4s ease';
         document.body.classList.add('ready');
-        setTimeout(() => boot.remove(), 500);
-      }, 300);
+        setTimeout(() => boot.remove(), 450);
+      }, 100);
     }
 
-    // Primary: dismiss on load + 800ms
-    window.addEventListener('load', () => setTimeout(dismissBoot, 800));
-    // Fallback: dismiss after 4s regardless
-    setTimeout(dismissBoot, 4000);
+    // Primary: dismiss on load + 400ms
+    window.addEventListener('load', () => setTimeout(dismissBoot, 400));
+    // Fallback: dismiss after 2s regardless
+    setTimeout(dismissBoot, 2000);
   </script>
 
 </body>

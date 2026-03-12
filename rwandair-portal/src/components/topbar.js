@@ -88,12 +88,10 @@ export function renderTopbar() {
     <!-- Right: clock + search + bell + user -->
     <div class="topbar-right">
 
-      <!-- Live UTC Clock -->
-      <div class="topbar-clock" id="topbar-clock" title="Current time in UTC">
-        <span class="clock-label">UTC</span>
-        <span class="clock-time" id="clock-time">--:--:--</span>
-        <span class="clock-date" id="clock-date"></span>
-      </div>
+      <!-- UTC Clock (compact) -->
+      <span class="topbar-clock-compact" id="topbar-clock" title="UTC time">
+        <span id="clock-time">--:--</span><span class="clock-utc">Z</span>
+      </span>
 
       <!-- Cmd+K Search -->
       <button class="topbar-search-btn" id="topbar-search-btn" title="Quick search (Cmd+K)" aria-label="Open search">
@@ -141,16 +139,6 @@ export function renderTopbar() {
             </button>
           </div>
           <div class="dropdown-section">
-            <div style="padding:8px 16px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid)">Switch Portal</div>
-            ${PORTALS.map(p => `
-              <button class="dropdown-item ${p.id === _currentPortal ? 'font-semi' : ''}" onclick="switchPortal('${p.id}')">
-                ${icon(p.icon, 14)}
-                ${p.label}
-                ${p.id === _currentPortal ? `<span style="margin-left:auto;font-size:10px;color:var(--mid)">Active</span>` : ''}
-              </button>
-            `).join('')}
-          </div>
-          <div class="dropdown-section">
             <button class="dropdown-item danger" onclick="handleLogout()">
               ${icon('log-out', 14)}
               Sign Out
@@ -172,18 +160,11 @@ function startClock() {
     const now = new Date();
     const h = String(now.getUTCHours()).padStart(2, '0');
     const m = String(now.getUTCMinutes()).padStart(2, '0');
-    const s = String(now.getUTCSeconds()).padStart(2, '0');
     const timeEl = document.getElementById('clock-time');
-    const dateEl = document.getElementById('clock-date');
-    if (timeEl) timeEl.textContent = `${h}:${m}:${s}`;
-    if (dateEl) {
-      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      dateEl.textContent = `${days[now.getUTCDay()]} ${now.getUTCDate()} ${months[now.getUTCMonth()]}`;
-    }
+    if (timeEl) timeEl.textContent = `${h}:${m}`;
   }
   tick();
-  _clockInterval = setInterval(tick, 1000);
+  _clockInterval = setInterval(tick, 60000);
 }
 
 // ── Portal switching ───────────────────────────────────────────────

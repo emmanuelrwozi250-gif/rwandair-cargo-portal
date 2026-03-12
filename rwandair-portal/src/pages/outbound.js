@@ -138,7 +138,7 @@ function _renderCard(f) {
           <span class="badge" style="background:${sc}20;color:${sc}">${f.status}</span>
         </div>
       </div>
-      <div style="display:flex;gap:6px;align-items:center;margin-top:8px">${staffBadgesHtml(getFlightStaff(f.flight))}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:6px;max-height:48px;overflow:hidden">${staffBadgesHtml(getFlightStaff(f.flight))}</div>
       <div class="outbound-actions">
         ${!f.closed && f.status !== 'Cutoff Passed'
           ? `<button class="btn btn-sec btn-sm" onclick="showToast('Cargo list printed','info','','2000')">Print Cargo List</button>

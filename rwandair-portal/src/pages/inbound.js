@@ -125,7 +125,7 @@ function _renderFlightCard(f) {
         <div class="flight-stat"><span class="stat-label">AWBs</span><span>${f.awbs}</span></div>
         <div class="flight-stat"><span class="stat-label">Pre-arrival</span><span style="color:${checkedCount>=5?'var(--green)':checkedCount>=3?'var(--amber)':'var(--red)'}">${checkedCount}/${CHECKLIST_ITEMS.length}</span></div>
       </div>
-      <div style="display:flex;gap:6px;align-items:center;margin-top:8px">${staffBadgesHtml(getFlightStaff(f.flight))}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:6px;max-height:48px;overflow:hidden">${staffBadgesHtml(getFlightStaff(f.flight))}</div>
     </div>
     ${active ? `
     <div class="flight-card-body">

@@ -103,8 +103,8 @@ setTimeout(() => {
   showToast(
     `${portalNames[activePortal] || 'Intelligence'} Portal`,
     'info',
-    'All systems operational · W25/S26',
-    3000
+    'All systems operational',
+    1500
   );
 }, 600);
 

@@ -56,11 +56,6 @@
   to   { background-position: 600px 0; }
 }
 
-@keyframes countUp {
-  from { transform: translateY(100%); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-}
-
 @keyframes kpiFill {
   from { width: 0; }
 }
@@ -75,16 +70,6 @@
 
 @keyframes bootFadeOut {
   to { opacity: 0; pointer-events: none; }
-}
-
-@keyframes planeFloat {
-  0%, 100% { transform: translateY(0) rotate(-15deg); }
-  50%       { transform: translateY(-12px) rotate(-10deg); }
-}
-
-@keyframes pathDraw {
-  from { stroke-dashoffset: 1000; }
-  to   { stroke-dashoffset: 0; }
 }
 
 @keyframes blink {
@@ -168,13 +153,6 @@
 .live-dot.amber { background: var(--amber); }
 .live-dot.red   { background: var(--red); animation: blink 1s step-start infinite; }
 
-/* ── Count-up number animation ──────────────────────────────────── */
-.count-up { animation: countUp 0.4s var(--ease-spring); }
-
-/* ── Hover lift ─────────────────────────────────────────────────── */
-.hover-lift { transition: transform var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease); }
-.hover-lift:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
-
 /* ── Transitions for interactive elements ───────────────────────── */
 .transition-all   { transition: all var(--transition); }
 .transition-bg    { transition: background var(--transition); }
@@ -256,7 +234,7 @@
   height: 100%;
   background: linear-gradient(90deg, var(--rw-navy) 0%, var(--rw-gold) 100%);
   border-radius: var(--r-full);
-  animation: bootProgress 2.2s var(--ease) forwards;
+  animation: bootProgress 1.0s var(--ease) forwards;
 }
 .boot-status {
   font-size: var(--font-xs);
@@ -267,26 +245,10 @@
   min-height: 18px;
 }
 
-/* Floating plane decoration */
-.boot-plane {
-  position: absolute;
-  bottom: 15%;
-  right: 15%;
-  color: rgba(255,255,255,0.04);
-  animation: planeFloat 4s ease-in-out infinite;
-}
-
 /* ── Report generation animation ────────────────────────────────── */
 .report-progress .progress-fill {
   animation: kpiFill 1.2s var(--ease) forwards;
   width: 0;
-}
-
-/* ── Checkmark success animation ────────────────────────────────── */
-.check-anim {
-  stroke-dasharray: 50;
-  stroke-dashoffset: 50;
-  animation: pathDraw 0.5s var(--ease) 0.1s forwards;
 }
 
 /* ── Reduced motion ─────────────────────────────────────────────── */

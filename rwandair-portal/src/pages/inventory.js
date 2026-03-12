@@ -16,6 +16,8 @@ let _statusFilter = '';
 let _searchQuery = '';
 let _expanded = new Set();
 let _dwellInterval = null;
+let _sortField = null;
+let _sortDir = 'asc';
 
 export function render() {
   const total = INVENTORY_ITEMS.length;
@@ -124,18 +126,15 @@ export function render() {
     <!-- ── Data table ──────────────────────────────────────────────── -->
     <div class="card" id="inventory-table-wrap">
       <table class="data-table" id="inventory-table">
-        <thead>
+        <thead id="inventory-thead">
           <tr>
             <th></th>
-            <th>AWB</th>
-            <th>Direction</th>
-            <th>Route</th>
-            <th>Commodity</th>
-            <th>Weight / Pcs</th>
-            <th>Zone</th>
-            <th>Location</th>
-            <th>Status</th>
-            <th>Dwell Time</th>
+            <th class="sortable" onclick="inventorySort('awb')">AWB</th>
+            <th class="sortable" onclick="inventorySort('route')">Route</th>
+            <th class="sortable" onclick="inventorySort('weight')">Weight / Pcs</th>
+            <th class="sortable" onclick="inventorySort('zone')">Zone</th>
+            <th class="sortable" onclick="inventorySort('status')">Status</th>
+            <th class="sortable" onclick="inventorySort('dwell')">Dwell Time</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -198,6 +197,30 @@ function _getFiltered() {
     );
   }
 
+  // Sort
+  if (_sortField) {
+    items = [...items].sort((a, b) => {
+      let va, vb;
+      switch (_sortField) {
+        case 'awb':    va = a.awb;      vb = b.awb;      break;
+        case 'route':  va = a.route;    vb = b.route;    break;
+        case 'weight': va = a.weight;   vb = b.weight;   break;
+        case 'zone':   va = a.zone;     vb = b.zone;     break;
+        case 'status': va = a.status;   vb = b.status;   break;
+        case 'dwell':  va = a.dwellMin; vb = b.dwellMin; break;
+        default: return 0;
+      }
+      if (typeof va === 'number') {
+        return _sortDir === 'asc' ? va - vb : vb - va;
+      }
+      va = String(va).toLowerCase();
+      vb = String(vb).toLowerCase();
+      if (va < vb) return _sortDir === 'asc' ? -1 : 1;
+      if (va > vb) return _sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
   return items;
 }
 
@@ -220,9 +243,22 @@ function _directionBadge(dir) {
     : `<span class="badge badge-blue">Import</span>`;
 }
 
+function _updateSortHeaders() {
+  const thead = document.getElementById('inventory-thead');
+  if (!thead) return;
+  thead.querySelectorAll('th.sortable').forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+    const field = th.getAttribute('onclick');
+    if (_sortField && field && field.includes(`'${_sortField}'`)) {
+      th.classList.add(_sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+    }
+  });
+}
+
 function _renderTable() {
   const tbody = document.getElementById('inventory-tbody');
   if (!tbody) return;
+  _updateSortHeaders();
   const data = _getFiltered();
 
   tbody.innerHTML = data.map(item => {
@@ -235,12 +271,9 @@ function _renderTable() {
     <tr class="table-row" id="inv-row-${item.awb.replace(/[^a-z0-9]/gi, '')}" onclick="toggleInventoryRow('${esc(item.awb)}')">
       <td><button class="expand-btn">${expanded ? '▼' : '▶'}</button></td>
       <td class="mono text-sm">${esc(item.awb)}</td>
-      <td>${_directionBadge(item.direction)}</td>
       <td><strong>${esc(item.route)}</strong></td>
-      <td class="text-sm">${esc(item.commodity)}</td>
       <td>${formatNumber(item.weight, 'weight')} · ${item.pieces}pc</td>
       <td class="text-sm">${esc(item.zone)}</td>
-      <td class="text-sm mono">${esc(item.bin)}</td>
       <td>${_statusBadge(item.status)}</td>
       <td class="dwell-cell" data-awb="${esc(item.awb)}">${formatDwell(item.dwellMin)}</td>
       <td onclick="event.stopPropagation()">
@@ -250,17 +283,18 @@ function _renderTable() {
     </tr>
     ${expanded ? `
     <tr class="expand-row">
-      <td colspan="11">
+      <td colspan="8">
         <div class="expand-content">
           <div class="expand-grid">
+            <div><span class="text-mid">Direction</span><br>${_directionBadge(item.direction)}</div>
+            <div><span class="text-mid">Commodity</span><br><strong>${esc(item.commodity)}</strong></div>
+            <div><span class="text-mid">Bin Location</span><br><strong class="mono">${esc(item.bin)}</strong></div>
             <div><span class="text-mid">Handler</span><br><strong>${esc(item.handler)}</strong></div>
             <div><span class="text-mid">SHC</span><br><strong class="badge-small">${esc(item.shc)}</strong></div>
             ${item.temp ? `<div><span class="text-mid">Temperature</span><br><strong style="color:${parseFloat(item.temp) > 8 ? 'var(--red)' : 'var(--green)'}">${esc(item.temp)}</strong></div>` : ''}
             ${item.inboundFlight ? `<div><span class="text-mid">Inbound Flight</span><br><strong class="mono">${esc(item.inboundFlight)}</strong></div>` : ''}
             ${item.outboundFlight ? `<div><span class="text-mid">Outbound Flight</span><br><strong class="mono">${esc(item.outboundFlight)}</strong></div>` : ''}
             <div><span class="text-mid">Station</span><br><strong>${esc(item.station)}</strong></div>
-            <div><span class="text-mid">Direction</span><br><strong>${esc(item.direction)}</strong></div>
-            <div><span class="text-mid">Bin Location</span><br><strong class="mono">${esc(item.bin)}</strong></div>
           </div>
           <div style="margin-top:10px">
             <span class="text-mid" style="display:block;margin-bottom:4px">Staff Assignment</span>
@@ -366,6 +400,16 @@ window.inventoryStatusFilter = function(status) {
 
 window.inventorySearch = function(q) {
   _searchQuery = q.trim();
+  _renderTable();
+};
+
+window.inventorySort = function(field) {
+  if (_sortField === field) {
+    _sortDir = _sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    _sortField = field;
+    _sortDir = 'asc';
+  }
   _renderTable();
 };
 

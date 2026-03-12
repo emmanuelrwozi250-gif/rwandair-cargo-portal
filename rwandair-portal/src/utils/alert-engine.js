@@ -45,32 +45,32 @@ export const ALERT_TYPES = {
 // ── 18 alert scenarios with staggered delays ────────────────────
 const ALERT_SCENARIOS = [
   {
-    delay: 15000,
+    delay: 30000,
     type: 'UPLIFT',
     data: { awb: '459-64810293', flight: 'WB710', station: 'KGL', weight: 420 }
   },
   {
-    delay: 38000,
+    delay: 75000,
     type: 'DWELL_WARNING',
     data: { awb: '459-64813401', station: 'NBO', dwell: '34hr 15min' }
   },
   {
-    delay: 62000,
+    delay: 120000,
     type: 'OFFLOAD',
     data: { awb: '459-66281540', flight: 'WB700', station: 'NBO', reason: 'Capacity shortage — priority cargo loaded' }
   },
   {
-    delay: 95000,
+    delay: 180000,
     type: 'DELIVERY',
     data: { awb: '459-64801122', destination: 'KGL', consignee: 'M. Habimana' }
   },
   {
-    delay: 120000,
+    delay: 240000,
     type: 'CUSTOMS_CLEARED',
     data: { awb: '459-64815720', station: 'KGL' }
   },
   {
-    delay: 155000,
+    delay: 310000,
     type: 'TEMP_EXCURSION',
     data: { awb: '459-66271704', station: 'DXB', temp: '12.4' }
   },
@@ -201,10 +201,13 @@ function _fireAlert(scenario) {
     window.addCargoNotification(notification);
   }
 
-  // 3. Show toast
+  // 3. Show toast (throttle: max 2 visible at once)
   if (typeof window.showToast === 'function') {
-    const toastType = severity === 'critical' ? 'error' : severity === 'warning' ? 'warning' : 'info';
-    window.showToast(title, toastType, message, 5000);
+    const visibleToasts = document.querySelectorAll('.toast').length;
+    if (visibleToasts < 2) {
+      const toastType = severity === 'critical' ? 'error' : severity === 'warning' ? 'warning' : 'info';
+      window.showToast(title, toastType, message, 5000);
+    }
   }
 
   // 4. If OFFLOAD, also dispatch disruption event
