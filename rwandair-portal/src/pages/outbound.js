@@ -6,6 +6,7 @@
 import { formatNumber, esc } from '../utils/format.js';
 import { showToast } from '../components/toast.js';
 import { icon } from '../utils/icons.js';
+import { getFlightStaff, staffBadgesHtml } from '../data/staff.js';
 
 // Today's outbound flights from KGL hub
 const OUTBOUND_FLIGHTS = [
@@ -137,6 +138,7 @@ function _renderCard(f) {
           <span class="badge" style="background:${sc}20;color:${sc}">${f.status}</span>
         </div>
       </div>
+      <div style="display:flex;gap:6px;align-items:center;margin-top:8px">${staffBadgesHtml(getFlightStaff(f.flight))}</div>
       <div class="outbound-actions">
         ${!f.closed && f.status !== 'Cutoff Passed'
           ? `<button class="btn btn-sec btn-sm" onclick="showToast('Cargo list printed','info','','2000')">Print Cargo List</button>

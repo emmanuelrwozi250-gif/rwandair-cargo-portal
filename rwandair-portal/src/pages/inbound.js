@@ -8,6 +8,7 @@ import { formatDate, formatNumber, esc } from '../utils/format.js';
 import { getChecklist, setChecklist } from '../utils/storage.js';
 import { showToast } from '../components/toast.js';
 import { icon } from '../utils/icons.js';
+import { getFlightStaff, staffBadgesHtml } from '../data/staff.js';
 
 // Today's inbound flights (arriving 11 Mar 2026)
 const INBOUND_FLIGHTS = [
@@ -124,6 +125,7 @@ function _renderFlightCard(f) {
         <div class="flight-stat"><span class="stat-label">AWBs</span><span>${f.awbs}</span></div>
         <div class="flight-stat"><span class="stat-label">Pre-arrival</span><span style="color:${checkedCount>=5?'var(--green)':checkedCount>=3?'var(--amber)':'var(--red)'}">${checkedCount}/${CHECKLIST_ITEMS.length}</span></div>
       </div>
+      <div style="display:flex;gap:6px;align-items:center;margin-top:8px">${staffBadgesHtml(getFlightStaff(f.flight))}</div>
     </div>
     ${active ? `
     <div class="flight-card-body">

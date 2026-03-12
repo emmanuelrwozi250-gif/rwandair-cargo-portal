@@ -47,6 +47,7 @@ const PORTAL_NAV = {
         label: 'Warehouse & Cargo',
         items: [
           { route: 'warehouse',       label: 'Warehouse',       icon: 'warehouse', badge: '3', badgeType: 'warn' },
+          { route: 'inventory',       label: 'Inventory',       icon: 'list',      badge: null },
           { route: 'dwell-alerts',    label: 'Dwell Alerts',    icon: 'dwell',     badge: '7', badgeType: 'danger' },
           { route: 'dangerous-goods', label: 'Dangerous Goods', icon: 'hazmat',    badge: null },
           { route: 'temperature',     label: 'Temperature Control', icon: 'temperature', badge: '1', badgeType: 'danger' },
@@ -55,8 +56,9 @@ const PORTAL_NAV = {
       {
         label: 'Tracking',
         items: [
-          { route: 'tracking',     label: 'Track Shipment',  icon: 'tracking',  badge: null },
-          { route: 'bookings',     label: 'All Bookings',    icon: 'bookings',  badge: null },
+          { route: 'tracking',     label: 'Track Shipment',  icon: 'tracking',        badge: null },
+          { route: 'bookings',     label: 'All Bookings',    icon: 'bookings',        badge: null },
+          { route: 'disruptions',  label: 'Disruptions',     icon: 'alert-triangle',  badge: '3', badgeType: 'danger' },
         ]
       }
     ]
@@ -88,7 +90,9 @@ const PORTAL_NAV = {
           { route: 'inbound',         label: 'Inbound Flights',     icon: 'plane-in',   badge: null },
           { route: 'outbound',        label: 'Outbound Flights',    icon: 'plane-out',  badge: null },
           { route: 'warehouse',       label: 'Warehouse',           icon: 'warehouse',  badge: null },
+          { route: 'inventory',       label: 'Inventory',           icon: 'list',       badge: null },
           { route: 'dwell-alerts',    label: 'Dwell Alerts',        icon: 'dwell',      badge: '7', badgeType: 'danger' },
+          { route: 'disruptions',     label: 'Disruptions',         icon: 'alert-triangle', badge: '3', badgeType: 'danger' },
           { route: 'temperature',     label: 'Temperature',         icon: 'temperature',badge: null },
         ]
       },

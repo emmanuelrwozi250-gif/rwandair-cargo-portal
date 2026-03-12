@@ -112,7 +112,11 @@ function _renderPanel() {
 
 function _renderItem(n) {
   const sev = { critical: 'var(--red)', warning: 'var(--amber)', info: 'var(--teal)' };
-  const icons = { DWELL: '⏰', BOOKING: '📋', ALERT: '⚠', INFO: 'ℹ' };
+  const icons = {
+    DWELL: '⏰', BOOKING: '📋', ALERT: '⚠', INFO: 'ℹ',
+    UPLIFT: '✈', OFFLOAD: '⚠', DELIVERY: '✓', DWELL_WARNING: '⏰',
+    DWELL_CRITICAL: '🔴', CUSTOMS_CLEARED: '🛡', TEMP_EXCURSION: '🌡',
+  };
   const color = sev[n.severity] || 'var(--teal)';
   const icon = icons[n.type] || 'ℹ';
 
@@ -161,4 +165,20 @@ window.markAllRead = function() {
 
 window.closeNotifPanel = function() {
   _closePanel();
+};
+
+// ── Public API for alert engine ──────────────────────────────────
+
+/** Add a notification from the alert engine */
+window.addCargoNotification = function(notif) {
+  _state.items.unshift({
+    ...notif,
+    id: notif.id || Date.now() + Math.random(),
+    time: notif.time || new Date().toISOString(),
+    read: false,
+  });
+  // Keep max 50 notifications
+  if (_state.items.length > 50) _state.items.length = 50;
+  _updateBadge();
+  if (_state.panelOpen) _refreshPanel();
 };

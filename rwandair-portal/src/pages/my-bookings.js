@@ -6,6 +6,7 @@
 import { BOOKINGS_DATA } from '../data/bookings.js';
 import { formatNumber, formatDate, esc, debounce } from '../utils/format.js';
 import { showToast } from '../components/toast.js';
+import { getAwbStaff, staffBadgesHtml } from '../data/staff.js';
 
 const PAGE_SIZE = 8;
 let _filtered = [...BOOKINGS_DATA];
@@ -273,6 +274,7 @@ window.openBookingPanel = function(id) {
       <div class="detail-row"><span>Volume</span><strong>${b.volume} CBM</strong></div>
       <div class="detail-row"><span>Rate</span><strong>$${b.rate}/kg</strong></div>
       <div class="detail-row"><span>Total Charge</span><strong>${formatNumber(b.charge, 'currency')}</strong></div>
+      <div class="detail-row"><span>Staff Assignment</span><span style="display:flex;gap:6px">${staffBadgesHtml(getAwbStaff(b.awb))}</span></div>
     </div>
     <div class="detail-actions">
       <button class="btn btn-sec btn-sm" onclick="showToast('AWB document generated','success','PDF download would open','3000')">Print AWB</button>

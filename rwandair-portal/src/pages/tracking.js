@@ -7,6 +7,7 @@ import { AWB_DATA, TRACKABLE_AWBS } from '../data/awbs.js';
 import { formatDate, formatDwell, ragClass, esc, debounce } from '../utils/format.js';
 import { showToast } from '../components/toast.js';
 import { icon } from '../utils/icons.js';
+import { getAwbStaff, staffBadgesHtml } from '../data/staff.js';
 
 const STATUS_STEPS = ['Booked','Accepted','ULD Build-up','Uplifted','In Transit','Connecting','Customs Clearance','Out for Delivery','Delivered'];
 
@@ -195,6 +196,7 @@ function _showResult(awb) {
         <div class="detail-row"><span>Total Charge</span><strong>$${awb.totalCharge.toFixed(2)}</strong></div>
         ${awb.specialHandling ? `<div class="detail-row"><span>SHC</span><span class="badge-small">${awb.specialHandling}</span></div>` : ''}
         <div class="detail-row"><span>Booked</span><span>${formatDate(awb.bookedDate,'short')}</span></div>
+        <div class="detail-row"><span>Staff</span><span style="display:flex;gap:6px">${staffBadgesHtml(getAwbStaff(awb.awb))}</span></div>
       </div>
       <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-sec btn-sm" onclick="shareTrackLink('${awb.awb}')">Share Link</button>

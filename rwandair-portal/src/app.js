@@ -11,6 +11,7 @@ import { renderSidebar }                          from './components/sidebar.js'
 import { initNotifications }                      from './components/notifications.js';
 import { initCommandPalette }                     from './components/command-palette.js';
 import { initModals }                             from './components/modals.js';
+import { initAlertEngine }                        from './utils/alert-engine.js';
 
 // ── Page Handlers ─────────────────────────────────────────────────
 import { handler as spaceSearchHandler }    from './pages/space-search.js?v=4';
@@ -32,6 +33,8 @@ import { handler as networkHandler }        from './pages/network.js?v=4';
 import { handler as executiveHandler }      from './pages/executive.js?v=4';
 import { handler as reportsHandler }        from './pages/reports.js?v=4';
 import { handler as contractTrackerHandler } from './pages/contract-tracker.js?v=4';
+import { handler as inventoryHandler }       from './pages/inventory.js?v=4';
+import { handler as disruptionsHandler }     from './pages/disruptions.js?v=4';
 
 // ── Register all routes ───────────────────────────────────────────
 const ROUTES = [
@@ -54,6 +57,8 @@ const ROUTES = [
   ['executive',       executiveHandler],
   ['reports',         reportsHandler],
   ['contract-tracker', contractTrackerHandler],
+  ['inventory',        inventoryHandler],
+  ['disruptions',      disruptionsHandler],
 ];
 
 ROUTES.forEach(([hash, handler]) => registerRoute(hash, handler));
@@ -87,6 +92,7 @@ initTopbarInteractivity();   // start UTC clock, Cmd+K binding, portal theme
 initNotifications();
 initCommandPalette();
 initModals();
+initAlertEngine();
 
 // ── Start router ──────────────────────────────────────────────────
 initRouter(defaultRoute);

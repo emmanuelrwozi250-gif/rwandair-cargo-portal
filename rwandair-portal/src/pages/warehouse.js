@@ -6,6 +6,7 @@
 import { formatDate, formatDwell, esc } from '../utils/format.js';
 import { showToast } from '../components/toast.js';
 import { icon } from '../utils/icons.js';
+import { getAwbStaff, staffBadgesHtml } from '../data/staff.js';
 
 // Mock transit shipments in warehouse
 const TRANSIT_AWBS = [
@@ -175,6 +176,7 @@ function _renderTable() {
             <div><span class="text-mid">SHC</span><br><strong class="badge-small">${esc(a.shc)}</strong></div>
             ${a.temp ? `<div><span class="text-mid">Temperature</span><br><strong style="color:${parseFloat(a.temp)>8?'var(--red)':'var(--green)'}">${esc(a.temp)}</strong></div>` : ''}
             <div><span class="text-mid">Status</span><br><strong style="color:${sc}">${esc(a.status)}</strong></div>
+            <div><span class="text-mid">Staff</span><br>${staffBadgesHtml(getAwbStaff(a.awb))}</div>
           </div>
           <div class="expand-actions">
             <button class="btn btn-pri btn-sm" onclick="showToast('ULD assignment confirmed','success','${esc(a.awb)} loaded to flight ${esc(a.flight)}','4000')">Confirm ULD Build</button>
