@@ -95,8 +95,9 @@ const PORTAL_NAV = {
       {
         label: 'Management',
         items: [
-          { route: 'claims',          label: 'Claims',              icon: 'claims',     badge: null },
-          { route: 'reports',         label: 'Reports',             icon: 'reports',    badge: null },
+          { route: 'claims',            label: 'Claims',              icon: 'claims',     badge: null },
+          { route: 'contract-tracker', label: 'Contracts',           icon: 'contract',   badge: null },
+          { route: 'reports',          label: 'Reports',             icon: 'reports',    badge: null },
         ]
       }
     ]

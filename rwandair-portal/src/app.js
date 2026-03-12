@@ -31,6 +31,7 @@ import { handler as capacityHandler }       from './pages/capacity.js?v=4';
 import { handler as networkHandler }        from './pages/network.js?v=4';
 import { handler as executiveHandler }      from './pages/executive.js?v=4';
 import { handler as reportsHandler }        from './pages/reports.js?v=4';
+import { handler as contractTrackerHandler } from './pages/contract-tracker.js?v=4';
 
 // ── Register all routes ───────────────────────────────────────────
 const ROUTES = [
@@ -52,6 +53,7 @@ const ROUTES = [
   ['network',         networkHandler],
   ['executive',       executiveHandler],
   ['reports',         reportsHandler],
+  ['contract-tracker', contractTrackerHandler],
 ];
 
 ROUTES.forEach(([hash, handler]) => registerRoute(hash, handler));
