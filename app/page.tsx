@@ -1,113 +1,208 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { ArrowRight, Package, Shield, BarChart3, FileCheck, CheckCircle } from 'lucide-react'
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="min-h-screen bg-white">
+      {/* Navigation */}
+      <nav className="bg-[#02284d] border-b border-white/10">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 bg-[#E4DC1F] rounded-lg flex items-center justify-center">
+              <span className="text-[#02284d] font-bold text-xs">A</span>
+            </div>
+            <span className="font-bold text-white text-xl tracking-tight">ALTITUDE</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/login"
+              className="text-sm font-medium text-blue-200 hover:text-white transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/register"
+              className="bg-[#E4DC1F] text-[#02284d] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#d4cc10] transition-colors"
+            >
+              Register
+            </Link>
+          </div>
         </div>
-      </div>
+      </nav>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      {/* Hero Section */}
+      <section className="bg-[#02284d] text-white">
+        <div className="max-w-6xl mx-auto px-6 py-20 md:py-28">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 text-sm text-blue-200 mb-6 border border-white/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E4DC1F]"></span>
+              Built for African Export SMEs
+            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-6">
+              Manage your exports<br />
+              <span className="text-[#E4DC1F]">with confidence.</span>
+            </h1>
+            <p className="text-lg text-blue-100 mb-10 leading-relaxed max-w-2xl">
+              Altitude is the structured export workflow and cargo coordination platform
+              for African SMEs. Manage shipments, handle documentation, and build a
+              verified export history — all in one place.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/register"
+                className="inline-flex items-center justify-center gap-2 bg-[#E4DC1F] text-[#02284d] px-6 py-3.5 rounded-lg font-semibold text-base hover:bg-[#d4cc10] transition-colors"
+              >
+                Register as Exporter
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center gap-2 bg-white/10 text-white border border-white/20 px-6 py-3.5 rounded-lg font-semibold text-base hover:bg-white/20 transition-colors"
+              >
+                Sign In
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
+      {/* Stats strip */}
+      <section className="bg-[#011d3a] text-white py-10">
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {[
+            { value: '100+', label: 'Exporters Supported' },
+            { value: '500+', label: 'Shipments Processed' },
+            { value: '95%', label: 'Uptime Guarantee' },
+            { value: '<3 min', label: 'Shipment Creation' },
+          ].map((stat) => (
+            <div key={stat.label}>
+              <div className="text-2xl font-bold text-[#E4DC1F]">{stat.value}</div>
+              <div className="text-sm text-blue-200 mt-1">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl font-bold text-[#02284d] mb-3">
+              Everything you need to export
+            </h2>
+            <p className="text-gray-600 max-w-xl mx-auto">
+              A complete platform purpose-built for African SME exporters — from
+              documentation to cargo space coordination.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                icon: Package,
+                title: 'Shipment Management',
+                description:
+                  'Create and track shipments from draft to delivery. Every shipment gets a unique ID and full audit trail.',
+              },
+              {
+                icon: FileCheck,
+                title: 'Document Handling',
+                description:
+                  'Upload and manage all export documents — invoices, packing lists, phytosanitary certificates — in one place.',
+              },
+              {
+                icon: Shield,
+                title: 'Cargo Coordination',
+                description:
+                  'Request air cargo space directly through the platform. Our team handles airline coordination on your behalf.',
+              },
+              {
+                icon: BarChart3,
+                title: 'Export Analytics',
+                description:
+                  'Track your total export volume, value, and on-time delivery rate. Build a verified export history over time.',
+              },
+            ].map((feature) => (
+              <div
+                key={feature.title}
+                className="bg-white rounded-xl border border-gray-200 p-6 hover:border-[#02284d]/20 hover:shadow-md transition-all"
+              >
+                <div className="h-10 w-10 bg-[#02284d]/8 rounded-lg flex items-center justify-center mb-4">
+                  <feature.icon className="h-5 w-5 text-[#02284d]" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl font-bold text-[#02284d] mb-3">How it works</h2>
+            <p className="text-gray-600">Get started in minutes. Our team verifies your account and you're ready to export.</p>
+          </div>
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              { step: '01', title: 'Register', desc: 'Submit your company details and export license for verification.' },
+              { step: '02', title: 'Get Approved', desc: 'Our team reviews your application within 24 hours.' },
+              { step: '03', title: 'Create Shipments', desc: 'Add shipment details and upload your export documents.' },
+              { step: '04', title: 'Request Cargo Space', desc: 'We coordinate airline space and confirm your booking.' },
+            ].map((item, i) => (
+              <div key={item.step} className="relative">
+                {i < 3 && (
+                  <div className="hidden md:block absolute top-5 left-full w-full h-px bg-gray-200 z-0" style={{ width: 'calc(100% - 20px)', left: '50%' }} />
+                )}
+                <div className="relative">
+                  <div className="h-10 w-10 bg-[#02284d] text-[#E4DC1F] rounded-full flex items-center justify-center text-sm font-bold mb-4 relative z-10">
+                    {item.step}
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">{item.title}</h3>
+                  <p className="text-sm text-gray-600">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 bg-[#02284d]">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Ready to streamline your exports?
           </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
+          <p className="text-blue-200 mb-8 text-lg">
+            Join African exporters who use Altitude to manage their cargo operations professionally.
           </p>
-        </a>
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-2 bg-[#E4DC1F] text-[#02284d] px-8 py-3.5 rounded-lg font-semibold text-base hover:bg-[#d4cc10] transition-colors"
+          >
+            Start Your Application
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+      {/* Footer */}
+      <footer className="bg-[#011d3a] text-blue-300 py-8">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="h-6 w-6 bg-[#E4DC1F] rounded flex items-center justify-center">
+              <span className="text-[#02284d] font-bold text-[10px]">A</span>
+            </div>
+            <span className="text-white font-semibold text-sm">ALTITUDE</span>
+          </div>
+          <p className="text-sm">© {new Date().getFullYear()} Altitude Africa. All rights reserved.</p>
+          <div className="flex items-center gap-6 text-sm">
+            <Link href="/login" className="hover:text-white transition-colors">Sign In</Link>
+            <Link href="/register" className="hover:text-white transition-colors">Register</Link>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
 }
