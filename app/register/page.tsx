@@ -12,8 +12,6 @@ import { EXPORT_CATEGORIES } from '@/lib/utils'
 import { CheckCircle } from 'lucide-react'
 
 export default function RegisterPage() {
-  const supabase = createClient()
-
   const [formData, setFormData] = useState({
     company_name: '',
     business_registration_number: '',
@@ -53,6 +51,7 @@ export default function RegisterPage() {
     }
 
     try {
+      const supabase = createClient()
       // Create auth user
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
