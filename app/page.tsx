@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
   Zap, Package, Globe2, Plane, Shield, Leaf,
-  ChevronRight, Clock, MessageCircle,
+  ChevronRight, Clock, MessageCircle, Tag,
   Thermometer, Star, Heart, AlertTriangle, Truck,
   Box, Warehouse,
 } from 'lucide-react'
@@ -179,13 +179,27 @@ export default function HomePage() {
       <Navbar />
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden pt-16 pb-20 lg:pb-0"
-               style={{ background: 'var(--wb-blue)', minHeight: '100vh' }}>
-        <ImigongoPattern color="white" opacity={0.05} />
-        <ConnectivityLines opacity={0.12} variant="light" />
+      <section className="relative overflow-hidden"
+               style={{
+                 backgroundImage: "linear-gradient(rgba(7,24,48,0.82), rgba(10,31,68,0.80)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1920&q=80&fit=crop')",
+                 backgroundSize: 'cover',
+                 backgroundPosition: 'center top',
+                 backgroundColor: '#0A1F44',
+                 minHeight: '100vh',
+               }}>
+        <ImigongoPattern color="white" opacity={0.015} />
+        <ConnectivityLines opacity={0.08} variant="light" />
         <AfricaWatermark />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-32">
+        {/* Radial glow behind headline */}
+        <div className="absolute pointer-events-none" aria-hidden="true" style={{
+          top: '80px', left: '-80px',
+          width: '700px', height: '500px',
+          background: 'radial-gradient(ellipse at 30% 40%, rgba(28,163,219,0.13) 0%, transparent 65%)',
+          zIndex: 1,
+        }} />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[136px] pb-[100px]">
           {/* Badges row */}
           <div className="flex flex-wrap items-center gap-3 mb-8">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
@@ -197,7 +211,12 @@ export default function HomePage() {
             </div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full"
                  style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}>
-              <span className="text-xs">🏆</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#E4DC1F" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                <path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+              </svg>
               <span className="text-xs font-semibold text-white">Africa&apos;s Best Regional Airline 2025</span>
             </div>
           </div>
@@ -205,40 +224,40 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             {/* Headlines & CTAs */}
             <div>
-              <h1 className="text-white mb-2" style={{ fontSize: 'clamp(40px,5.5vw,72px)', lineHeight: 1.05, fontWeight: 800 }}>
+              <h1 className="text-white mb-3" style={{ fontSize: 'clamp(40px,5.5vw,72px)', lineHeight: 1.05, fontWeight: 800 }}>
                 Kigali to the World.
               </h1>
-              <p className="font-semibold mb-4" style={{ fontSize: 'clamp(16px,2vw,22px)', color: 'var(--wb-yellow)', letterSpacing: '0.01em' }}>
+              <p className="mb-3" style={{ fontSize: 'clamp(16px,2vw,22px)', color: 'var(--wb-yellow)', letterSpacing: '0.01em', fontWeight: 500 }}>
                 Africa&apos;s cargo hub, connecting 40+ destinations.
               </p>
-              <p className="text-base mb-10 max-w-lg"
-                 style={{ color: 'rgba(255,255,255,0.72)', fontWeight: 300, lineHeight: 1.75 }}>
+              <p className="text-base mb-8 max-w-lg"
+                 style={{ color: 'rgba(255,255,255,0.82)', fontWeight: 400, lineHeight: 1.7 }}>
                 From Rwandan flowers to global pharmaceuticals — RwandAir Cargo delivers with speed,
                 cold-chain precision, and national pride.
               </p>
 
-              {/* Yellow pill CTAs */}
-              <div className="flex flex-wrap gap-3 mb-10">
+              {/* CTAs */}
+              <div className="flex flex-wrap mb-12" style={{ gap: '16px' }}>
                 <Link href="/quote"
-                      className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all hover:opacity-90"
-                      style={{ background: 'var(--wb-yellow)', color: 'var(--wb-blue)' }}>
+                      className="flex items-center gap-2 font-bold text-sm transition-all hover:opacity-90"
+                      style={{ background: 'var(--wb-yellow)', color: '#0A1F44', padding: '14px 28px', borderRadius: '8px' }}>
                   <Zap className="w-4 h-4" /> Get instant quote
                 </Link>
                 <Link href="/track/459-40100001"
-                      className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm border transition-all hover:bg-white/15"
-                      style={{ borderColor: 'rgba(255,255,255,0.3)', color: 'white', background: 'rgba(255,255,255,0.08)' }}>
+                      className="flex items-center gap-2 font-bold text-sm transition-all hover:bg-white/10"
+                      style={{ border: '1.5px solid rgba(255,255,255,0.4)', color: 'rgba(255,255,255,0.85)', background: 'transparent', padding: '14px 28px', borderRadius: '8px' }}>
                   <Globe2 className="w-4 h-4" /> Track shipment
                 </Link>
                 <Link href="/capacity"
-                      className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm border transition-all hover:bg-white/15"
-                      style={{ borderColor: 'rgba(255,255,255,0.3)', color: 'white', background: 'rgba(255,255,255,0.08)' }}>
+                      className="flex items-center gap-2 font-bold text-sm transition-all hover:bg-white/10"
+                      style={{ border: '1.5px solid rgba(255,255,255,0.4)', color: 'rgba(255,255,255,0.85)', background: 'transparent', padding: '14px 28px', borderRadius: '8px' }}>
                   <Plane className="w-4 h-4" /> View live capacity
                 </Link>
               </div>
 
               {/* Quick track input */}
-              <div className="flex items-center gap-0 rounded-full overflow-hidden max-w-sm"
-                   style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}>
+              <div className="flex items-center gap-0 max-w-sm overflow-hidden"
+                   style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px' }}>
                 <input
                   type="text"
                   placeholder="AWB number or booking ref…"
@@ -249,11 +268,12 @@ export default function HomePage() {
                       router.push(`/track/${trackInput || '459-40100001'}`)
                     }
                   }}
-                  className="flex-1 bg-transparent px-5 py-3 text-sm text-white placeholder-white/40 outline-none"
+                  className="flex-1 bg-transparent px-5 py-3 text-sm text-white outline-none"
+                  style={{ color: 'white' }}
                 />
                 <Link href={`/track/${trackInput || '459-40100001'}`}
                       className="px-5 py-3 text-sm font-bold shrink-0"
-                      style={{ background: 'var(--wb-sky)', color: 'white' }}>
+                      style={{ background: 'var(--wb-yellow)', color: '#0A1F44' }}>
                   Track
                 </Link>
               </div>
@@ -262,18 +282,24 @@ export default function HomePage() {
             {/* Stat cards */}
             <div className="grid grid-cols-2 gap-4 mt-4">
               {[
-                { value: '40+', unit: 'routes',   label: 'Active cargo routes' },
-                { value: '98.2%', unit: '',        label: 'On-time delivery rate' },
-                { value: '$4.18', unit: '/kg',     label: "Today's avg yield" },
-                { value: '340+', unit: '',         label: 'Consolidations this month' },
-              ].map(({ value, unit, label }) => (
-                <div key={label} className="p-6 rounded-2xl"
-                     style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                  <div className="font-bold text-white mb-1" style={{ fontSize: 'clamp(26px,3vw,40px)', lineHeight: 1 }}>
+                { Icon: Plane,   value: '40+',   unit: 'routes', label: 'Active cargo routes' },
+                { Icon: Clock,   value: '98.2%', unit: '',        label: 'On-time delivery rate' },
+                { Icon: Tag,     value: '$4.18', unit: '/kg',     label: "Today's avg yield" },
+                { Icon: Package, value: '340+',  unit: '',        label: 'Consolidations this month' },
+              ].map(({ Icon, value, unit, label }) => (
+                <div key={label}
+                     style={{
+                       background: 'rgba(255,255,255,0.07)',
+                       border: '1px solid rgba(255,255,255,0.12)',
+                       borderRadius: '12px',
+                       padding: '20px 24px',
+                     }}>
+                  <Icon style={{ width: 20, height: 20, color: 'rgba(255,255,255,0.65)', marginBottom: 12 }} aria-hidden="true" />
+                  <div className="font-bold text-white" style={{ fontSize: '28px', lineHeight: 1, marginBottom: 6 }}>
                     {value}
-                    {unit && <span className="text-sm font-semibold ml-1" style={{ color: 'var(--wb-sky)' }}>{unit}</span>}
+                    {unit && <span className="font-semibold ml-1" style={{ fontSize: 14, color: 'var(--wb-sky)' }}>{unit}</span>}
                   </div>
-                  <p className="text-xs" style={{ color: 'rgba(255,255,255,0.55)' }}>{label}</p>
+                  <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13 }}>{label}</p>
                 </div>
               ))}
             </div>
