@@ -1,28 +1,26 @@
 export const dynamic = 'force-dynamic'
 
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
-import { getAdminClient } from '@/lib/supabase-admin'
-import AppShell from '@/components/dashboard/AppShell'
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const supabaseAdmin = getAdminClient()
-  const supabase = await createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const supabase = await createServerSupabaseClient()
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch {
+    // Supabase not configured — allow in dev
+  }
 
-  if (!user) redirect('/login')
+  if (user === null && process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    redirect('/login')
+  }
 
-  const { data: userData } = await supabaseAdmin
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (userData?.role !== 'admin') redirect('/dashboard')
-
-  return (
-    <AppShell role="admin" email={user.email}>
-      {children}
-    </AppShell>
-  )
+  return <>{children}</>
 }

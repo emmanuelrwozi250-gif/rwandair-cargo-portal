@@ -2,22 +2,316 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
+/* ─── RwandAir Cargo Brand Tokens ────────────────────────────────────────── */
+/*
+  Official palette (updated to exact brand spec):
+    Primary blue    #04549B   --brand-blue
+    Accent yellow   #E4DC1F   --brand-yellow
+    Light blue      #1CA3DB   --brand-light-blue
+    Brand green     #2D7D46   --brand-green
+    Neutral dark    #1A1A2E   --neutral-dark
+    Neutral light   #F5F7FA   --neutral-light
+*/
 :root {
-  --navy: #02284d;
-  --yellow: #E4DC1F;
+  /* ── Primary brand ── */
+  --brand-blue:        #04549B;
+  --brand-yellow:      #E4DC1F;
+  --brand-light-blue:  #1CA3DB;
+  --brand-green:       #2D7D46;
+  --neutral-dark:      #1A1A2E;
+  --neutral-light:     #F5F7FA;
+
+  /* ── Derived / tinted ── */
+  --brand-blue-dark:   #033a6e;
+  --brand-blue-hover:  #0560af;
+  --brand-yellow-dark: #c4bc00;
+  --brand-yellow-light:#fdfce0;
+  --brand-green-light: #e8f4ec;
+  --brand-sky-light:   #e6f6fc;
+
+  /* ── Semantic surface ── */
+  --surface-0:  #ffffff;
+  --surface-1:  var(--neutral-light);
+  --surface-2:  #eaecf0;
+
+  /* ── Semantic text ── */
+  --text-primary:   var(--neutral-dark);
+  --text-secondary: #4a5568;
+  --text-muted:     #718096;
+
+  /* ── Legacy aliases — kept for backward compat with existing components ── */
+  --wb-blue:         var(--brand-blue);
+  --wb-sky:          var(--brand-light-blue);
+  --wb-yellow:       var(--brand-yellow);
+  --wb-green:        var(--brand-green);
+  --wb-blue-dark:    var(--brand-blue-dark);
+  --wb-sky-light:    var(--brand-sky-light);
+  --wb-yellow-light: var(--brand-yellow-light);
+  --wb-green-light:  var(--brand-green-light);
+  --wb-white:        #ffffff;
+  --wb-gray-50:      var(--neutral-light);
+  --wb-gray-200:     var(--surface-2);
+  --wb-gray-500:     var(--text-muted);
+  --wb-gray-900:     var(--neutral-dark);
 }
 
+/* ─── Smooth scroll ──────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ─── Base Typography ────────────────────────────────────────────────────── */
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  background-color: var(--neutral-light);
   -webkit-font-smoothing: antialiased;
-  background-color: #f8fafc;
-  color: #1a2332;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* ─── Heading Hierarchy ─────────────────────────────────────────────────── */
+h1 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 900;
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+h2 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+h3 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.3;
+}
+h4 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+/* ─── Global focus ring (WCAG 2.1 AA) ──────────────────────────────────── */
+/* Visible ring on all interactive elements without relying on UA default */
+:focus-visible {
+  outline: 2px solid var(--brand-yellow);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Remove outline for mouse users, keep for keyboard */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+/* Invert ring on dark backgrounds (nav, footer, dark sections) */
+[style*="background: var(--brand-blue)"] :focus-visible,
+[style*="background: var(--wb-blue)"] :focus-visible,
+header :focus-visible,
+footer :focus-visible {
+  outline-color: var(--brand-yellow);
+}
+
+/* ─── Price Display ─────────────────────────────────────────────────────── */
+.price-large {
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: clamp(40px, 5vw, 72px);
+  color: var(--brand-blue);
+  line-height: 1;
+}
+.price-label {
+  font-family: 'Lato', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--brand-light-blue);
+}
+.price-unit {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ─── Label Style ────────────────────────────────────────────────────────── */
+.label-upper {
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ─── Connectivity Line Animation ───────────────────────────────────────── */
+.connectivity-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dashFlow 2.5s ease forwards;
+}
+
+@keyframes dashFlow {
+  0%   { stroke-dashoffset: 1000; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* ─── Stat Ticker ────────────────────────────────────────────────────────── */
+.ticker-track {
+  animation: ticker 30s linear infinite;
+  white-space: nowrap;
+}
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ─── Pulsing Hub Dot ────────────────────────────────────────────────────── */
+@keyframes hubPulse {
+  0%, 100% { r: 8px; opacity: 0.8; }
+  50%       { r: 14px; opacity: 0.3; }
+}
+.hub-pulse { animation: hubPulse 2s ease-in-out infinite; }
+
+/* ─── Capacity Bar Colors ────────────────────────────────────────────────── */
+.cap-bar-high   { background: var(--brand-green); }
+.cap-bar-mid    { background: #d97706; }
+.cap-bar-low    { background: #dc2626; }
+
+/* ─── Card hover lift ────────────────────────────────────────────────────── */
+.card-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-lift:hover {
+  transform: translateY(-3px) scale(1.005);
+  box-shadow: 0 12px 40px rgba(4, 84, 155, 0.14);
+}
+
+/* ─── Primary CTA button micro-interaction ──────────────────────────────── */
+.cta-primary {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.cta-primary:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(4, 84, 155, 0.25);
+}
+.cta-primary:active {
+  transform: scale(0.98);
+}
+
+/* ─── Scroll-triggered fade-in ──────────────────────────────────────────── */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-in-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Reading progress bar ──────────────────────────────────────────────── */
+#reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--brand-yellow);
+  z-index: 9999;
+  transition: width 0.1s linear;
+}
+
+/* ─── Chat bubbles ───────────────────────────────────────────────────────── */
+.bubble-agent {
+  background: white;
+  border-left: 3px solid var(--brand-light-blue);
+  border-radius: 0 12px 12px 12px;
+}
+.bubble-user {
+  background: var(--brand-blue);
+  color: white;
+  border-radius: 12px 12px 0 12px;
+}
+
+/* ─── WhatsApp bubble ────────────────────────────────────────────────────── */
+.wa-bubble {
+  background: #dcf8c6;
+  border-radius: 8px 8px 0 8px;
+}
+
+/* ─── Status badge colour helpers (text+color, never color alone) ────────── */
+.status-on-time    { background: #d1fae5; color: #065f46; }
+.status-delayed    { background: #fee2e2; color: #991b1b; }
+.status-customs    { background: #fef3c7; color: #92400e; }
+.status-delivered  { background: #d1fae5; color: #065f46; }
+.status-in-transit { background: #dbeafe; color: #1e40af; }
+
+/* ─── Reduced-motion: disable all transitions/animations ────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
+  .ticker-track {
+    animation: none;
+  }
+  .connectivity-line {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .hub-pulse {
+    animation: none;
+  }
+  .fade-in-up {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ─── Mobile touch targets ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  /* Prevent iOS input zoom */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* ─── Utilities ─────────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* ─── Print styles ──────────────────────────────────────────────────────── */
+@media print {
+  nav, footer, .no-print { display: none !important; }
+  body { background: white; color: black; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
 }

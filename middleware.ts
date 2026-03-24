@@ -1,6 +1,25 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
+// Routes that are always public — no auth required
+const PUBLIC_ROUTES = [
+  '/',
+  '/login',
+  '/register',
+  '/quote',
+  '/consolidate',
+  '/perishables',
+  '/capacity',
+  '/deals',
+  '/agent',
+  '/stations',
+  '/globe',
+  '/track',
+]
+
+// Public route prefixes (dynamic segments)
+const PUBLIC_PREFIXES = ['/products', '/track']
+
 export async function middleware(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -12,44 +31,42 @@ export async function middleware(request: NextRequest) {
 
   let supabaseResponse = NextResponse.next({ request })
 
-  const supabase = createServerClient(
-    url,
-    key,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({ request })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        },
+  const supabase = createServerClient(url, key, {
+    cookies: {
+      getAll() { return request.cookies.getAll() },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+        supabaseResponse = NextResponse.next({ request })
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options)
+        )
       },
-    }
-  )
+    },
+  })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
 
+  // Allow tracking pages publicly: /track/[awb]
+  if (pathname.startsWith('/track')) {
+    return supabaseResponse
+  }
+
+  // Allow webhook and public API routes
+  if (pathname.startsWith('/api/webhook') || pathname.startsWith('/api/quote') ||
+      pathname.startsWith('/api/track') || pathname.startsWith('/api/capacity') ||
+      pathname.startsWith('/api/agent')) {
+    return supabaseResponse
+  }
+
   // Public routes — always accessible
-  const publicRoutes = ['/', '/login', '/register']
-  if (publicRoutes.includes(pathname)) {
-    // If logged in and trying to access login/register, redirect to dashboard
+  if (PUBLIC_ROUTES.some(r => pathname === r) || PUBLIC_PREFIXES.some(p => pathname.startsWith(p))) {
+    // Redirect logged-in users away from login/register
     if (user && (pathname === '/login' || pathname === '/register')) {
       const { data: userData } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
+        .from('users').select('role').eq('id', user.id).single()
       if (userData?.role === 'admin') {
-        return NextResponse.redirect(new URL('/admin', request.url))
+        return NextResponse.redirect(new URL('/admin/revenue', request.url))
       }
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
@@ -63,24 +80,13 @@ export async function middleware(request: NextRequest) {
 
   // Get user role
   const { data: userData } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
+    .from('users').select('role').eq('id', user.id).single()
   const role = userData?.role
 
-  // Admin routes — require admin role
+  // Admin revenue dashboard — admin only
   if (pathname.startsWith('/admin')) {
     if (role !== 'admin') {
       return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
-  }
-
-  // Exporter routes — require exporter role
-  if (pathname.startsWith('/dashboard')) {
-    if (role !== 'exporter') {
-      return NextResponse.redirect(new URL('/admin', request.url))
     }
   }
 

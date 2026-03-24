@@ -119,7 +119,7 @@ export default function ShipmentDetailPage() {
     : 3
   const uploadedRequired = documents.filter((d) => {
     if (isWater && shipment.water_type === 'inland_lake') {
-      return ['Commercial Invoice', 'Inland Waterway Bill', 'Cargo Manifest', 'Packing List', 'Export License'].includes(d.document_type)
+      return ['Commercial Invoice', 'Inland Waterway Bill', 'Packing List', 'Certificate of Origin', 'Export License'].includes(d.document_type)
     }
     if (isWater) {
       return ['Commercial Invoice', 'Bill of Lading', 'Certificate of Origin', 'Packing List', 'Vessel Booking Confirmation', 'Export License'].includes(d.document_type)
