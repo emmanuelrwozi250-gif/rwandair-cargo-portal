@@ -117,8 +117,13 @@ function AfricaWatermark() {
 
 // ─── Animated stats counter ───────────────────────────────────────────────────
 function AnimatedStat({ target, suffix, label }: { target: string; suffix?: string; label: string }) {
-  const [displayed, setDisplayed] = useState('0')
-  const ref = useRef<HTMLDivElement>(null)
+  // Initialize with the real value so SSR and no-JS always render the correct number
+  const numericFinal = parseFloat(target.replace(/[^0-9.]/g, ''))
+  const hasDecimal   = target.includes('.')
+  const finalStr     = hasDecimal ? numericFinal.toFixed(1) : Math.floor(numericFinal).toString()
+
+  const [displayed, setDisplayed] = useState(finalStr)
+  const ref    = useRef<HTMLDivElement>(null)
   const hasRun = useRef(false)
 
   useEffect(() => {
@@ -129,22 +134,21 @@ function AnimatedStat({ target, suffix, label }: { target: string; suffix?: stri
       ([entry]) => {
         if (entry.isIntersecting && !hasRun.current) {
           hasRun.current = true
-          // Extract numeric part
-          const numeric = parseFloat(target.replace(/[^0-9.]/g, ''))
-          const hasDecimal = target.includes('.')
           const duration = 1200
-          const steps = 40
+          const steps    = 40
           const interval = duration / steps
           let step = 0
+          // Reset to 0 to start the count-up animation (progressive enhancement)
+          setDisplayed(hasDecimal ? '0.0' : '0')
           const timer = setInterval(() => {
             step++
             const progress = step / steps
-            const eased = 1 - Math.pow(1 - progress, 3)
-            const current = numeric * eased
+            const eased    = 1 - Math.pow(1 - progress, 3)
+            const current  = numericFinal * eased
             setDisplayed(hasDecimal ? current.toFixed(1) : Math.floor(current).toString())
             if (step >= steps) {
               clearInterval(timer)
-              setDisplayed(hasDecimal ? numeric.toFixed(1) : Math.floor(numeric).toString())
+              setDisplayed(finalStr)
             }
           }, interval)
         }
@@ -217,7 +221,7 @@ export default function HomePage() {
                 <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
                 <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
               </svg>
-              <span className="text-xs font-semibold text-white">Africa&apos;s Best Regional Airline 2025</span>
+              <span className="text-xs font-semibold text-white">Top-Rated African Cargo Carrier · 2025</span>
             </div>
           </div>
 
@@ -236,45 +240,17 @@ export default function HomePage() {
                 cold-chain precision, and national pride.
               </p>
 
-              {/* CTAs */}
-              <div className="flex flex-wrap mb-12" style={{ gap: '16px' }}>
+              {/* CTAs — primary + one ghost */}
+              <div className="flex flex-wrap" style={{ gap: '16px' }}>
                 <Link href="/quote"
                       className="flex items-center gap-2 font-bold text-sm transition-all hover:opacity-90"
                       style={{ background: 'var(--wb-yellow)', color: '#0A1F44', padding: '14px 28px', borderRadius: '8px' }}>
                   <Zap className="w-4 h-4" /> Get instant quote
                 </Link>
-                <Link href="/track/459-40100001"
+                <Link href="/agent"
                       className="flex items-center gap-2 font-bold text-sm transition-all hover:bg-white/10"
                       style={{ border: '1.5px solid rgba(255,255,255,0.4)', color: 'rgba(255,255,255,0.85)', background: 'transparent', padding: '14px 28px', borderRadius: '8px' }}>
-                  <Globe2 className="w-4 h-4" /> Track shipment
-                </Link>
-                <Link href="/capacity"
-                      className="flex items-center gap-2 font-bold text-sm transition-all hover:bg-white/10"
-                      style={{ border: '1.5px solid rgba(255,255,255,0.4)', color: 'rgba(255,255,255,0.85)', background: 'transparent', padding: '14px 28px', borderRadius: '8px' }}>
-                  <Plane className="w-4 h-4" /> View live capacity
-                </Link>
-              </div>
-
-              {/* Quick track input */}
-              <div className="flex items-center gap-0 max-w-sm overflow-hidden"
-                   style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px' }}>
-                <input
-                  type="text"
-                  placeholder="AWB number or booking ref…"
-                  value={trackInput}
-                  onChange={e => setTrackInput(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') {
-                      router.push(`/track/${trackInput || '459-40100001'}`)
-                    }
-                  }}
-                  className="flex-1 bg-transparent px-5 py-3 text-sm text-white outline-none"
-                  style={{ color: 'white' }}
-                />
-                <Link href={`/track/${trackInput || '459-40100001'}`}
-                      className="px-5 py-3 text-sm font-bold shrink-0"
-                      style={{ background: 'var(--wb-yellow)', color: '#0A1F44' }}>
-                  Track
+                  <MessageCircle className="w-4 h-4" /> Talk to AI Agent
                 </Link>
               </div>
             </div>
@@ -284,7 +260,7 @@ export default function HomePage() {
               {[
                 { Icon: Plane,   value: '40+',   unit: 'routes', label: 'Active cargo routes' },
                 { Icon: Clock,   value: '98.2%', unit: '',        label: 'On-time delivery rate' },
-                { Icon: Tag,     value: '$4.18', unit: '/kg',     label: "Today's avg yield" },
+                { Icon: Tag,     value: 'from $2.80', unit: '/kg', label: 'Rates — get a quote in 30s' },
                 { Icon: Package, value: '340+',  unit: '',        label: 'Consolidations this month' },
               ].map(({ Icon, value, unit, label }) => (
                 <div key={label}
@@ -434,6 +410,90 @@ export default function HomePage() {
               {name}
             </span>
           ))}
+        </div>
+      </div>
+
+      {/* ── Testimonials ───────────────────────────────────────────────────── */}
+      {/* TODO: replace with real customer quotes */}
+      <section className="py-20" style={{ background: 'var(--wb-gray-50)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="label-upper mb-3" style={{ color: 'var(--wb-sky)' }}>Customer Stories</p>
+            <h2 style={{ color: 'var(--wb-blue)' }}>Trusted by African exporters</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                quote: 'RwandAir Cargo gets our flowers to Amsterdam in under 14 hours. Cold-chain has never failed us.',
+                name: 'Amina K.',
+                company: 'Kigali Floriculture Ltd',
+                country: 'Rwanda',
+                badge: 'Perishables',
+                badgeColor: '#2D7D46',
+                badgeBg: 'rgba(45,125,70,0.1)',
+              },
+              {
+                quote: 'The consolidation engine saved us 22% on our last three Dubai shipments.',
+                name: 'Jean-Pierre M.',
+                company: 'EastAfrica Freight Solutions',
+                country: 'Kenya',
+                badge: 'General Cargo',
+                badgeColor: '#04549B',
+                badgeBg: 'rgba(4,84,155,0.08)',
+              },
+              {
+                quote: 'CEIV Pharma certification and real-time temp monitoring gave our procurement team the confidence to approve RwandAir.',
+                name: 'Dr. Sarah O.',
+                company: 'MedExpress Africa',
+                country: 'Uganda',
+                badge: 'Pharmaceuticals',
+                badgeColor: '#1CA3DB',
+                badgeBg: 'rgba(28,163,219,0.1)',
+              },
+            ].map(({ quote, name, company, country, badge, badgeColor, badgeBg }) => (
+              <div key={name} className="rounded-2xl p-8 flex flex-col gap-4"
+                   style={{ background: 'white', border: '1px solid var(--wb-gray-200)' }}>
+                <svg width="28" height="20" viewBox="0 0 28 20" fill="none" aria-hidden="true">
+                  <path d="M0 20V12C0 5.373 4.477 1.12 13.43 0l1.14 2.16C9.38 3.44 6.9 6.04 6.28 10H12V20H0zm16 0V12c0-6.627 4.477-10.88 13.43-12L30.57 2.16C25.38 3.44 22.9 6.04 22.28 10H28V20H16z"
+                        fill="var(--wb-yellow)" fillOpacity="0.5"/>
+                </svg>
+                <p className="text-sm leading-relaxed flex-1" style={{ color: 'var(--wb-gray-500)' }}>
+                  &ldquo;{quote}&rdquo;
+                </p>
+                <div>
+                  <p className="font-bold text-sm" style={{ color: 'var(--wb-blue)' }}>{name}</p>
+                  <p className="text-xs" style={{ color: 'var(--wb-gray-500)' }}>{company} · {country}</p>
+                </div>
+                <span className="self-start text-xs font-semibold px-2.5 py-1 rounded-full"
+                      style={{ background: badgeBg, color: badgeColor }}>
+                  {badge}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Partner logo strip ──────────────────────────────────────────────── */}
+      <div style={{ background: 'white', borderTop: '1px solid var(--wb-gray-200)', borderBottom: '1px solid var(--wb-gray-200)', overflow: 'hidden' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          <p className="text-center text-xs font-semibold mb-4" style={{ color: 'var(--wb-gray-500)' }}>
+            Integrated with the platforms you already use
+          </p>
+          <div className="relative overflow-hidden"
+               onMouseEnter={e => (e.currentTarget.querySelector('.logo-scroll') as HTMLElement)?.style.setProperty('animation-play-state','paused')}
+               onMouseLeave={e => (e.currentTarget.querySelector('.logo-scroll') as HTMLElement)?.style.setProperty('animation-play-state','running')}>
+            <div className="logo-scroll flex gap-8 items-center"
+                 style={{ animation: 'ticker 20s linear infinite', whiteSpace: 'nowrap' }}>
+              {[...['cargo.one','WebCargo','CargoAi','Flexport','Freightos','CargoWise','Patch.io'],
+                 ...['cargo.one','WebCargo','CargoAi','Flexport','Freightos','CargoWise','Patch.io']].map((name, i) => (
+                <span key={i} className="shrink-0 text-sm font-bold px-4 py-2 rounded-lg"
+                      style={{ background: 'var(--wb-gray-50)', border: '1px solid var(--wb-gray-200)', color: 'var(--wb-blue)' }}>
+                  {name}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -593,10 +653,10 @@ export default function HomePage() {
       <section style={{ background: 'var(--neutral-dark)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-white/10">
-            <AnimatedStat target="40"  suffix="+"  label="Destinations" />
-            <AnimatedStat target="7"   suffix=""   label="Cargo categories" />
-            <AnimatedStat target="98.2" suffix="%" label="On-time rate" />
-            <AnimatedStat target="24"  suffix="/7" label="Support" />
+            <AnimatedStat target="40"   suffix="+"  label="Destinations" />
+            <AnimatedStat target="11"   suffix=""   label="Cargo categories" />
+            <AnimatedStat target="98.2" suffix="%"  label="On-time rate" />
+            <AnimatedStat target="24"   suffix="/7" label="Support" />
           </div>
         </div>
       </section>

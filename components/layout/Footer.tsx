@@ -44,7 +44,7 @@ export default function Footer() {
                    style={{ background: 'rgba(242,222,14,0.1)', border: '1px solid rgba(242,222,14,0.25)' }}>
                 <span className="text-xs" style={{ color: 'var(--wb-yellow)' }}>🏆</span>
                 <span className="text-xs font-semibold" style={{ color: 'var(--wb-yellow)' }}>
-                  Africa&apos;s Best Regional Airline 2025
+                  Top-Rated African Cargo Carrier · 2025
                 </span>
               </div>
 
@@ -79,6 +79,9 @@ export default function Footer() {
                   ['Last-Min Deals', '/deals'],
                   ['AI Agent', '/agent'],
                   ['Cargo Stations', '/stations'],
+                  ['For Freight Agents', '/agents'],
+                  ['Trade Insights', '/insights'],
+                  ['Service Guarantee & Claims', '/legal/service-guarantee'],
                 ].map(([label, href]) => (
                   <li key={href}>
                     <Link href={href} className="hover:text-white transition-colors">{label}</Link>
@@ -153,17 +156,15 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Marketplace integrations strip */}
+          {/* Platform integrations — single line replacing duplicate strip */}
           <div className="mt-10 pt-6 flex flex-wrap items-center gap-4"
                style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-            <p className="text-xs mr-2" style={{ color: 'rgba(255,255,255,0.3)' }}>Book via:</p>
-            {['cargo.one', 'WebCargo', 'CargoAi', 'Flexport', 'Freightos', 'CargoWise'].map(name => (
-              <span key={name}
-                    className="px-2.5 py-1 rounded text-xs font-semibold"
-                    style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                {name}
-              </span>
-            ))}
+            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              <Link href="/integrations" className="hover:text-white transition-colors underline underline-offset-2">
+                Book via all major platforms
+              </Link>
+              {' '}— cargo.one, WebCargo, CargoAi, Flexport &amp; more
+            </p>
           </div>
 
           {/* Certifications strip */}

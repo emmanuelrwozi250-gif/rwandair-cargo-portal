@@ -25,6 +25,7 @@ export default function Navbar() {
     { href: '/perishables', label: 'Perishables' },
     { href: '/stations',    label: 'Stations' },
     { href: '/agent',       label: 'AI Agent' },
+    { href: '/agents',      label: 'For Agents' },
   ]
 
   function pickLocale(l: Locale) {
