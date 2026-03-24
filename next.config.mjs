@@ -5,7 +5,7 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ['localhost:3000', 'altitude-inc.vercel.app', '*.vercel.app'],
+      allowedOrigins: ['localhost:3000', 'localhost:3001', 'rwandair-cargo-portal.vercel.app', '*.vercel.app'],
     },
   },
 };
