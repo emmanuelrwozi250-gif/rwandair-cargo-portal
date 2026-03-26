@@ -8,10 +8,10 @@ export const metadata: Metadata = {
     title: 'Cargo Station Directory | RwandAir Cargo',
     description:
       'Find handler details, cold-store facilities, and certifications at all 14 RwandAir Cargo stations across Africa, Europe, and the Middle East.',
-    url: 'https://cargo.rwandair.com/stations',
+    url: '/stations',
   },
   alternates: {
-    canonical: 'https://cargo.rwandair.com/stations',
+    canonical: '/stations',
   },
 }
 

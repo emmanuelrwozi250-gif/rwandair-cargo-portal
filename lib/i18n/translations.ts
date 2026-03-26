@@ -47,7 +47,7 @@ const t = {
 
     // Footer
     footerTagline:   'Fly the Dream of Africa',
-    footerRights:    '© 2025 RwandAir Ltd. All rights reserved.',
+    footerRights:    '© 2026 RwandAir Ltd. All rights reserved.',
 
     // Common
     back:            'Back',
@@ -95,7 +95,7 @@ const t = {
     capacityRefresh: 'Actualiser',
 
     footerTagline:   'Vivez le rêve de l\'Afrique',
-    footerRights:    '© 2025 RwandAir Ltd. Tous droits réservés.',
+    footerRights:    '© 2026 RwandAir Ltd. Tous droits réservés.',
 
     back:            'Retour',
     loading:         'Chargement…',
@@ -142,7 +142,7 @@ const t = {
     capacityRefresh: 'تحديث',
 
     footerTagline:   'اعش حلم أفريقيا',
-    footerRights:    '© 2025 رواند إير. جميع الحقوق محفوظة.',
+    footerRights:    '© 2026 رواند إير. جميع الحقوق محفوظة.',
 
     back:            'رجوع',
     loading:         'جارٍ التحميل…',
@@ -189,7 +189,7 @@ const t = {
     capacityRefresh: 'Sasisha',
 
     footerTagline:   'Ruka Ndoto ya Afrika',
-    footerRights:    '© 2025 RwandAir Ltd. Haki zote zimehifadhiwa.',
+    footerRights:    '© 2026 RwandAir Ltd. Haki zote zimehifadhiwa.',
 
     back:            'Rudi',
     loading:         'Inapakia…',
@@ -236,7 +236,7 @@ const t = {
     capacityRefresh: '刷新',
 
     footerTagline:   '飞翔非洲之梦',
-    footerRights:    '© 2025 卢旺达航空有限公司。保留所有权利。',
+    footerRights:    '© 2026 卢旺达航空有限公司。保留所有权利。',
 
     back:            '返回',
     loading:         '加载中…',
@@ -283,7 +283,7 @@ const t = {
     capacityRefresh: 'रिफ्रेश',
 
     footerTagline:   'अफ्रीका का सपना उड़ाओ',
-    footerRights:    '© 2025 RwandAir Ltd. सर्वाधिकार सुरक्षित।',
+    footerRights:    '© 2026 RwandAir Ltd. सर्वाधिकार सुरक्षित।',
 
     back:            'वापस',
     loading:         'लोड हो रहा है…',

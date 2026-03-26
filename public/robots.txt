@@ -4,4 +4,4 @@ Disallow: /dashboard/
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://cargo.rwandair.com/sitemap.xml
+Sitemap: https://rwandair-cargo-portal-nnvj.vercel.app/sitemap.xml

@@ -5,10 +5,24 @@ import Link from 'next/link'
 import {
   Zap, Clock, Shield, Leaf, Upload, ChevronRight,
   AlertTriangle, CheckCircle, Info, ArrowLeft, Scale,
-  Thermometer, Star, Heart, Package, Plane
+  Thermometer, Star, Heart, Package, Plane, XCircle
 } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function formatDeparture(isoStr: string): string {
+  try {
+    const d    = new Date(isoStr)
+    const now  = new Date()
+    const diff = (d.getTime() - now.getTime()) / 3_600_000
+    const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+    if (diff < 10)  return `${time} tonight`
+    if (diff < 24)  return `${time} today`
+    if (diff < 48)  return `${time} tomorrow`
+    return d.toLocaleDateString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  } catch { return isoStr }
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type CommodityType = 'GENERAL' | 'PHARMACEUTICAL' | 'PERISHABLE' | 'DANGEROUS_GOODS' | 'LIVE_ANIMALS' | 'HIGH_VALUE'
@@ -250,22 +264,53 @@ export default function QuotePage() {
   const [length, setLength] = useState(120)
   const [width, setWidth]   = useState(80)
   const [height, setHeight] = useState(100)
-  const [quotes, setQuotes] = useState<ReturnType<typeof generateQuotes> | null>(null)
+  const [quotes, setQuotes] = useState<{ options: QuoteOption[]; perishableRisk?: PerishableRisk } | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [apiError, setApiError] = useState('')
   const [uploadedFile, setUploadedFile] = useState<string | null>(null)
 
   const volumetricWeight = Math.ceil((length * width * height) / 6000)
   const chargeableWeight = volumetricMode ? Math.max(weightKg, volumetricWeight) : weightKg
 
+  const OPTION_META: Record<string, { label: string; badge: string; badgeColor: string; recommended?: boolean }> = {
+    fastest:  { label: 'FASTEST',       badge: '⭐ Recommended', badgeColor: '#fee014', recommended: true },
+    cheapest: { label: 'CHEAPEST',      badge: 'Save 18%',       badgeColor: '#94c943' },
+    reliable: { label: 'MOST RELIABLE', badge: '99.1% on-time',  badgeColor: '#1ea2dc' },
+  }
+
   async function handleGetQuote() {
     if (!origin || !destination) return
     setLoading(true)
     setQuotes(null)
-    // Simulate API call
-    await new Promise(r => setTimeout(r, 1200))
-    setQuotes(generateQuotes(origin, destination, commodity, chargeableWeight))
-    setLoading(false)
+    setApiError('')
+    try {
+      const res = await fetch('/api/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin, destination, commodityType: commodity, weightKg: chargeableWeight }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to get quote')
+      const options: QuoteOption[] = (data.options as Array<{
+        type: string; route: string[]; priceUsd: number; transitHours: number;
+        departure: string; onTimePct: number; co2Kg: number;
+      }>).map(opt => ({
+        type: opt.type as QuoteOption['type'],
+        route: opt.route,
+        priceUsd: opt.priceUsd,
+        transitHours: opt.transitHours,
+        departure: formatDeparture(opt.departure),
+        onTimePct: opt.onTimePct,
+        co2Kg: opt.co2Kg,
+        ...(OPTION_META[opt.type] ?? { label: opt.type.toUpperCase(), badge: '', badgeColor: '#ccc' }),
+      }))
+      setQuotes({ options, perishableRisk: data.perishableRisk })
+    } catch (err) {
+      setApiError(err instanceof Error ? err.message : 'Failed to get quote. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const risk = quotes?.perishableRisk
@@ -466,11 +511,11 @@ export default function QuotePage() {
                         <p className="text-xs leading-relaxed" style={{ color: 'var(--wb-gray-500)' }}>
                           Shipments over 5t often benefit from a dedicated charter. Our team can find the best option for you.
                         </p>
-                        <Link href="/agent"
-                              className="inline-flex items-center gap-1 text-xs font-bold mt-2"
-                              style={{ color: '#d97706' }}>
+                        <a href="mailto:cargobooking@rwandair.com?subject=Charter%20Inquiry"
+                           className="inline-flex items-center gap-1 text-xs font-bold mt-2"
+                           style={{ color: '#d97706' }}>
                           Request charter inquiry <ChevronRight className="w-3 h-3" />
-                        </Link>
+                        </a>
                       </div>
                     </div>
                   )}
@@ -499,7 +544,22 @@ export default function QuotePage() {
 
             {/* ── Quote results ─────────────────────────────────────────── */}
             <div className="lg:col-span-2">
-              {!quotes && !loading && (
+              {apiError && !loading && (
+                <div className="mb-6 p-4 rounded-xl flex items-start gap-3"
+                     style={{ background: 'rgba(239,68,68,0.07)', border: '1.5px solid rgba(239,68,68,0.25)' }}>
+                  <XCircle className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#ef4444' }} />
+                  <div>
+                    <p className="text-sm font-semibold mb-0.5" style={{ color: '#ef4444' }}>Could not retrieve quotes</p>
+                    <p className="text-sm" style={{ color: 'var(--wb-gray-900)' }}>{apiError}</p>
+                    <p className="text-xs mt-1" style={{ color: 'var(--wb-gray-500)' }}>
+                      Please check your route selection and try again, or{' '}
+                      <a href="mailto:cargobooking@rwandair.com" style={{ color: 'var(--wb-sky)' }}>email us directly</a>.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {!quotes && !loading && !apiError && (
                 <div className="flex flex-col items-center justify-center py-24 text-center"
                      style={{ border: '2px dashed var(--wb-gray-200)', borderRadius: '1.5rem', color: 'var(--wb-gray-500)' }}>
                   <Zap className="w-12 h-12 mb-4" style={{ color: 'var(--wb-gray-200)' }} />
@@ -577,9 +637,9 @@ export default function QuotePage() {
                           {quotes.options.find(o => o.type === selected)?.route.join(' → ')}
                         </p>
                       </div>
-                      <Link href="/agent"
-                            className="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2"
-                            style={{ background: 'var(--wb-yellow)', color: 'var(--wb-blue)' }}>
+                      <Link href="/dashboard/shipments/new"
+                         className="px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2"
+                         style={{ background: 'var(--wb-yellow)', color: 'var(--wb-blue)' }}>
                         Proceed to book <ChevronRight className="w-4 h-4" />
                       </Link>
                     </div>

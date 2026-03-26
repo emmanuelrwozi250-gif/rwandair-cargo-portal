@@ -8,10 +8,10 @@ export const metadata: Metadata = {
     title: 'Get a Cargo Quote | RwandAir Cargo',
     description:
       'Get instant air cargo quotes for 40+ destinations from Kigali. Compare fastest, cheapest and most reliable routing options with live CO₂ estimates.',
-    url: 'https://cargo.rwandair.com/quote',
+    url: '/quote',
   },
   alternates: {
-    canonical: 'https://cargo.rwandair.com/quote',
+    canonical: '/quote',
   },
 }
 

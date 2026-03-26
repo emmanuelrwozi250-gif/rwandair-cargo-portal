@@ -11,21 +11,29 @@ const PUBLIC_ROUTES = [
   '/perishables',
   '/capacity',
   '/deals',
-  '/agent',
   '/stations',
   '/globe',
   '/track',
+  '/agents',
+  '/agent',
+  '/integrations',
+  '/insights',
+  '/api-docs',
 ]
 
 // Public route prefixes (dynamic segments)
-const PUBLIC_PREFIXES = ['/products', '/track']
+const PUBLIC_PREFIXES = ['/products', '/track', '/legal']
 
 export async function middleware(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  // If env vars are not configured, let all requests through
+  // If env vars are not configured, still protect admin/dashboard routes
   if (!url || !key) {
+    const { pathname } = request.nextUrl
+    if (pathname.startsWith('/admin') || pathname.startsWith('/dashboard')) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
     return NextResponse.next({ request })
   }
 
@@ -54,8 +62,7 @@ export async function middleware(request: NextRequest) {
 
   // Allow webhook and public API routes
   if (pathname.startsWith('/api/webhook') || pathname.startsWith('/api/quote') ||
-      pathname.startsWith('/api/track') || pathname.startsWith('/api/capacity') ||
-      pathname.startsWith('/api/agent')) {
+      pathname.startsWith('/api/track') || pathname.startsWith('/api/capacity')) {
     return supabaseResponse
   }
 

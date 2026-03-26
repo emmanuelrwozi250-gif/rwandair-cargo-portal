@@ -1,20 +1,24 @@
 import type { MetadataRoute } from 'next'
 
-const SITE_URL = 'https://cargo.rwandair.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rwandair-cargo-portal-nnvj.vercel.app'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
 
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: SITE_URL,                    lastModified: now, changeFrequency: 'daily',   priority: 1.0 },
-    { url: `${SITE_URL}/quote`,         lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
-    { url: `${SITE_URL}/track`,         lastModified: now, changeFrequency: 'daily',   priority: 0.9 },
-    { url: `${SITE_URL}/consolidate`,   lastModified: now, changeFrequency: 'daily',   priority: 0.8 },
-    { url: `${SITE_URL}/capacity`,      lastModified: now, changeFrequency: 'daily',   priority: 0.8 },
-    { url: `${SITE_URL}/deals`,         lastModified: now, changeFrequency: 'daily',   priority: 0.7 },
-    { url: `${SITE_URL}/perishables`,   lastModified: now, changeFrequency: 'weekly',  priority: 0.7 },
-    { url: `${SITE_URL}/stations`,      lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${SITE_URL}/agent`,         lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
+    { url: SITE_URL,                               lastModified: now, changeFrequency: 'daily',   priority: 1.0 },
+    { url: `${SITE_URL}/quote`,                    lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
+    { url: `${SITE_URL}/track`,                    lastModified: now, changeFrequency: 'daily',   priority: 0.9 },
+    { url: `${SITE_URL}/consolidate`,              lastModified: now, changeFrequency: 'daily',   priority: 0.8 },
+    { url: `${SITE_URL}/capacity`,                 lastModified: now, changeFrequency: 'daily',   priority: 0.8 },
+    { url: `${SITE_URL}/deals`,                    lastModified: now, changeFrequency: 'daily',   priority: 0.7 },
+    { url: `${SITE_URL}/perishables`,              lastModified: now, changeFrequency: 'weekly',  priority: 0.7 },
+    { url: `${SITE_URL}/stations`,                 lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${SITE_URL}/agents`,                   lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${SITE_URL}/integrations`,             lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${SITE_URL}/insights`,                 lastModified: now, changeFrequency: 'weekly',  priority: 0.7 },
+    { url: `${SITE_URL}/api-docs`,                 lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${SITE_URL}/legal/service-guarantee`,  lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
   ]
 
   const productSlugs = [

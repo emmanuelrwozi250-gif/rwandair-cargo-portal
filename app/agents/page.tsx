@@ -1,5 +1,4 @@
 'use client'
-// TODO: connect form to CRM
 import { useState } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
@@ -12,6 +11,8 @@ export default function AgentsPage() {
     company: '', iata: '', contact: '', email: '', phone: '', country: '', volume: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   function validate() {
     const e: Record<string, string> = {}
@@ -23,14 +24,28 @@ export default function AgentsPage() {
     return e
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const errs = validate()
     if (Object.keys(errs).length) { setErrors(errs); return }
-    // TODO: connect to CRM — for now open mailto
-    const body = Object.entries(form).map(([k, v]) => `${k}: ${v}`).join('\n')
-    window.location.href = `mailto:cargobooking@rwandair.com?subject=Freight Agent Registration — ${form.company}&body=${encodeURIComponent(body)}`
-    setSubmitted(true)
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      const res = await fetch('/api/agents/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data?.error || `Request failed (${res.status})`)
+      }
+      setSubmitted(true)
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Something went wrong. Please try again or email us directly.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const field = (id: keyof typeof form, label: string, placeholder: string, required = true) => (
@@ -195,6 +210,13 @@ export default function AgentsPage() {
                 <p className="text-sm" style={{ color: 'var(--wb-gray-500)' }}>We&apos;ll be in touch within 2 business days.</p>
               </div>
             ) : (
+              <>
+              {submitError && (
+                <div className="rounded-lg p-3 text-sm mb-4"
+                     style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.25)', color: '#dc2626' }}>
+                  {submitError}
+                </div>
+              )}
               <form onSubmit={handleSubmit} noValidate className="space-y-5">
                 {field('company', 'Company name', 'e.g. East Africa Freight Ltd')}
                 {field('iata', 'IATA / FIATA code (optional)', 'e.g. 12345678', false)}
@@ -222,10 +244,11 @@ export default function AgentsPage() {
                   </select>
                 </div>
                 <button type="submit"
-                        className="w-full flex items-center justify-center gap-2 font-bold text-sm"
-                        style={{ background: 'var(--wb-yellow)', color: '#0A1F44', padding: '14px 28px', borderRadius: '8px' }}>
+                        disabled={submitting}
+                        className="w-full flex items-center justify-center gap-2 font-bold text-sm transition-opacity"
+                        style={{ background: 'var(--wb-yellow)', color: '#0A1F44', padding: '14px 28px', borderRadius: '8px', opacity: submitting ? 0.7 : 1 }}>
                   <Zap className="w-4 h-4" />
-                  Submit registration
+                  {submitting ? 'Submitting…' : 'Submit registration'}
                 </button>
                 <p className="text-xs text-center" style={{ color: 'var(--wb-gray-500)' }}>
                   Or email us directly at{' '}
@@ -234,6 +257,7 @@ export default function AgentsPage() {
                   </a>
                 </p>
               </form>
+              </>
             )}
           </div>
         </section>

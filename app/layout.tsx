@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Lato } from 'next/font/google'
 import './globals.css'
+import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/components/providers/LanguageProvider'
 import { ToastProvider } from '@/components/ui/Toast'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
@@ -13,7 +14,7 @@ const lato = Lato({
   variable: '--font-lato',
 })
 
-const SITE_URL = 'https://cargo.rwandair.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rwandair-cargo-portal-nnvj.vercel.app'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -61,9 +62,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: SITE_URL,
   },
-  verification: {
-    // google: 'your-google-site-verification-token',
-  },
+  // verification: { google: 'paste-your-google-site-verification-token-here' },
 }
 
 // ─── Organization + AirlineService structured data ────────────────────────
@@ -145,7 +144,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="canonical" href={SITE_URL} />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -165,6 +163,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </ErrorBoundary>
           </ToastProvider>
         </LanguageProvider>
+        <Analytics />
       </body>
     </html>
   )

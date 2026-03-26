@@ -8,10 +8,10 @@ export const metadata: Metadata = {
     title: 'Track Your Shipment | RwandAir Cargo',
     description:
       'Track your RwandAir Cargo shipment with your Air Waybill (AWB) number. Get real-time status, IoT sensor data, and delivery estimates.',
-    url: 'https://cargo.rwandair.com/track',
+    url: '/track',
   },
   alternates: {
-    canonical: 'https://cargo.rwandair.com/track',
+    canonical: '/track',
   },
 }
 

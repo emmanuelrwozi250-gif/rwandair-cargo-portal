@@ -165,7 +165,6 @@ export default function TrackPage() {
     if (!awbs.length) return
     setLoading(true)
     setResults(null)
-    await new Promise(r => setTimeout(r, 1100))
     setResults(awbs.map(mockResult))
     setLoading(false)
   }

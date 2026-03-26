@@ -8,10 +8,10 @@ export const metadata: Metadata = {
     title: 'Last-Minute Cargo Deals | RwandAir Cargo',
     description:
       'Grab discounted empty belly space before tonight\'s flights. Save up to 30% on last-minute air cargo bookings from Kigali.',
-    url: 'https://cargo.rwandair.com/deals',
+    url: '/deals',
   },
   alternates: {
-    canonical: 'https://cargo.rwandair.com/deals',
+    canonical: '/deals',
   },
 }
 

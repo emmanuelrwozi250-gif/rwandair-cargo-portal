@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import { RwandAirCargoLogoMark } from '@/components/brand/RwandAirCargoLogo'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -67,13 +68,18 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <nav className="bg-[#02284d]">
+      <nav style={{ background: '#071830' }}>
         <div className="max-w-6xl mx-auto px-6 py-4">
           <Link href="/" className="flex items-center gap-2.5 w-fit">
-            <div className="h-7 w-7 bg-[#E4DC1F] rounded-lg flex items-center justify-center">
-              <span className="text-[#02284d] font-bold text-xs">A</span>
-            </div>
-            <span className="font-bold text-white text-lg tracking-tight">ALTITUDE</span>
+            <RwandAirCargoLogoMark size={32} />
+            <span style={{ lineHeight: 1, whiteSpace: 'nowrap' }}>
+              <span style={{ fontFamily: "'Lato', sans-serif", fontWeight: 900, fontStyle: 'italic', fontSize: '0.95rem', color: 'white' }}>
+                RwandAir
+              </span>
+              <span style={{ fontFamily: "'Lato', sans-serif", fontWeight: 900, fontStyle: 'italic', fontSize: '0.95rem', color: '#F2DE0E', letterSpacing: '0.02em', marginLeft: '0.1em' }}>
+                CARGO
+              </span>
+            </span>
           </Link>
         </div>
       </nav>
@@ -83,7 +89,7 @@ export default function LoginPage() {
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-            <p className="text-gray-500 text-sm mt-1">Sign in to your Altitude account</p>
+            <p className="text-gray-500 text-sm mt-1">Sign in to your RwandAir Cargo account</p>
           </div>
 
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">

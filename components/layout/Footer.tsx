@@ -50,16 +50,19 @@ export default function Footer() {
 
               <div className="flex gap-3">
                 <a href="https://www.rwandair.com" target="_blank" rel="noopener noreferrer"
+                   aria-label="Visit RwandAir official website"
                    className="w-8 h-8 rounded-full flex items-center justify-center"
                    style={{ background: 'rgba(255,255,255,0.08)' }}>
                   <Globe className="w-4 h-4" style={{ color: 'var(--wb-sky)' }} />
                 </a>
                 <a href="https://wa.me/250788177000"
+                   aria-label="Contact us on WhatsApp"
                    className="w-8 h-8 rounded-full flex items-center justify-center"
                    style={{ background: 'rgba(255,255,255,0.08)' }}>
                   <MessageCircle className="w-4 h-4" style={{ color: '#25D366' }} />
                 </a>
                 <a href="tel:+250788177000"
+                   aria-label="Call RwandAir Cargo desk"
                    className="w-8 h-8 rounded-full flex items-center justify-center"
                    style={{ background: 'rgba(255,255,255,0.08)' }}>
                   <Phone className="w-4 h-4" style={{ color: 'var(--wb-sky)' }} />
@@ -77,7 +80,6 @@ export default function Footer() {
                   ['Perishables', '/perishables'],
                   ['Live Capacity', '/capacity'],
                   ['Last-Min Deals', '/deals'],
-                  ['AI Agent', '/agent'],
                   ['Cargo Stations', '/stations'],
                   ['For Freight Agents', '/agents'],
                   ['Trade Insights', '/insights'],
