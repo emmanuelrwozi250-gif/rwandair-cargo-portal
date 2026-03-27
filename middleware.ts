@@ -61,8 +61,14 @@ export async function middleware(request: NextRequest) {
   }
 
   // Allow webhook and public API routes
-  if (pathname.startsWith('/api/webhook') || pathname.startsWith('/api/quote') ||
-      pathname.startsWith('/api/track') || pathname.startsWith('/api/capacity')) {
+  if (
+    pathname.startsWith('/api/webhook') ||
+    pathname.startsWith('/api/quote') ||
+    pathname.startsWith('/api/track') ||
+    pathname.startsWith('/api/capacity') ||
+    pathname.startsWith('/api/agents') ||
+    pathname.startsWith('/api/agent')
+  ) {
     return supabaseResponse
   }
 
