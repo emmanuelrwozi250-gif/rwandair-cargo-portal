@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import RwandaLandscape from '@/components/brand/RwandaLandscape'
 import { Globe, MessageCircle, Phone, Mail, MapPin } from 'lucide-react'
-import { RwandAirCargoLogoMark } from '@/components/brand/RwandAirCargoLogo'
+import RwandAirCargoLogo from '@/components/brand/RwandAirCargoLogo'
 
 export default function Footer() {
   return (
@@ -18,7 +18,7 @@ export default function Footer() {
             {/* Brand col */}
             <div className="md:col-span-1">
               <div className="mb-1">
-                <RwandAirCargoLogoMark size={36} />
+                <RwandAirCargoLogo size={56} />
               </div>
               <p className="text-xs italic mb-4 mt-2" style={{ color: 'rgba(242,222,14,0.7)' }}>
                 Fly the Dream of Africa

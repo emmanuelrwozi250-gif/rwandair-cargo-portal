@@ -49,7 +49,7 @@ export default function Navbar() {
         >
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0" aria-label="RwandAir Cargo — home">
-            <RwandAirCargoLogoMark size={36} />
+            <RwandAirCargoLogoMark size={44} />
           </Link>
 
           {/* Desktop nav links */}

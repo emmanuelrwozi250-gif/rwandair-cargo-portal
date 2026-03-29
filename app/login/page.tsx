@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { RwandAirCargoLogoMark } from '@/components/brand/RwandAirCargoLogo'
+import RwandAirCargoLogo from '@/components/brand/RwandAirCargoLogo'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -71,7 +71,7 @@ export default function LoginPage() {
       <nav style={{ background: '#071830' }}>
         <div className="max-w-6xl mx-auto px-6 py-4">
           <Link href="/" className="flex items-center w-fit">
-            <RwandAirCargoLogoMark size={32} />
+            <RwandAirCargoLogo size={44} />
           </Link>
         </div>
       </nav>
