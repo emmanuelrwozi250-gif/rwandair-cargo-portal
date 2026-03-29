@@ -110,7 +110,7 @@ export default function AdminExportersPage() {
               onClick={() => setFilter(f.value)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === f.value
-                  ? 'bg-[#02284d] text-[#E4DC1F]'
+                  ? 'bg-[#02284d] text-[#FBE115]'
                   : 'bg-white text-gray-600 border border-gray-200 hover:border-[#02284d]/30'
               }`}
             >

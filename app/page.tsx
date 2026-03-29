@@ -165,7 +165,7 @@ function AnimatedStat({ target, suffix, label }: { target: string; suffix?: stri
 
   return (
     <div ref={ref} className="text-center px-8 py-10">
-      <div className="font-bold mb-2" style={{ fontSize: 'clamp(36px,4vw,56px)', color: '#E4DC1F', lineHeight: 1 }}>
+      <div className="font-bold mb-2" style={{ fontSize: 'clamp(36px,4vw,56px)', color: '#FBE115', lineHeight: 1 }}>
         {prefix}{displayed}{postfix}{suffix}
       </div>
       <div className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.65)' }}>{label}</div>
@@ -215,7 +215,7 @@ export default function HomePage() {
             </div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full"
                  style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#E4DC1F" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FBE115" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
                 <path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
                 <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
@@ -247,10 +247,10 @@ export default function HomePage() {
                       style={{ background: 'var(--wb-yellow)', color: '#0A1F44', padding: '14px 28px', borderRadius: '8px' }}>
                   <Zap className="w-4 h-4" /> Get instant quote
                 </Link>
-                <Link href="/agent"
+                <Link href="/stations"
                       className="flex items-center gap-2 font-bold text-sm transition-all hover:bg-white/10"
                       style={{ border: '1.5px solid rgba(255,255,255,0.4)', color: 'rgba(255,255,255,0.85)', background: 'transparent', padding: '14px 28px', borderRadius: '8px' }}>
-                  <MessageCircle className="w-4 h-4" /> Talk to AI Agent
+                  <Plane className="w-4 h-4" /> Explore our routes
                 </Link>
               </div>
             </div>
@@ -375,8 +375,8 @@ export default function HomePage() {
                 <div className="absolute right-0 bottom-0 w-28 h-28 overflow-hidden pointer-events-none">
                   <svg viewBox="0 0 60 60" className="w-full h-full opacity-20">
                     <polygon points="30,2 58,30 30,58 2,30" fill="none"
-                             stroke="#04549B" strokeWidth="1" strokeOpacity="0.3" />
-                    <polygon points="30,14 46,30 30,46 14,30" fill="#04549B" fillOpacity="0.08" />
+                             stroke="#00529C" strokeWidth="1" strokeOpacity="0.3" />
+                    <polygon points="30,14 46,30 30,46 14,30" fill="#00529C" fillOpacity="0.08" />
                   </svg>
                 </div>
                 <div className="relative">
@@ -429,7 +429,7 @@ export default function HomePage() {
                 company: 'Kigali Floriculture Ltd',
                 country: 'Rwanda',
                 badge: 'Perishables',
-                badgeColor: '#2D7D46',
+                badgeColor: '#94C944',
                 badgeBg: 'rgba(45,125,70,0.1)',
               },
               {
@@ -438,7 +438,7 @@ export default function HomePage() {
                 company: 'EastAfrica Freight Solutions',
                 country: 'Kenya',
                 badge: 'General Cargo',
-                badgeColor: '#04549B',
+                badgeColor: '#00529C',
                 badgeBg: 'rgba(4,84,155,0.08)',
               },
               {
@@ -447,7 +447,7 @@ export default function HomePage() {
                 company: 'MedExpress Africa',
                 country: 'Uganda',
                 badge: 'Pharmaceuticals',
-                badgeColor: '#1CA3DB',
+                badgeColor: '#16A1DC',
                 badgeBg: 'rgba(28,163,219,0.1)',
               },
             ].map(({ quote, name, company, country, badge, badgeColor, badgeBg }) => (
@@ -514,7 +514,7 @@ export default function HomePage() {
                 name: 'General Cargo',
                 tagline: 'Reliable, all-route',
                 desc: 'Standard cargo across all 40+ RwandAir routes with consolidation matching available.',
-                color: '#04549B',
+                color: '#00529C',
                 bgColor: 'rgba(4,84,155,0.07)',
                 icon: Package,
                 badge: 'Consolidation eligible',
@@ -524,7 +524,7 @@ export default function HomePage() {
                 name: 'Perishables',
                 tagline: 'Active cold-chain',
                 desc: 'Flowers, fruit, vegetables, fish. Active cold-chain, shelf-life calculation.',
-                color: '#2D7D46',
+                color: '#94C944',
                 bgColor: 'rgba(45,125,70,0.08)',
                 icon: Thermometer,
                 badge: 'Cold-chain monitored',
@@ -534,7 +534,7 @@ export default function HomePage() {
                 name: 'Pharmaceuticals',
                 tagline: 'GDP-certified',
                 desc: 'GDP-certified. ±2°C / ±8°C. CEIV Pharma compliant across all hub connections.',
-                color: '#1CA3DB',
+                color: '#16A1DC',
                 bgColor: 'rgba(28,163,219,0.08)',
                 icon: Shield,
                 badge: 'CEIV Pharma',
@@ -755,48 +755,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── AI Agent promo ────────────────────────────────────────────────── */}
-      <section className="py-20 pb-20 lg:pb-20" style={{ background: 'var(--wb-sky-light)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-2"
-               style={{ background: 'var(--wb-blue)' }}>
-            <div className="p-12 relative overflow-hidden">
-              <ImigongoPattern color="white" opacity={0.05} />
-              <ConnectivityLines opacity={0.08} variant="light" animated={false} />
-              <div className="relative z-10">
-                <p className="label-upper mb-3" style={{ color: 'var(--wb-sky)' }}>AI Booking Agent</p>
-                <h2 className="text-white mb-4">Your 24/7 cargo intelligence assistant</h2>
-                <p className="text-base mb-8" style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 300, lineHeight: 1.75 }}>
-                  Powered by Claude. Understands African trade, speaks your language, and can generate quotes,
-                  find consolidation opportunities, and check customs requirements — all in a conversational interface.
-                </p>
-                <Link href="/agent"
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm"
-                      style={{ background: 'var(--wb-yellow)', color: 'var(--wb-blue)' }}>
-                  Talk to the agent <ChevronRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
-            {/* Mock chat preview */}
-            <div className="p-8 flex flex-col gap-3 justify-center"
-                 style={{ background: 'rgba(0,0,0,0.15)' }}>
-              {[
-                { role: 'user',  text: 'I need to ship 500kg of fresh roses from Kigali to Amsterdam.' },
-                { role: 'agent', text: 'Perfect — I can help with that. For fresh-cut flowers KGL→AMS, I\'ll check our next available cold-chain flight and consolidation groups. What\'s your preferred departure date?' },
-                { role: 'user',  text: 'As soon as possible — ideally tonight.' },
-                { role: 'agent', text: '✅ Found a match. WB401 departs tonight at 22:15. There\'s an active consolidation with 2 other flower shippers — joining saves you est. 19%. Shelf life: 4.8 days remaining on arrival. Want me to generate the full quote?' },
-              ].map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`px-4 py-2.5 rounded-xl max-w-xs text-xs leading-relaxed ${msg.role === 'user' ? 'bubble-user' : 'bubble-agent'}`}>
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ── Flying Green ─────────────────────────────────────────────────── */}
       <section className="py-20 pb-20 lg:pb-20" style={{ background: '#f0f9e8' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -865,7 +823,7 @@ export default function HomePage() {
           </p>
           <h2 className="text-white mb-4">Ready to move your cargo?</h2>
           <p className="text-base mb-8" style={{ color: 'rgba(255,255,255,0.65)', fontWeight: 300 }}>
-            Get an instant quote in seconds, or let our AI agent guide you through the entire booking.
+            Get an instant quote in seconds, or speak directly with our 24/7 cargo desk.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/quote"
@@ -873,11 +831,11 @@ export default function HomePage() {
                   style={{ background: 'var(--wb-yellow)', color: 'var(--wb-blue)' }}>
               Get instant quote
             </Link>
-            <Link href="/agent"
-                  className="px-8 py-3 rounded-full font-bold text-sm border"
-                  style={{ borderColor: 'rgba(255,255,255,0.3)', color: 'white', background: 'rgba(255,255,255,0.08)' }}>
-              Talk to AI Agent
-            </Link>
+            <a href="tel:+250788177000"
+               className="px-8 py-3 rounded-full font-bold text-sm border"
+               style={{ borderColor: 'rgba(255,255,255,0.3)', color: 'white', background: 'rgba(255,255,255,0.08)' }}>
+              Call cargo desk
+            </a>
           </div>
         </div>
       </section>

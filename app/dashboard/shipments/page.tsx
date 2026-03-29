@@ -39,7 +39,7 @@ export default async function ShipmentsPage() {
         actions={
           <Link
             href="/dashboard/shipments/new"
-            className="bg-[#02284d] text-[#E4DC1F] px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#01193a] transition-colors"
+            className="bg-[#02284d] text-[#FBE115] px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#01193a] transition-colors"
           >
             + New Shipment
           </Link>
@@ -56,7 +56,7 @@ export default async function ShipmentsPage() {
               <p className="text-gray-500 text-sm font-medium">No shipments yet</p>
               <Link
                 href="/dashboard/shipments/new"
-                className="mt-4 inline-flex bg-[#02284d] text-[#E4DC1F] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#01193a] transition-colors"
+                className="mt-4 inline-flex bg-[#02284d] text-[#FBE115] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#01193a] transition-colors"
               >
                 Create your first shipment
               </Link>

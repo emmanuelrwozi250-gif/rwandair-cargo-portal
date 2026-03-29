@@ -118,7 +118,7 @@ export default function AdminShipmentsPage() {
         actions={
           <a
             href="/api/admin/export-csv"
-            className="inline-flex items-center gap-2 bg-[#02284d] text-[#E4DC1F] px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#01193a] transition-colors"
+            className="inline-flex items-center gap-2 bg-[#02284d] text-[#FBE115] px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#01193a] transition-colors"
           >
             <Download className="h-4 w-4" />
             Export CSV
@@ -135,7 +135,7 @@ export default function AdminShipmentsPage() {
               onClick={() => setFilterMode(m)}
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 filterMode === m
-                  ? 'bg-[#02284d] text-[#E4DC1F]'
+                  ? 'bg-[#02284d] text-[#FBE115]'
                   : 'bg-white text-gray-600 border border-gray-200 hover:border-[#02284d]/30'
               }`}
             >
@@ -149,7 +149,7 @@ export default function AdminShipmentsPage() {
           <button
             onClick={() => setFilterStatus('all')}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              filterStatus === 'all' ? 'bg-[#02284d] text-[#E4DC1F]' : 'bg-white text-gray-600 border border-gray-200 hover:border-[#02284d]/30'
+              filterStatus === 'all' ? 'bg-[#02284d] text-[#FBE115]' : 'bg-white text-gray-600 border border-gray-200 hover:border-[#02284d]/30'
             }`}
           >
             All
@@ -159,7 +159,7 @@ export default function AdminShipmentsPage() {
               key={status}
               onClick={() => setFilterStatus(status)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                filterStatus === status ? 'bg-[#02284d] text-[#E4DC1F]' : 'bg-white text-gray-600 border border-gray-200 hover:border-[#02284d]/30'
+                filterStatus === status ? 'bg-[#02284d] text-[#FBE115]' : 'bg-white text-gray-600 border border-gray-200 hover:border-[#02284d]/30'
               }`}
             >
               {status}

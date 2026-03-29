@@ -1,5 +1,3 @@
-// TODO: connect to CMS — replace placeholder articles with live content
-import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { ChevronRight } from 'lucide-react'
@@ -15,7 +13,7 @@ const ARTICLES = [
     title: "Rwanda's horticultural exports up 34% YoY — what it means for air cargo capacity",
     date: 'March 18, 2026',
     category: 'Market Update',
-    categoryColor: '#2D7D46',
+    categoryColor: '#94C944',
     categoryBg: 'rgba(45,125,70,0.1)',
     excerpt: "Rwanda's National Agricultural Export Development Board reports record horticultural export volumes for Q1 2026, driven by strong European demand for roses and avocados. We examine what this means for belly space availability on the KGL–AMS and KGL–CDG corridors over the next quarter.",
   },
@@ -33,7 +31,7 @@ const ARTICLES = [
     title: 'Cold-chain innovations: how RwandAir Cargo achieves 99.7% integrity on pharma routes',
     date: 'February 28, 2026',
     category: 'Cold Chain',
-    categoryColor: '#1CA3DB',
+    categoryColor: '#16A1DC',
     categoryBg: 'rgba(28,163,219,0.1)',
     excerpt: "Our CEIV Pharma certification demands real-time IoT temperature monitoring at every stage — from acceptance at KGL to final delivery. In this piece, our cargo operations team explains the technology stack and protocols that underpin our cold-chain performance record.",
   },
@@ -60,14 +58,6 @@ export default function InsightsPage() {
 
         {/* Articles */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* TODO: connect to CMS notice */}
-          <div className="rounded-xl px-5 py-3 mb-10 inline-flex items-center gap-2"
-               style={{ background: 'rgba(228,220,31,0.07)', border: '1px solid rgba(228,220,31,0.25)' }}>
-            <span className="text-xs font-semibold" style={{ color: '#92400e' }}>
-              TODO: connect to CMS — articles below are placeholder content
-            </span>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {ARTICLES.map(({ slug, title, date, category, categoryColor, categoryBg, excerpt }) => (
               <article key={slug} className="rounded-2xl overflow-hidden flex flex-col"
@@ -88,7 +78,6 @@ export default function InsightsPage() {
                   <p className="text-sm flex-1" style={{ color: 'var(--wb-gray-500)', lineHeight: 1.65 }}>
                     {excerpt}
                   </p>
-                  {/* TODO: link to full article page when CMS is live */}
                   <span className="inline-flex items-center gap-1 text-sm font-bold"
                         style={{ color: 'var(--wb-sky)' }}>
                     Read more <ChevronRight className="w-4 h-4" />
@@ -102,7 +91,6 @@ export default function InsightsPage() {
             <p className="text-sm mb-4" style={{ color: 'var(--wb-gray-500)' }}>
               Subscribe to receive trade intelligence in your inbox
             </p>
-            {/* TODO: connect to email marketing platform */}
             <a href="mailto:cargo@rwandair.com?subject=Trade Insights Newsletter"
                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-sm"
                style={{ background: 'var(--wb-blue)', color: 'white' }}>

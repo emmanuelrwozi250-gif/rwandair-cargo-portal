@@ -84,7 +84,7 @@ export async function GET() {
     return new NextResponse(csvContent, {
       headers: {
         'Content-Type': 'text/csv',
-        'Content-Disposition': `attachment; filename="altitude-shipments-${new Date().toISOString().split('T')[0]}.csv"`,
+        'Content-Disposition': `attachment; filename="rwandair-cargo-shipments-${new Date().toISOString().split('T')[0]}.csv"`,
       },
     })
   } catch (err) {

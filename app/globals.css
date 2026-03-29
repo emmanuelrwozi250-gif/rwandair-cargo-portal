@@ -4,30 +4,30 @@
 
 /* ─── RwandAir Cargo Brand Tokens ────────────────────────────────────────── */
 /*
-  Official palette (updated to exact brand spec):
-    Primary blue    #04549B   --brand-blue
-    Accent yellow   #E4DC1F   --brand-yellow
-    Light blue      #1CA3DB   --brand-light-blue
-    Brand green     #2D7D46   --brand-green
-    Neutral dark    #1A1A2E   --neutral-dark
+  Official palette — extracted directly from the RwandAir Cargo logo SVG:
+    Primary blue    #00529C   --brand-blue        (logo blue ellipse)
+    Accent yellow   #FBE115   --brand-yellow      (logo CARGO text + sun)
+    Sky blue        #16A1DC   --brand-light-blue  (logo sky-blue swoosh)
+    Brand green     #94C944   --brand-green       (logo green swoosh)
+    Neutral dark    #071830   --neutral-dark       (navbar / dark surfaces)
     Neutral light   #F5F7FA   --neutral-light
 */
 :root {
   /* ── Primary brand ── */
-  --brand-blue:        #04549B;
-  --brand-yellow:      #E4DC1F;
-  --brand-light-blue:  #1CA3DB;
-  --brand-green:       #2D7D46;
-  --neutral-dark:      #1A1A2E;
+  --brand-blue:        #00529C;
+  --brand-yellow:      #FBE115;
+  --brand-light-blue:  #16A1DC;
+  --brand-green:       #94C944;
+  --neutral-dark:      #071830;
   --neutral-light:     #F5F7FA;
 
   /* ── Derived / tinted ── */
-  --brand-blue-dark:   #033a6e;
-  --brand-blue-hover:  #0560af;
-  --brand-yellow-dark: #c4bc00;
-  --brand-yellow-light:#fdfce0;
-  --brand-green-light: #e8f4ec;
-  --brand-sky-light:   #e6f6fc;
+  --brand-blue-dark:   #003b75;
+  --brand-blue-hover:  #0062b8;
+  --brand-yellow-dark: #d4be0e;
+  --brand-yellow-light:#fffce6;
+  --brand-green-light: #f0fae0;
+  --brand-sky-light:   #e4f5fc;
 
   /* ── Semantic surface ── */
   --surface-0:  #ffffff;

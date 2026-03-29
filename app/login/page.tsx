@@ -67,15 +67,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <nav style={{ background: '#071830' }}>
-        <div className="max-w-6xl mx-auto px-6 py-4">
-          <Link href="/" className="flex items-center w-fit">
-            <RwandAirCargoLogo size={44} />
-          </Link>
-        </div>
-      </nav>
-
       {/* Form */}
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-sm">

@@ -115,7 +115,7 @@ export default function AgentsPage() {
                 {
                   icon: CreditCard,
                   title: 'Credit account eligibility',
-                  color: '#04549B', bg: 'rgba(4,84,155,0.07)',
+                  color: '#00529C', bg: 'rgba(4,84,155,0.07)',
                   points: [
                     '30-day credit terms for approved agents',
                     'Consolidated monthly invoicing',
@@ -125,7 +125,7 @@ export default function AgentsPage() {
                 {
                   icon: Globe2,
                   title: 'Platform integrations',
-                  color: '#2D7D46', bg: 'rgba(45,125,70,0.08)',
+                  color: '#94C944', bg: 'rgba(45,125,70,0.08)',
                   points: [
                     'Live on cargo.one, WebCargo, CargoAi',
                     'Flexport, Freightos & CargoWise',
@@ -135,7 +135,7 @@ export default function AgentsPage() {
                 {
                   icon: Headphones,
                   title: 'Dedicated agent support',
-                  color: '#1CA3DB', bg: 'rgba(28,163,219,0.08)',
+                  color: '#16A1DC', bg: 'rgba(28,163,219,0.08)',
                   points: [
                     'Named account manager for volume agents',
                     '24/7 agent-priority cargo desk',
@@ -205,7 +205,7 @@ export default function AgentsPage() {
             {submitted ? (
               <div className="text-center py-12 rounded-2xl"
                    style={{ background: 'rgba(45,125,70,0.07)', border: '1px solid rgba(45,125,70,0.2)' }}>
-                <CheckCircle className="w-12 h-12 mx-auto mb-4" style={{ color: '#2D7D46' }} />
+                <CheckCircle className="w-12 h-12 mx-auto mb-4" style={{ color: '#94C944' }} />
                 <h3 className="font-bold mb-2" style={{ color: 'var(--wb-blue)' }}>Application submitted</h3>
                 <p className="text-sm" style={{ color: 'var(--wb-gray-500)' }}>We&apos;ll be in touch within 2 business days.</p>
               </div>

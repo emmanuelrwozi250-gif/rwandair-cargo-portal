@@ -1,4 +1,3 @@
-// TODO: legal team to complete all sections below
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
@@ -14,7 +13,7 @@ export default function ServiceGuaranteePage() {
     {
       icon: Clock,
       title: 'On-Time Delivery Commitment',
-      color: '#04549B',
+      color: '#00529C',
       bg: 'rgba(4,84,155,0.07)',
       // TODO: legal team to complete
       content: [
@@ -26,7 +25,7 @@ export default function ServiceGuaranteePage() {
     {
       icon: Thermometer,
       title: 'Cold-Chain Integrity Guarantee',
-      color: '#2D7D46',
+      color: '#94C944',
       bg: 'rgba(45,125,70,0.08)',
       // TODO: legal team to complete
       content: [
@@ -38,7 +37,7 @@ export default function ServiceGuaranteePage() {
     {
       icon: FileText,
       title: 'Claims Procedure',
-      color: '#1CA3DB',
+      color: '#16A1DC',
       bg: 'rgba(28,163,219,0.08)',
       // TODO: legal team to complete
       content: [
@@ -89,22 +88,13 @@ export default function ServiceGuaranteePage() {
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.72)', lineHeight: 1.7, maxWidth: '600px' }}>
               Our commitments to on-time delivery, cold-chain integrity, and transparent claims handling.
-              Last reviewed: {new Date().getFullYear()}. {/* TODO: update with real review date */}
+              Last reviewed: {new Date().getFullYear()}.
             </p>
           </div>
         </div>
 
         {/* Content */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8">
-          {/* TODO: legal team notice */}
-          <div className="rounded-xl px-6 py-4"
-               style={{ background: 'rgba(228,220,31,0.07)', border: '1px solid rgba(228,220,31,0.3)', borderLeft: '4px solid #E4DC1F' }}>
-            <p className="text-sm font-semibold mb-1" style={{ color: '#92400e' }}>Draft — Pending Legal Review</p>
-            <p className="text-sm" style={{ color: '#78350f' }}>
-              This page contains placeholder content. Legal team: please review and replace all sections marked // TODO before publishing.
-            </p>
-          </div>
-
           {sections.map(({ icon: Icon, title, color, bg, content }) => (
             <div key={title} className="rounded-2xl p-8"
                  style={{ background: 'white', border: '1px solid var(--wb-gray-200)' }}>

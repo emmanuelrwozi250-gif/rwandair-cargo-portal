@@ -38,7 +38,7 @@ export default function MetricCard({
         </div>
         {Icon && (
           <div className={cn('p-2.5 rounded-lg', accent ? 'bg-white/10' : 'bg-[#02284d]/8')}>
-            <Icon className={cn('h-5 w-5', accent ? 'text-[#E4DC1F]' : 'text-[#02284d]')} />
+            <Icon className={cn('h-5 w-5', accent ? 'text-[#FBE115]' : 'text-[#02284d]')} />
           </div>
         )}
       </div>

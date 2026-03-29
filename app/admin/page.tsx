@@ -75,11 +75,11 @@ export default async function AdminDashboard() {
     <div>
       <TopBar
         title="Admin Dashboard"
-        subtitle="Altitude platform overview"
+        subtitle="RwandAir Cargo platform overview"
         actions={
           <a
             href="/api/admin/export-csv"
-            className="bg-[#02284d] text-[#E4DC1F] px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#01193a] transition-colors"
+            className="bg-[#02284d] text-[#FBE115] px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#01193a] transition-colors"
           >
             Export CSV
           </a>

@@ -166,7 +166,7 @@ export default function DocumentUpload({
                 'text-xs font-medium px-3 py-1.5 rounded-md flex items-center gap-1.5 transition-colors',
                 isUploaded
                   ? 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-                  : 'bg-[#02284d] text-[#E4DC1F] hover:bg-[#01193a]'
+                  : 'bg-[#02284d] text-[#FBE115] hover:bg-[#01193a]'
               )}
             >
               {isUploading ? (

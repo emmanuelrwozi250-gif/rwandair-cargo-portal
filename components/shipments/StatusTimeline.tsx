@@ -45,7 +45,7 @@ export default function StatusTimeline({ currentStatus, logs, transportMode = 'a
                   {isCompleted ? (
                     <CheckCircle className="h-4 w-4 text-white" />
                   ) : (
-                    <div className={cn('h-2 w-2 rounded-full', isCurrent ? 'bg-[#E4DC1F]' : 'bg-gray-400')} />
+                    <div className={cn('h-2 w-2 rounded-full', isCurrent ? 'bg-[#FBE115]' : 'bg-gray-400')} />
                   )}
                 </div>
                 {index < statuses.length - 1 && (
@@ -85,7 +85,7 @@ export default function StatusTimeline({ currentStatus, logs, transportMode = 'a
                     {isCompleted ? (
                       <CheckCircle className="h-4 w-4 text-white" />
                     ) : (
-                      <div className={cn('h-2.5 w-2.5 rounded-full', isCurrent ? 'bg-[#E4DC1F]' : 'bg-gray-400')} />
+                      <div className={cn('h-2.5 w-2.5 rounded-full', isCurrent ? 'bg-[#FBE115]' : 'bg-gray-400')} />
                     )}
                   </div>
                   <div className="text-center mt-2 px-1">

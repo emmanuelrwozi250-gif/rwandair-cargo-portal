@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     if (error) return NextResponse.json({ error: error.message }, { status: 400 })
 
     // Send admin email (non-blocking)
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@altitudeafrica.com'
+    const adminEmail = process.env.ADMIN_EMAIL || 'cargobooking@rwandair.com'
     try {
       await sendPickupRequestedEmail(pickup, shipment.shipment_id, adminEmail)
     } catch (emailErr) {

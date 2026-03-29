@@ -57,7 +57,7 @@ export default function Sidebar({ role, companyName, email }: SidebarProps) {
       {/* Logo */}
       <div className="px-6 py-5 border-b border-white/10">
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 bg-[#E4DC1F] rounded-lg flex items-center justify-center">
+          <div className="h-8 w-8 bg-[#FBE115] rounded-lg flex items-center justify-center">
             <span className="text-[#02284d] font-bold text-xs">A</span>
           </div>
           <div>
@@ -87,7 +87,7 @@ export default function Sidebar({ role, companyName, email }: SidebarProps) {
             className={cn(
               'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
               isActive(item.href, item.exact)
-                ? 'bg-[#E4DC1F] text-[#02284d]'
+                ? 'bg-[#FBE115] text-[#02284d]'
                 : 'text-blue-100 hover:bg-white/10 hover:text-white'
             )}
           >

@@ -17,7 +17,7 @@ const PRODUCTS = {
     name: 'WB General',
     tagline: 'Standard cargo, all 40+ routes',
     description: 'Competitive, reliable general cargo across all RwandAir routes. Consolidation matching available to save up to 25% — our AI engine groups compatible shipments daily.',
-    color: '#04549B',
+    color: '#00529C',
     bgColor: 'rgba(4,84,155,0.06)',
     icon: Package,
     badge: 'Consolidation eligible',
@@ -39,7 +39,7 @@ const PRODUCTS = {
     name: 'WB Fresh',
     tagline: 'Temperature-controlled perishables',
     description: 'Dedicated cold-chain solution for fresh flowers, fruit, vegetables, and any temperature-sensitive cargo. Active IoT sensor monitoring throughout the journey with proactive shelf-life alerts.',
-    color: '#2D7D46',
+    color: '#94C944',
     bgColor: 'rgba(45,125,70,0.08)',
     icon: Thermometer,
     badge: '±2°C monitoring',
@@ -61,7 +61,7 @@ const PRODUCTS = {
     name: 'WB Pharma',
     tagline: 'GDP-certified pharmaceutical cold chain',
     description: 'Full Good Distribution Practice (GDP) compliance for pharmaceuticals, vaccines, and biological materials. ±2°C/±8°C passive or active temperature control with unbroken data logging.',
-    color: '#1CA3DB',
+    color: '#16A1DC',
     bgColor: 'rgba(28,163,219,0.08)',
     icon: Shield,
     badge: 'GDP certified',
@@ -398,11 +398,11 @@ export default function ProductPage() {
                         style={{ background: product.color, color: 'white' }}>
                     Get a {product.name} quote
                   </Link>
-                  <Link href="/agent"
-                        className="w-full block text-center py-3 rounded-xl font-bold text-sm border transition-all hover:opacity-90"
-                        style={{ borderColor: product.color, color: product.color, background: product.bgColor }}>
-                    Ask the AI agent <ChevronRight className="inline w-4 h-4" />
-                  </Link>
+                  <a href="mailto:cargobooking@rwandair.com"
+                     className="w-full block text-center py-3 rounded-xl font-bold text-sm border transition-all hover:opacity-90"
+                     style={{ borderColor: product.color, color: product.color, background: product.bgColor }}>
+                    Contact cargo desk <ChevronRight className="inline w-4 h-4" />
+                  </a>
                 </div>
               </div>
 

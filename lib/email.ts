@@ -14,8 +14,8 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;')
 }
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@altitudeafrica.com'
-const FROM_EMAIL = 'Altitude <no-reply@altitudeafrica.com>'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'cargobooking@rwandair.com'
+const FROM_EMAIL = 'RwandAir Cargo <no-reply@cargo.rwandair.com>'
 
 function shipmentDetailsHtml(shipment: Shipment & { exporters?: Exporter }): string {
   const isWater = shipment.transport_mode === 'water'
@@ -40,13 +40,13 @@ function emailWrapper(content: string): string {
   return `
     <div style="font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;color:#1a2332;">
       <div style="background:#02284d;padding:24px 32px;border-radius:8px 8px 0 0;">
-        <h1 style="color:#E4DC1F;font-size:22px;margin:0;font-weight:700;letter-spacing:-0.5px;">ALTITUDE</h1>
-        <p style="color:#a0aec0;font-size:13px;margin:4px 0 0;">Export Workflow Platform</p>
+        <h1 style="color:#FBE115;font-size:22px;margin:0;font-weight:700;letter-spacing:-0.5px;">RwandAir CARGO</h1>
+        <p style="color:#a0aec0;font-size:13px;margin:4px 0 0;">Cargo Booking &amp; Tracking Portal</p>
       </div>
       <div style="background:#fff;padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;">
         ${content}
       </div>
-      <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:16px;">Altitude Africa · Nairobi, Kenya</p>
+      <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:16px;">RwandAir Cargo · Kigali International Airport, Rwanda</p>
     </div>
   `
 }
@@ -73,7 +73,7 @@ export async function sendNewExporterRegistrationEmail(exporter: Exporter) {
         <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Submitted</td><td style="padding:6px 12px">${new Date(exporter.created_at).toLocaleDateString()}</td></tr>
       </table>
       <div style="margin-top:24px;">
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/exporters" style="background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Review in Admin Dashboard →</a>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/exporters" style="background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Review in Admin Dashboard →</a>
       </div>
     `),
   })
@@ -84,12 +84,12 @@ export async function sendExporterApprovedEmail(exporter: Exporter) {
   await resend.emails.send({
     from: FROM_EMAIL,
     to: exporter.email,
-    subject: 'Your Altitude account has been approved',
+    subject: 'Your RwandAir Cargo account has been approved',
     html: emailWrapper(`
-      <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Welcome to Altitude, ${exporter.contact_person}!</h2>
+      <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Welcome to RwandAir Cargo, ${exporter.contact_person}!</h2>
       <p style="color:#64748b;margin:0 0 16px;">Your exporter account for <strong>${exporter.company_name}</strong> has been approved. You now have full access to the platform.</p>
       <p style="color:#64748b;margin:0 0 24px;">You can now create shipments, upload documents, and request cargo bookings through your dashboard.</p>
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard" style="background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Go to Your Dashboard →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard" style="background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Go to Your Dashboard →</a>
     `),
   })
 }
@@ -99,10 +99,10 @@ export async function sendExporterRejectedEmail(exporter: Exporter, reason?: str
   await resend.emails.send({
     from: FROM_EMAIL,
     to: exporter.email,
-    subject: 'Update on your Altitude application',
+    subject: 'Update on your RwandAir Cargo application',
     html: emailWrapper(`
       <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Application Update</h2>
-      <p style="color:#64748b;margin:0 0 16px;">Thank you for your interest in Altitude, ${exporter.contact_person}.</p>
+      <p style="color:#64748b;margin:0 0 16px;">Thank you for your interest in RwandAir Cargo, ${exporter.contact_person}.</p>
       <p style="color:#64748b;margin:0 0 16px;">After reviewing your application for <strong>${exporter.company_name}</strong>, we are unable to approve your account at this time.</p>
       ${reason ? `<p style="color:#64748b;margin:0 0 16px;"><strong>Reason:</strong> ${escapeHtml(reason)}</p>` : ''}
       <p style="color:#64748b;margin:0;">If you believe this is an error or would like to reapply, please contact us at <a href="mailto:${ADMIN_EMAIL}" style="color:#02284d;">${ADMIN_EMAIL}</a>.</p>
@@ -124,7 +124,7 @@ export async function sendBookingRequestedEmail(shipment: Shipment & { exporters
       ${shipmentDetailsHtml(shipment as Shipment & { exporters?: Exporter })}
       ${shipment.exporters ? `<p style="margin-top:16px;color:#64748b;"><strong>Exporter:</strong> ${(shipment.exporters as { company_name: string }).company_name} (${(shipment.exporters as { email: string }).email})</p>` : ''}
       <div style="margin-top:24px;">
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/shipments" style="background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Review Booking Request →</a>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/shipments" style="background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Review Booking Request →</a>
       </div>
     `),
   })
@@ -140,7 +140,7 @@ export async function sendSpaceConfirmedEmail(shipment: Shipment, exporterEmail:
       <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Cargo Space Confirmed</h2>
       <p style="color:#64748b;margin:0 0 24px;">Great news! Cargo space has been confirmed for your shipment.</p>
       ${shipmentDetailsHtml(shipment)}
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Shipment →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Shipment →</a>
     `),
   })
 }
@@ -155,7 +155,7 @@ export async function sendInTransitEmail(shipment: Shipment, exporterEmail: stri
       <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Shipment In Transit</h2>
       <p style="color:#64748b;margin:0 0 24px;">Your shipment is now in transit to its destination.</p>
       ${shipmentDetailsHtml(shipment)}
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Track Shipment →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Track Shipment →</a>
     `),
   })
 }
@@ -170,7 +170,7 @@ export async function sendDeliveredEmail(shipment: Shipment, exporterEmail: stri
       <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Shipment Delivered</h2>
       <p style="color:#64748b;margin:0 0 24px;">Your shipment has been successfully delivered.</p>
       ${shipmentDetailsHtml(shipment)}
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Details →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Details →</a>
     `),
   })
 }
@@ -197,7 +197,7 @@ export async function sendWaterBookingRequestedEmail(
       ${shipment.container_type && shipment.container_type !== 'N/A' ? `<p style="color:#64748b;"><strong>Container Type:</strong> ${escapeHtml(shipment.container_type)}</p>` : ''}
       ${shipment.port_cutoff_date ? `<p style="color:#e53e3e;"><strong>Port Cut-off:</strong> ${escapeHtml(shipment.port_cutoff_date)}</p>` : ''}
       <div style="margin-top:24px;">
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/shipments" style="background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Review Booking Request →</a>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/shipments" style="background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Review Booking Request →</a>
       </div>
     `),
   })
@@ -216,7 +216,7 @@ export async function sendVesselSpaceConfirmedEmail(shipment: Shipment, exporter
       ${shipment.vessel_name ? `<p style="margin-top:12px;color:#64748b;"><strong>Vessel:</strong> ${escapeHtml(shipment.vessel_name)}</p>` : ''}
       ${shipment.voyage_number ? `<p style="color:#64748b;"><strong>Voyage:</strong> ${escapeHtml(shipment.voyage_number)}</p>` : ''}
       ${shipment.port_cutoff_date ? `<p style="color:#e53e3e;font-weight:600;margin-top:12px;">Port cut-off deadline: ${escapeHtml(shipment.port_cutoff_date)}. Ensure all documents are ready.</p>` : ''}
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Shipment →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Shipment →</a>
     `),
   })
 }
@@ -232,7 +232,7 @@ export async function sendPortInEmail(shipment: Shipment, exporterEmail: string)
       <p style="color:#64748b;margin:0 0 24px;">Your cargo has arrived at the port of loading and is ready for vessel loading.</p>
       ${shipmentDetailsHtml(shipment)}
       ${shipment.port_of_loading ? `<p style="margin-top:12px;color:#64748b;"><strong>Port of Loading:</strong> ${escapeHtml(shipment.port_of_loading)}</p>` : ''}
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Shipment →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Shipment →</a>
     `),
   })
 }
@@ -250,7 +250,7 @@ export async function sendVesselDepartedEmail(shipment: Shipment, exporterEmail:
       ${shipment.vessel_name ? `<p style="margin-top:12px;color:#64748b;"><strong>Vessel:</strong> ${escapeHtml(shipment.vessel_name)}</p>` : ''}
       ${shipment.voyage_number ? `<p style="color:#64748b;"><strong>Voyage:</strong> ${escapeHtml(shipment.voyage_number)}</p>` : ''}
       ${shipment.port_of_discharge ? `<p style="color:#64748b;"><strong>Destination Port:</strong> ${escapeHtml(shipment.port_of_discharge)}</p>` : ''}
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Track Shipment →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Track Shipment →</a>
     `),
   })
 }
@@ -266,7 +266,7 @@ export async function sendPortOfDischargeEmail(shipment: Shipment, exporterEmail
       <p style="color:#64748b;margin:0 0 24px;">Your cargo has arrived at the destination port and is awaiting customs clearance and delivery.</p>
       ${shipmentDetailsHtml(shipment)}
       ${shipment.port_of_discharge ? `<p style="margin-top:12px;color:#64748b;"><strong>Port of Discharge:</strong> ${escapeHtml(shipment.port_of_discharge)}</p>` : ''}
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Details →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${shipment.id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Details →</a>
     `),
   })
 }
@@ -297,7 +297,7 @@ export async function sendPickupRequestedEmail(
         ${pickup.special_handling_notes ? `<tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Special Handling</td><td style="padding:6px 12px">${escapeHtml(pickup.special_handling_notes)}</td></tr>` : ''}
       </table>
       <div style="margin-top:24px;">
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/pickups" style="background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Manage Pickups →</a>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/pickups" style="background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Manage Pickups →</a>
       </div>
     `),
   })
@@ -325,7 +325,7 @@ export async function sendTransporterAssignedEmail(
         <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Destination Terminal</td><td style="padding:6px 12px">${escapeHtml(pickup.destination_terminal)}</td></tr>
       </table>
       <p style="margin-top:16px;color:#64748b;font-size:13px;">Please ensure your cargo is packaged and ready for collection at the specified address.</p>
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${pickup.shipment_id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Pickup Status →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${pickup.shipment_id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Pickup Status →</a>
     `),
   })
 }
@@ -345,7 +345,7 @@ export async function sendPickupEnRouteEmail(pickup: PickupRequest, exporterEmai
         <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Contact at Site</td><td style="padding:6px 12px">${escapeHtml(pickup.pickup_contact_name)} · ${escapeHtml(pickup.pickup_contact_phone)}</td></tr>
       </table>
       <p style="margin-top:16px;color:#64748b;font-size:13px;">Please ensure your contact is available at the pickup address.</p>
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${pickup.shipment_id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Track Pickup →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${pickup.shipment_id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Track Pickup →</a>
     `),
   })
 }
@@ -363,7 +363,7 @@ export async function sendPickupCargoCollectedEmail(pickup: PickupRequest, expor
         <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600;width:40%">Pickup ID</td><td style="padding:6px 12px;font-family:monospace">${escapeHtml(pickup.pickup_id)}</td></tr>
         <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Destination Terminal</td><td style="padding:6px 12px">${escapeHtml(pickup.destination_terminal)}</td></tr>
       </table>
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${pickup.shipment_id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Track Progress →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${pickup.shipment_id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Track Progress →</a>
     `),
   })
 }
@@ -383,7 +383,7 @@ export async function sendPickupDeliveredToTerminalEmail(pickup: PickupRequest, 
         ${pickup.actual_delivery_time ? `<tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Delivered At</td><td style="padding:6px 12px">${new Date(pickup.actual_delivery_time).toLocaleString('en-GB')}</td></tr>` : ''}
       </table>
       <p style="margin-top:16px;color:#64748b;font-size:13px;">Your cargo is now in the hands of the freight team. You will receive further updates as your shipment progresses.</p>
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${pickup.shipment_id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Shipment →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${pickup.shipment_id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Shipment →</a>
     `),
   })
 }
@@ -403,7 +403,7 @@ export async function sendPickupCancelledEmail(pickup: PickupRequest, exporterEm
       </table>
       ${pickup.admin_notes ? `<p style="margin-top:16px;color:#64748b;"><strong>Reason:</strong> ${escapeHtml(pickup.admin_notes)}</p>` : ''}
       <p style="margin-top:16px;color:#64748b;font-size:13px;">If you need to arrange a new pickup, please contact us or submit a new request through your dashboard.</p>
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${pickup.shipment_id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#E4DC1F;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Shipment →</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${pickup.shipment_id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Shipment →</a>
     `),
   })
 }

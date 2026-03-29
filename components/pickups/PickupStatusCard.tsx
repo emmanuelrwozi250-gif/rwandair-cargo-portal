@@ -121,7 +121,7 @@ export default function PickupStatusCard({ pickup }: PickupStatusCardProps) {
                       {isCompleted ? (
                         <CheckCircle className="h-3.5 w-3.5 text-white" />
                       ) : (
-                        <div className={cn('h-2 w-2 rounded-full', isCurrent ? 'bg-[#E4DC1F]' : 'bg-gray-400')} />
+                        <div className={cn('h-2 w-2 rounded-full', isCurrent ? 'bg-[#FBE115]' : 'bg-gray-400')} />
                       )}
                     </div>
                     {index < allStatuses.length - 1 && (

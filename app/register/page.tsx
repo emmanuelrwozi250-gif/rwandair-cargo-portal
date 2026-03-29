@@ -113,7 +113,7 @@ export default function RegisterPage() {
         <nav className="bg-[#02284d]">
           <div className="max-w-6xl mx-auto px-6 py-4">
             <Link href="/" className="flex items-center gap-2.5 w-fit">
-              <div className="h-7 w-7 bg-[#E4DC1F] rounded-lg flex items-center justify-center">
+              <div className="h-7 w-7 bg-[#FBE115] rounded-lg flex items-center justify-center">
                 <span className="text-[#02284d] font-bold text-xs">A</span>
               </div>
               <span className="font-bold text-white text-lg tracking-tight">ALTITUDE</span>
@@ -147,7 +147,7 @@ export default function RegisterPage() {
       <nav className="bg-[#02284d]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="h-7 w-7 bg-[#E4DC1F] rounded-lg flex items-center justify-center">
+            <div className="h-7 w-7 bg-[#FBE115] rounded-lg flex items-center justify-center">
               <span className="text-[#02284d] font-bold text-xs">A</span>
             </div>
             <span className="font-bold text-white text-lg tracking-tight">ALTITUDE</span>

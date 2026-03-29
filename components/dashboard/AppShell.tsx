@@ -40,13 +40,13 @@ export default function AppShell({ role, companyName, email, children }: AppShel
         <div className="md:hidden flex items-center gap-3 px-4 py-3 bg-[#02284d] border-b border-white/10">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-white hover:text-[#E4DC1F] transition-colors"
+            className="text-white hover:text-[#FBE115] transition-colors"
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="h-6 w-6 bg-[#E4DC1F] rounded flex items-center justify-center">
+            <div className="h-6 w-6 bg-[#FBE115] rounded flex items-center justify-center">
               <span className="text-[#02284d] font-bold text-[10px]">A</span>
             </div>
             <span className="font-bold text-white text-sm tracking-tight">ALTITUDE</span>

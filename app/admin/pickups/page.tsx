@@ -150,7 +150,7 @@ export default function AdminPickupsPage() {
               onClick={() => setFilterStatus(tab)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 filterStatus === tab
-                  ? 'bg-[#02284d] text-[#E4DC1F]'
+                  ? 'bg-[#02284d] text-[#FBE115]'
                   : 'bg-white text-gray-600 border border-gray-200 hover:border-[#02284d]/30'
               }`}
             >

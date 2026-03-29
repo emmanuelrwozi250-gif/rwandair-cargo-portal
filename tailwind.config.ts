@@ -10,20 +10,21 @@ const config: Config = {
     extend: {
       colors: {
         // RwandAir brand palette
+        // Exact values extracted from official RwandAir Cargo logo SVG
         wb: {
-          blue:        "#00509E",
-          sky:         "#1ea2dc",
-          yellow:      "#F2DE0E",
-          green:       "#94c943",
-          "blue-dark": "#003d74",
-          "sky-light": "#e8f6fc",
-          "yellow-light": "#fff9d6",
-          "green-light":  "#f0f8e2",
+          blue:        "#00529C",
+          sky:         "#16A1DC",
+          yellow:      "#FBE115",
+          green:       "#94C944",
+          "blue-dark": "#003b75",
+          "sky-light": "#e4f5fc",
+          "yellow-light": "#fffce6",
+          "green-light":  "#f0fae0",
           white:       "#ffffff",
           "gray-50":   "#f8f9fa",
           "gray-200":  "#e9ecef",
           "gray-500":  "#6c757d",
-          "gray-900":  "#1a1a2e",
+          "gray-900":  "#071830",
         },
         // Legacy Altitude colors (kept for backwards compat)
         navy: {
@@ -40,12 +41,12 @@ const config: Config = {
           900: "#011223",
         },
         yellow: {
-          DEFAULT: "#E4DC1F",
+          DEFAULT: "#FBE115",
           50: "#fdfce0",
           100: "#faf8c1",
           200: "#f5f083",
           300: "#efe845",
-          400: "#E4DC1F",
+          400: "#FBE115",
           500: "#d4cc10",
           600: "#b0aa0d",
           700: "#8c880a",
