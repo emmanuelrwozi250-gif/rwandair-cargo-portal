@@ -8,10 +8,10 @@ export default function Footer() {
     <footer className="relative overflow-hidden" style={{ background: 'var(--wb-gray-900)' }}>
       {/* Landscape silhouette transition */}
       <div className="w-full" style={{ marginBottom: '-2px' }}>
-        <RwandaLandscape baseColor="#003d74" />
+        <RwandaLandscape baseColor="#00529C" />
       </div>
 
-      <div style={{ background: 'var(--wb-blue-dark)' }}>
+      <div style={{ background: 'var(--brand-blue)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
 

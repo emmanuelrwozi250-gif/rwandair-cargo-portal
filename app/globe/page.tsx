@@ -9,7 +9,7 @@ export default function GlobePage() {
   return (
     <>
       <Navbar />
-      <main style={{ paddingTop: '64px', background: '#071830', minHeight: '100vh' }}>
+      <main style={{ paddingTop: '64px', background: 'var(--brand-blue)', minHeight: '100vh' }}>
         <div style={{ padding: '40px 0 0', textAlign: 'center' }}>
           <h1 style={{ color: '#FBE115', fontFamily: "'Lato', sans-serif", fontSize: '2rem', fontWeight: 900, marginBottom: 4 }}>
             Our Route Network

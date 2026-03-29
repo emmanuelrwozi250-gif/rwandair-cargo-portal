@@ -40,7 +40,7 @@ export default function Navbar() {
     <>
       <header
         className="fixed top-0 inset-x-0 z-50"
-        style={{ background: '#071830', boxShadow: '0 1px 0 rgba(255,255,255,0.08)' }}
+        style={{ background: 'var(--brand-blue)', boxShadow: '0 2px 0 rgba(0,0,0,0.15)' }}
         role="banner"
       >
         <nav
