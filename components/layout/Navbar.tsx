@@ -24,7 +24,6 @@ export default function Navbar() {
     { href: '/deals',       label: 'Deals' },
     { href: '/perishables', label: 'Perishables' },
     { href: '/stations',    label: 'Stations' },
-    { href: '/agent',       label: 'AI Agent' },
     { href: '/agents',      label: 'For Agents' },
   ]
 
@@ -49,27 +48,8 @@ export default function Navbar() {
           aria-label="Main navigation"
         >
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label="RwandAir Cargo — home">
+          <Link href="/" className="flex items-center shrink-0" aria-label="RwandAir Cargo — home">
             <RwandAirCargoLogoMark size={36} />
-            <span style={{ lineHeight: 1, userSelect: 'none', whiteSpace: 'nowrap' }}>
-              <span style={{
-                fontFamily: "'Lato', sans-serif",
-                fontWeight: 900,
-                fontStyle: 'italic',
-                fontSize: '1rem',
-                color: 'white',
-                letterSpacing: '-0.01em',
-              }}>RwandAir</span>
-              <span style={{
-                fontFamily: "'Lato', sans-serif",
-                fontWeight: 900,
-                fontStyle: 'italic',
-                fontSize: '1rem',
-                color: 'var(--brand-yellow)',
-                letterSpacing: '0.02em',
-                marginLeft: '0.1em',
-              }}>CARGO</span>
-            </span>
           </Link>
 
           {/* Desktop nav links */}

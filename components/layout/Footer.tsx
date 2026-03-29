@@ -17,20 +17,8 @@ export default function Footer() {
 
             {/* Brand col */}
             <div className="md:col-span-1">
-              {/* Inline wordmark — matches official logo layout */}
-              <div className="flex items-center gap-2.5 mb-1">
+              <div className="mb-1">
                 <RwandAirCargoLogoMark size={36} />
-                <span style={{ lineHeight: 1, whiteSpace: 'nowrap' }}>
-                  <span style={{
-                    fontFamily: "'Lato', sans-serif", fontWeight: 900, fontStyle: 'italic',
-                    fontSize: '0.95rem', color: 'white',
-                  }}>RwandAir</span>
-                  <span style={{
-                    fontFamily: "'Lato', sans-serif", fontWeight: 900, fontStyle: 'italic',
-                    fontSize: '0.95rem', color: 'var(--wb-yellow)',
-                    letterSpacing: '0.02em', marginLeft: '0.1em',
-                  }}>CARGO</span>
-                </span>
               </div>
               <p className="text-xs italic mb-4 mt-2" style={{ color: 'rgba(242,222,14,0.7)' }}>
                 Fly the Dream of Africa

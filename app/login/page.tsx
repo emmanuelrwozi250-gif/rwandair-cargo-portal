@@ -70,16 +70,8 @@ export default function LoginPage() {
       {/* Header */}
       <nav style={{ background: '#071830' }}>
         <div className="max-w-6xl mx-auto px-6 py-4">
-          <Link href="/" className="flex items-center gap-2.5 w-fit">
+          <Link href="/" className="flex items-center w-fit">
             <RwandAirCargoLogoMark size={32} />
-            <span style={{ lineHeight: 1, whiteSpace: 'nowrap' }}>
-              <span style={{ fontFamily: "'Lato', sans-serif", fontWeight: 900, fontStyle: 'italic', fontSize: '0.95rem', color: 'white' }}>
-                RwandAir
-              </span>
-              <span style={{ fontFamily: "'Lato', sans-serif", fontWeight: 900, fontStyle: 'italic', fontSize: '0.95rem', color: '#F2DE0E', letterSpacing: '0.02em', marginLeft: '0.1em' }}>
-                CARGO
-              </span>
-            </span>
           </Link>
         </div>
       </nav>
