@@ -106,7 +106,7 @@ export default function IntegrationsPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <a href="mailto:cargobooking@rwandair.com?subject=API Credentials Request"
                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-bold text-sm"
-                 style={{ background: 'var(--wb-yellow)', color: '#0A1F44' }}>
+                 style={{ background: 'var(--wb-yellow)', color: 'var(--brand-blue)' }}>
                 <Zap className="w-4 h-4" />
                 Request API credentials
               </a>

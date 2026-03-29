@@ -82,9 +82,9 @@ export default function AgentsPage() {
 
         {/* Hero */}
         <div className="py-20" style={{
-          backgroundImage: "linear-gradient(rgba(7,24,48,0.88), rgba(10,31,68,0.84)), url('https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600&q=80&fit=crop')",
+          backgroundImage: "linear-gradient(rgba(0,82,156,0.85), rgba(0,62,120,0.90)), url('https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600&q=80&fit=crop')",
           backgroundSize: 'cover', backgroundPosition: 'center',
-          backgroundColor: '#0A1F44',
+          backgroundColor: 'var(--brand-blue)',
         }}>
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <p className="label-upper mb-3" style={{ color: 'var(--wb-sky)' }}>Freight Agents &amp; Forwarders</p>
@@ -97,7 +97,7 @@ export default function AgentsPage() {
             </p>
             <a href="#register"
                className="inline-flex items-center gap-2 font-bold text-sm"
-               style={{ background: 'var(--wb-yellow)', color: '#0A1F44', padding: '14px 28px', borderRadius: '8px' }}>
+               style={{ background: 'var(--wb-yellow)', color: 'var(--brand-blue)', padding: '14px 28px', borderRadius: '8px' }}>
               <Zap className="w-4 h-4" /> Register your agency
             </a>
           </div>
@@ -246,7 +246,7 @@ export default function AgentsPage() {
                 <button type="submit"
                         disabled={submitting}
                         className="w-full flex items-center justify-center gap-2 font-bold text-sm transition-opacity"
-                        style={{ background: 'var(--wb-yellow)', color: '#0A1F44', padding: '14px 28px', borderRadius: '8px', opacity: submitting ? 0.7 : 1 }}>
+                        style={{ background: 'var(--wb-yellow)', color: 'var(--brand-blue)', padding: '14px 28px', borderRadius: '8px', opacity: submitting ? 0.7 : 1 }}>
                   <Zap className="w-4 h-4" />
                   {submitting ? 'Submitting…' : 'Submit registration'}
                 </button>

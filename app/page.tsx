@@ -185,10 +185,10 @@ export default function HomePage() {
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden"
                style={{
-                 backgroundImage: "linear-gradient(rgba(7,24,48,0.82), rgba(10,31,68,0.80)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1920&q=80&fit=crop')",
+                 backgroundImage: "linear-gradient(rgba(0,82,156,0.82), rgba(0,62,120,0.88)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1920&q=80&fit=crop')",
                  backgroundSize: 'cover',
                  backgroundPosition: 'center top',
-                 backgroundColor: '#0A1F44',
+                 backgroundColor: 'var(--brand-blue)',
                  minHeight: '100vh',
                }}>
         <ImigongoPattern color="white" opacity={0.015} />
@@ -244,7 +244,7 @@ export default function HomePage() {
               <div className="flex flex-wrap" style={{ gap: '16px' }}>
                 <Link href="/quote"
                       className="flex items-center gap-2 font-bold text-sm transition-all hover:opacity-90"
-                      style={{ background: 'var(--wb-yellow)', color: '#0A1F44', padding: '14px 28px', borderRadius: '8px' }}>
+                      style={{ background: 'var(--wb-yellow)', color: 'var(--brand-blue)', padding: '14px 28px', borderRadius: '8px' }}>
                   <Zap className="w-4 h-4" /> Get instant quote
                 </Link>
                 <Link href="/stations"

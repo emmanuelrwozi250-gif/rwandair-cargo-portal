@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { Menu, X, Globe, ChevronDown, Search, Zap } from 'lucide-react'
-import { RwandAirCargoLogoMark } from '@/components/brand/RwandAirCargoLogo'
+import RwandAirCargoLogo from '@/components/brand/RwandAirCargoLogo'
 import {
   useLanguage,
   LOCALES, LOCALE_NAMES, LOCALE_FLAGS,
@@ -49,7 +49,7 @@ export default function Navbar() {
         >
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0" aria-label="RwandAir Cargo — home">
-            <RwandAirCargoLogoMark size={44} />
+            <RwandAirCargoLogo size={36} />
           </Link>
 
           {/* Desktop nav links */}

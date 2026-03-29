@@ -26,7 +26,7 @@ export default function ApiDocsPage() {
           {/* TODO: replace mailto with API portal link when ready */}
           <a href="mailto:cargobooking@rwandair.com?subject=API Early Access"
              className="inline-flex items-center gap-2 font-bold text-sm"
-             style={{ background: 'var(--wb-yellow)', color: '#0A1F44', padding: '14px 28px', borderRadius: '8px' }}>
+             style={{ background: 'var(--wb-yellow)', color: 'var(--brand-blue)', padding: '14px 28px', borderRadius: '8px' }}>
             <Zap className="w-4 h-4" />
             Request early access
           </a>
