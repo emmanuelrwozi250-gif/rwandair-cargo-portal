@@ -31,9 +31,18 @@ export async function middleware(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  // If env vars are not configured, still protect admin/dashboard routes
+  // If env vars are not configured, still protect authenticated areas
   if (!url || !key) {
     const { pathname } = request.nextUrl
+    // Agent portal + agent-only marketplace pages → portal login
+    if (
+      (pathname.startsWith('/portal') && pathname !== '/portal/login') ||
+      pathname.startsWith('/capacity') ||
+      pathname.startsWith('/deals')
+    ) {
+      return NextResponse.redirect(new URL('/portal/login', request.url))
+    }
+    // Exporter dashboard + Supabase admin → exporter login
     if (pathname.startsWith('/admin') || pathname.startsWith('/dashboard')) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
