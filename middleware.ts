@@ -10,6 +10,7 @@ const PUBLIC_ROUTES = [
   '/consolidate',
   '/perishables',
   '/stations',
+  '/charter',
   '/globe',
   '/track',
   '/agents',
@@ -77,6 +78,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/feature-requests') ||
     pathname.startsWith('/api/news') ||
     pathname.startsWith('/api/articles') ||
+    pathname.startsWith('/api/charter') ||
     pathname.startsWith('/api/cron')
   ) {
     return supabaseResponse

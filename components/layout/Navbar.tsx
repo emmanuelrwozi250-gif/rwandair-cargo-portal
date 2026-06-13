@@ -86,6 +86,7 @@ export default function Navbar() {
     { href: '/capacity',    label: 'Capacity' },
     { href: '/deals',       label: 'Deals' },
     { href: '/perishables', label: 'Perishables' },
+    { href: '/charter',     label: 'Charter' },
     { href: '/stations',    label: 'Stations' },
     { href: '/agents',      label: 'For Agents' },
     { href: '/news',        label: 'News' },
