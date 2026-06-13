@@ -1,49 +1,18 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-// Routes that are always public — no auth required
-const PUBLIC_ROUTES = [
-  '/',
-  '/login',
-  '/register',
-  '/quote',
-  '/consolidate',
-  '/perishables',
-  '/stations',
-  '/charter',
-  '/globe',
-  '/track',
-  '/agents',
-  '/agent',
-  '/integrations',
-  '/api-docs',
-  '/claims',
-  '/rate',
-  '/reviews',
-  '/feedback',
-  '/agent-admin',
-]
-
-// Public route prefixes (dynamic segments)
-const PUBLIC_PREFIXES = ['/products', '/track', '/legal', '/news', '/agents/register']
+// Authenticated areas. Everything else is public; unknown paths fall through
+// to Next (which 404s if there's no page) rather than redirecting to login.
+const PROTECTED_PREFIXES = ['/dashboard', '/admin', '/capacity']
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   // If env vars are not configured, still protect authenticated areas
   if (!url || !key) {
-    const { pathname } = request.nextUrl
-    // Agent portal + agent-only marketplace pages → portal login
-    if (
-      (pathname.startsWith('/portal') && pathname !== '/portal/login') ||
-      pathname.startsWith('/capacity') ||
-      pathname.startsWith('/deals')
-    ) {
-      return NextResponse.redirect(new URL('/portal/login', request.url))
-    }
-    // Exporter dashboard + Supabase admin → exporter login
-    if (pathname.startsWith('/admin') || pathname.startsWith('/dashboard')) {
+    if (PROTECTED_PREFIXES.some(p => pathname.startsWith(p))) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
     return NextResponse.next({ request })
@@ -65,21 +34,13 @@ export async function middleware(request: NextRequest) {
   })
 
   const { data: { user } } = await supabase.auth.getUser()
-  const { pathname } = request.nextUrl
 
-  // Allow tracking pages publicly: /track/[awb]
-  if (pathname.startsWith('/track')) {
-    return supabaseResponse
-  }
-
-  // Allow webhook and public API routes
+  // Public API routes (everything the public site posts to / reads from)
   if (
     pathname.startsWith('/api/webhook') ||
     pathname.startsWith('/api/quote') ||
     pathname.startsWith('/api/track') ||
     pathname.startsWith('/api/capacity') ||
-    pathname.startsWith('/api/agents') ||
-    pathname.startsWith('/api/agent') ||
     pathname.startsWith('/api/claims') ||
     pathname.startsWith('/api/rate') ||
     pathname.startsWith('/api/reviews') ||
@@ -89,63 +50,35 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/news') ||
     pathname.startsWith('/api/articles') ||
     pathname.startsWith('/api/charter') ||
-    pathname.startsWith('/api/agent-admin') ||
     pathname.startsWith('/api/cron')
   ) {
     return supabaseResponse
   }
 
-  // Agent-only marketplace pages — require a signed-in account, bounce to portal login
-  if (pathname.startsWith('/capacity') || pathname.startsWith('/deals')) {
+  // Signed-in users skip the login/register pages
+  if (user && (pathname === '/login' || pathname === '/register')) {
+    const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
+    return NextResponse.redirect(
+      new URL(userData?.role === 'admin' ? '/admin/revenue' : '/dashboard', request.url)
+    )
+  }
+
+  // Protected areas — exporter dashboard, admin, and the capacity marketplace
+  if (PROTECTED_PREFIXES.some(p => pathname.startsWith(p))) {
     if (!user) {
-      const url = new URL('/portal/login', request.url)
-      url.searchParams.set('next', pathname)
-      return NextResponse.redirect(url)
+      const login = new URL('/login', request.url)
+      if (pathname.startsWith('/capacity')) login.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(login)
     }
-    return supabaseResponse
-  }
-
-  // Agent portal — its own auth surface, separate from the exporter /login
-  if (pathname.startsWith('/portal')) {
-    if (pathname === '/portal/login') {
-      if (user) return NextResponse.redirect(new URL('/portal/dashboard', request.url))
-      return supabaseResponse
-    }
-    if (!user) return NextResponse.redirect(new URL('/portal/login', request.url))
-    return supabaseResponse
-  }
-
-  // Public routes — always accessible
-  if (PUBLIC_ROUTES.some(r => pathname === r) || PUBLIC_PREFIXES.some(p => pathname.startsWith(p))) {
-    // Redirect logged-in users away from login/register
-    if (user && (pathname === '/login' || pathname === '/register')) {
-      const { data: userData } = await supabase
-        .from('users').select('role').eq('id', user.id).single()
-      if (userData?.role === 'admin') {
-        return NextResponse.redirect(new URL('/admin/revenue', request.url))
+    if (pathname.startsWith('/admin')) {
+      const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
+      if (userData?.role !== 'admin') {
+        return NextResponse.redirect(new URL('/dashboard', request.url))
       }
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
-    return supabaseResponse
-  }
-
-  // Protected routes — require authentication
-  if (!user) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
-
-  // Get user role
-  const { data: userData } = await supabase
-    .from('users').select('role').eq('id', user.id).single()
-  const role = userData?.role
-
-  // Admin revenue dashboard — admin only
-  if (pathname.startsWith('/admin')) {
-    if (role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
 
+  // Public + unknown paths fall through (unknown → Next 404)
   return supabaseResponse
 }
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import {
   Zap, Clock, Shield, Upload, ChevronRight,
   AlertTriangle, CheckCircle, Info, ArrowLeft, Scale,
@@ -9,18 +10,10 @@ import {
 } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import RegistrationWall from '@/components/quote/RegistrationWall'
 import CallbackButton from '@/components/quote/CallbackButton'
 import { createClient } from '@/lib/supabase'
 import { useLanguage } from '@/components/providers/LanguageProvider'
 import { computeLineItems, usd, outOfStandardReason } from '@/lib/quote-pricing'
-import type { ContractRate } from '@/types'
-
-// Quote commodity → contract-rate / portal product-type label
-const COMMODITY_TO_PRODUCT: Record<string, string> = {
-  GENERAL: 'General', PERISHABLE: 'Fresh', PHARMACEUTICAL: 'Pharma',
-  HIGH_VALUE: 'Valuables', LIVE_ANIMALS: 'Live', DANGEROUS_GOODS: 'DG',
-}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatDeparture(isoStr: string): string {
@@ -133,17 +126,12 @@ function QuoteCard({
   option,
   selected,
   onSelect,
-  weightKg,
-  contractRatePerKg,
 }: {
   option: QuoteOption
   selected: boolean
   onSelect: () => void
-  weightKg: number
-  contractRatePerKg: number | null
 }) {
-  const cargoUsd = contractRatePerKg ? Math.round(contractRatePerKg * weightKg) : option.priceUsd
-  const li = computeLineItems(cargoUsd)
+  const li = computeLineItems(option.priceUsd)
   return (
     <button
       onClick={onSelect}
@@ -183,12 +171,6 @@ function QuoteCard({
 
       {/* All-in price */}
       <div className="mb-1">
-        {contractRatePerKg && (
-          <span className="inline-block mb-1 px-2 py-0.5 rounded-full text-xs font-bold"
-                style={{ background: 'var(--wb-green-light)', color: '#4a7c20' }}>
-            Your contract rate · ${contractRatePerKg.toFixed(2)}/kg
-          </span>
-        )}
         <p className="price-unit">ALL-IN</p>
         <p className="price-large">{usd(li.allInUsd)}</p>
         <p className="price-label">per shipment</p>
@@ -275,6 +257,7 @@ const WB_PRODUCT_OPTIONS: {
 
 export default function QuotePage() {
   const { t } = useLanguage()
+  const router = useRouter()
   const [origin, setOrigin] = useState('KGL')
   const [destination, setDestination] = useState('LHR')
   const [commodity, setCommodity] = useState<CommodityType>('GENERAL')
@@ -289,28 +272,12 @@ export default function QuotePage() {
   const [apiError, setApiError] = useState('')
   const [uploadedFile, setUploadedFile] = useState<string | null>(null)
 
-  // Auth + registration wall (rates are gated behind a free instant account)
+  // Rates are gated behind a signed-in exporter account
   const [isAuthed, setIsAuthed] = useState(false)
-  const [isApproved, setIsApproved] = useState(false)
-  const [contractRates, setContractRates] = useState<ContractRate[]>([])
-  const [showWall, setShowWall] = useState(false)
 
-  async function loadAuth() {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { setIsAuthed(false); return false }
-    setIsAuthed(true)
-    const { data: profile } = await supabase.from('profiles').select('status').eq('id', user.id).maybeSingle()
-    const approved = profile?.status === 'approved'
-    setIsApproved(approved)
-    if (approved) {
-      const { data: rates } = await supabase.from('contract_rates').select('*')
-      setContractRates((rates as ContractRate[]) ?? [])
-    }
-    return true
-  }
-
-  useEffect(() => { loadAuth() }, [])
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data }) => setIsAuthed(!!data.user))
+  }, [])
 
   // Pre-populate from /quote?from=KGL&to=LHR&weight=500 (homepage hero widget, Feature 5b)
   useEffect(() => {
@@ -326,19 +293,6 @@ export default function QuotePage() {
   const volumetricWeight = Math.ceil((length * width * height) / 6000)
   const chargeableWeight = volumetricMode ? Math.max(weightKg, volumetricWeight) : weightKg
 
-  // Contract $/kg for the current route + product, if this approved agent has one
-  const contractRatePerKg = (() => {
-    if (!isApproved || !contractRates.length) return null
-    const product = COMMODITY_TO_PRODUCT[commodity] ?? 'General'
-    const match = contractRates.find(r =>
-      r.product_type === product &&
-      (r.route === `${origin}-${destination}` ||
-       r.route === `${origin} → ${destination}` ||
-       (r.route.includes(origin) && r.route.includes(destination)))
-    )
-    return match ? match.rate_usd_per_kg : null
-  })()
-
   const routeKnown = ORIGINS.includes(origin) && DESTINATIONS_LIST.includes(destination)
   const outOfStandard = outOfStandardReason({ weightKg: chargeableWeight, commodity, routeKnown })
 
@@ -350,13 +304,11 @@ export default function QuotePage() {
 
   async function handleGetQuote() {
     if (!origin || !destination) return
-    // Gate rates behind a free instant account
-    if (!isAuthed) { setShowWall(true); return }
+    // Rates are gated behind the exporter login
+    if (!isAuthed) { router.push(`/login?redirect=${encodeURIComponent('/quote')}`); return }
     await fetchQuotes()
   }
 
-  // The actual fetch — called directly after the wall authenticates (where
-  // isAuthed state hasn't flushed yet), bypassing the gate.
   async function fetchQuotes() {
     if (!origin || !destination) return
     setLoading(true)
@@ -694,8 +646,6 @@ export default function QuotePage() {
                         option={opt}
                         selected={selected === opt.type}
                         onSelect={() => setSelected(opt.type)}
-                        weightKg={chargeableWeight}
-                        contractRatePerKg={contractRatePerKg}
                       />
                     ))}
                   </div>
@@ -748,16 +698,6 @@ export default function QuotePage() {
         </div>
       </div>
       <Footer />
-
-      <RegistrationWall
-        open={showWall}
-        onClose={() => setShowWall(false)}
-        onAuthed={async () => {
-          setShowWall(false)
-          await loadAuth()
-          await fetchQuotes()
-        }}
-      />
     </>
   )
 }

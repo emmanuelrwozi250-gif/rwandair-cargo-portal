@@ -25,10 +25,10 @@ const TICKER = [
   '98.2% on-time',
   'Rwanda\'s goods, moving the world tonight',
   'WB9308 departing tonight: KGL → JIB → SHJ → JUB',
-  '340+ consolidations matched this month',
+  'Rwanda\'s flowers reach Amsterdam in 14 hours',
   'From Africa, for the world',
   'WB9316 Mon 00:30: KGL → Djibouti → Dubai Al Maktoum',
-  'Average shipper saving: 21% via consolidation',
+  'B737-800F freighter charters across Africa, Middle East & Europe',
   'Cold-chain certified for pharmaceuticals & perishables',
   'Freighter departing KGL tonight: WB9304 → Sharjah, space available',
 ]
@@ -260,7 +260,7 @@ export default function HomePage() {
                 { Icon: Plane,   value: '40+',   unit: 'routes', label: 'Active cargo routes' },
                 { Icon: Clock,   value: '98.2%', unit: '',        label: 'On-time delivery rate' },
                 { Icon: Tag,     value: 'from $2.80', unit: '/kg', label: 'Rates — get a quote in 30s' },
-                { Icon: Package, value: '340+',  unit: '',        label: 'Consolidations this month' },
+                { Icon: Package, value: '14h',  unit: '',        label: 'Kigali → Amsterdam, cold-chain' },
               ].map(({ Icon, value, unit, label }) => (
                 <div key={label}
                      style={{
@@ -351,17 +351,17 @@ export default function HomePage() {
               },
               {
                 icon: Package,
-                title: 'Join Consolidation',
-                desc: 'African shippers moving in the same direction? We match you. Save up to 25% and secure your space on tonight\'s departure.',
-                cta: 'Find consolidation',
-                href: '/consolidate',
+                title: 'Track a Shipment',
+                desc: 'Live milestones and a map for every air waybill — from acceptance at Kigali to available for collection.',
+                cta: 'Track cargo',
+                href: '/track',
               },
               {
-                icon: Clock,
-                title: 'Last-Minute Deals',
-                desc: 'Tonight\'s aircraft leaves Kigali with space to fill. Claim it. Up to 30% off — expires at departure.',
-                cta: 'View live deals',
-                href: '/deals',
+                icon: Plane,
+                title: 'Charter an Aircraft',
+                desc: 'The whole aircraft on your route and timing — up to 22,000kg of African cargo. 2-hour quote response.',
+                cta: 'Request a charter',
+                href: '/charter',
               },
             ].map(({ icon: Icon, title, desc, cta, href }) => (
               <Link key={href} href={href}
@@ -455,11 +455,11 @@ export default function HomePage() {
                 slug: 'general-cargo',
                 name: 'General Cargo',
                 tagline: 'Reliable, all-route',
-                desc: 'Everything Africa ships. Across all 40+ routes, consolidated or direct — space guaranteed.',
+                desc: 'Everything Africa ships. Across all 40+ routes, with guaranteed space and full track & trace.',
                 color: '#00529C',
                 bgColor: 'rgba(4,84,155,0.07)',
                 icon: Package,
-                badge: 'Consolidation eligible',
+                badge: 'All routes',
               },
               {
                 slug: 'perishables',
@@ -525,7 +525,7 @@ export default function HomePage() {
                 slug: 'parcels',
                 name: 'Parcels',
                 tagline: 'Door-to-door parcel delivery',
-                desc: 'Affordable, tracked parcel delivery on all routes. AWB 459 assigned instantly. Consolidation-eligible for e-commerce shippers.',
+                desc: 'Affordable, tracked parcel delivery on all routes. AWB 459 assigned instantly — ideal for e-commerce shippers.',
                 color: '#F97316',
                 bgColor: 'rgba(249,115,22,0.07)',
                 icon: Box,
@@ -642,7 +642,6 @@ export default function HomePage() {
               <div className="mt-8 space-y-5">
                 {[
                   { icon: Zap,           title: 'Live intelligence',         desc: 'Every shipment tracked, every sensor active, every alert instant. Africa\'s cargo doesn\'t go dark.' },
-                  { icon: Package,       title: 'Smarter consolidation',     desc: 'African shippers on the same route, matched by our engine. Move more, spend less.' },
                   { icon: Shield,        title: 'Cold-chain built for Africa', desc: 'Rwanda\'s harvest has a 14-hour window. We protect every minute of it.' },
                   { icon: MessageCircle, title: 'WhatsApp alerts',           desc: 'Because Africa runs on WhatsApp. Every update, on the platform your team already uses.' },
                 ].map(({ icon: Icon, title, desc }) => (
@@ -682,7 +681,7 @@ export default function HomePage() {
             <div className="space-y-4">
               {[
                 { label: 'On-time performance',              value: '98.2%', badge: '+1.2% vs last month' },
-                { label: 'Consolidation savings avg.',       value: '21%',   badge: 'this quarter' },
+                { label: 'Kigali → Amsterdam transit',       value: '14h',   badge: 'cold-chain intact' },
                 { label: 'Perishables cold-chain integrity', value: '99.7%', badge: 'maintained' },
                 { label: 'Avg. quote generation time',       value: '< 30s', badge: 'AI-powered' },
                 { label: 'Active route network',             value: '40+',   badge: 'destinations' },

@@ -81,13 +81,10 @@ export default function Navbar() {
 
   const NAV_LINKS: { href: string; label: string }[] = [
     { href: '/quote',       label: t('navQuote') },
-    { href: '/consolidate', label: t('navConsolidate') },
     { href: '/capacity',    label: t('navCapacity') },
-    { href: '/deals',       label: t('navDeals') },
     { href: '/perishables', label: t('navPerishables') },
     { href: '/charter',     label: t('navCharter') },
     { href: '/stations',    label: t('navStations') },
-    { href: '/agents',      label: t('navAgents') },
     { href: '/news',        label: t('navNews') },
   ]
 

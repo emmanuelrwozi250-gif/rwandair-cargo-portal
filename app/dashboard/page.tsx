@@ -213,7 +213,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             {[
               { icon: Zap,     label: 'New quote',           href: '/quote',       bg: 'var(--wb-yellow)', fg: 'var(--wb-blue)' },
-              { icon: Package, label: 'Find consolidation',  href: '/consolidate', bg: 'var(--wb-blue)',   fg: 'white' },
+              { icon: Package, label: 'Track a shipment',    href: '/track',       bg: 'var(--wb-blue)',   fg: 'white' },
               { icon: Phone,   label: 'Contact cargo desk',  href: 'tel:+250788177000', bg: 'var(--wb-sky)', fg: 'white' },
             ].map(({ icon: Icon, label, href, bg, fg }) => (
               <Link key={href} href={href}
@@ -340,7 +340,7 @@ export default function DashboardPage() {
                  style={{ background: 'var(--wb-blue)', border: '1px solid rgba(255,255,255,0.1)' }}>
               <h4 className="text-white mb-2" style={{ fontSize: '1rem' }}>Need help?</h4>
               <p className="text-xs mb-5" style={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.65 }}>
-                Our cargo desk team can answer questions about customs, routing, and consolidation — 24/7.
+                Our cargo desk team can answer questions about customs, routing, and bookings — 24/7.
               </p>
               <a href="tel:+250788177000"
                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold"
