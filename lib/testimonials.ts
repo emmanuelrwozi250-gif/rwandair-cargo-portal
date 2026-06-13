@@ -11,7 +11,7 @@ export const STATIC_TESTIMONIALS = [
     badgeBg: 'rgba(45,125,70,0.1)',
   },
   {
-    quote: 'The consolidation engine saved us 22% on our last three Dubai shipments.',
+    quote: 'Booking, tracking and AWBs in one place — our last three Dubai shipments were our smoothest yet.',
     name: 'Jean-Pierre M.',
     company: 'EastAfrica Freight Solutions',
     country: 'Kenya',

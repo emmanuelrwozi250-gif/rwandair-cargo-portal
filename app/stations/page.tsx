@@ -207,7 +207,7 @@ export default function StationsPage() {
             </Link>
             <h1 className="text-white mb-2" style={{ fontSize: '2rem' }}>{t('headStations')}</h1>
             <p style={{ color: 'rgba(255,255,255,0.65)', fontWeight: 300 }}>
-              Handler details, cold-store availability, and certifications across all {STATIONS.length} RwandAir Cargo stations.
+              Handler details and cold-store availability across all {STATIONS.length} RwandAir Cargo stations.
             </p>
           </div>
         </div>
@@ -311,25 +311,27 @@ export default function StationsPage() {
                           )}
                         </div>
                         <p className="text-xs" style={{ color: 'var(--wb-gray-500)' }}>
-                          {s.certifications.length} cert{s.certifications.length !== 1 ? 's' : ''}
+                          {s.type} station
                         </p>
                       </div>
                     </div>
 
-                    {/* Quick badges */}
-                    <div className="flex flex-wrap gap-1.5 mt-3">
-                      {s.certifications.slice(0, 3).map(c => (
-                        <span key={c} className="text-xs px-2 py-0.5 rounded font-semibold"
-                              style={{ background: 'rgba(0,80,158,0.07)', color: 'var(--wb-blue)' }}>
-                          {c}
-                        </span>
-                      ))}
-                      {s.certifications.length > 3 && (
-                        <span className="text-xs px-2 py-0.5 rounded" style={{ color: 'var(--wb-gray-500)' }}>
-                          +{s.certifications.length - 3} more
-                        </span>
-                      )}
-                    </div>
+                    {/* Quick badges — certifications shown for the Kigali hub only */}
+                    {s.type === 'Hub' && (
+                      <div className="flex flex-wrap gap-1.5 mt-3">
+                        {s.certifications.slice(0, 3).map(c => (
+                          <span key={c} className="text-xs px-2 py-0.5 rounded font-semibold"
+                                style={{ background: 'rgba(0,80,158,0.07)', color: 'var(--wb-blue)' }}>
+                            {c}
+                          </span>
+                        ))}
+                        {s.certifications.length > 3 && (
+                          <span className="text-xs px-2 py-0.5 rounded" style={{ color: 'var(--wb-gray-500)' }}>
+                            +{s.certifications.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </button>
 
                   {/* Expanded detail */}
@@ -364,20 +366,22 @@ export default function StationsPage() {
                         )}
                       </div>
 
-                      {/* All certs */}
-                      <div>
-                        <p className="text-xs font-semibold mb-1.5" style={{ color: 'var(--wb-gray-500)' }}>
-                          Certifications
-                        </p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {s.certifications.map(c => (
-                            <span key={c} className="flex items-center gap-1 text-xs px-2 py-0.5 rounded font-semibold"
-                                  style={{ background: 'rgba(0,80,158,0.07)', color: 'var(--wb-blue)' }}>
-                              <Shield className="w-2.5 h-2.5 shrink-0" /> {c}
-                            </span>
-                          ))}
+                      {/* Certifications — Kigali hub only */}
+                      {s.type === 'Hub' && (
+                        <div>
+                          <p className="text-xs font-semibold mb-1.5" style={{ color: 'var(--wb-gray-500)' }}>
+                            Certifications
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {s.certifications.map(c => (
+                              <span key={c} className="flex items-center gap-1 text-xs px-2 py-0.5 rounded font-semibold"
+                                    style={{ background: 'rgba(0,80,158,0.07)', color: 'var(--wb-blue)' }}>
+                                <Shield className="w-2.5 h-2.5 shrink-0" /> {c}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       {/* Limits + contact */}
                       <div className="grid grid-cols-2 gap-3">

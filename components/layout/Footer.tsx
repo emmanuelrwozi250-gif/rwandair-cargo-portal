@@ -65,12 +65,10 @@ export default function Footer() {
               <ul className="space-y-2 text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
                 {[
                   ['Get a Quote', '/quote'],
-                  ['Consolidation', '/consolidate'],
                   ['Perishables', '/perishables'],
                   ['Live Capacity', '/capacity'],
-                  ['Last-Min Deals', '/deals'],
+                  ['Charter', '/charter'],
                   ['Cargo Stations', '/stations'],
-                  ['For Freight Agents', '/agents'],
                   ['File a Claim', '/claims'],
                   ['Rate our Services', '/reviews'],
                   ['Feedback', '/feedback'],

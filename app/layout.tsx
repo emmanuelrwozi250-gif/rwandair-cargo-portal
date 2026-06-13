@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   keywords: [
     'RwandAir Cargo', 'air cargo Africa', 'Kigali freight', 'cargo booking Rwanda',
     'perishables airfreight', 'cold chain cargo', 'pharmaceutical air cargo',
-    'cargo consolidation', 'WB freighter', 'air cargo KGL', 'Africa cargo hub',
+    'air charter', 'WB freighter', 'air cargo KGL', 'Africa cargo hub',
     'Rwanda exports airfreight', 'flowers cargo Kigali', 'cargo London Brussels Paris',
   ],
   authors: [{ name: 'RwandAir Cargo', url: SITE_URL }],

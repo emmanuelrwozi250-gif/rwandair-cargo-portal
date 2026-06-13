@@ -20,10 +20,10 @@ const PRODUCTS = {
     color: '#00529C',
     bgColor: 'rgba(4,84,155,0.06)',
     icon: Package,
-    badge: 'Consolidation eligible',
+    badge: 'All routes',
     keyFeatures: [
       'Coverage across all 40+ active routes',
-      'AI consolidation matching — save up to 25%',
+      'Guaranteed space with full track & trace',
       'Instant online quote in under 30 seconds',
       'Volumetric weight calculator built-in',
       'Packing list upload with AI data extraction',
