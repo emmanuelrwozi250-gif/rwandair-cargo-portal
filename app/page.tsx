@@ -426,8 +426,8 @@ export default function HomePage() {
                onMouseLeave={e => (e.currentTarget.querySelector('.logo-scroll') as HTMLElement)?.style.setProperty('animation-play-state','running')}>
             <div className="logo-scroll flex gap-8 items-center"
                  style={{ animation: 'ticker 20s linear infinite', whiteSpace: 'nowrap' }}>
-              {[...['cargo.one','WebCargo','CargoAi','Flexport','Freightos','CargoWise','Patch.io'],
-                 ...['cargo.one','WebCargo','CargoAi','Flexport','Freightos','CargoWise','Patch.io']].map((name, i) => (
+              {[...['cargo.one','WebCargo','CargoAi','Flexport','Freightos','CargoWise'],
+                 ...['cargo.one','WebCargo','CargoAi','Flexport','Freightos','CargoWise']].map((name, i) => (
                 <span key={i} className="shrink-0 text-sm font-bold px-4 py-2 rounded-lg"
                       style={{ background: 'var(--wb-gray-50)', border: '1px solid var(--wb-gray-200)', color: 'var(--wb-blue)' }}>
                   {name}
@@ -644,7 +644,6 @@ export default function HomePage() {
                   { icon: Zap,           title: 'Live intelligence',         desc: 'Every shipment tracked, every sensor active, every alert instant. Africa\'s cargo doesn\'t go dark.' },
                   { icon: Package,       title: 'Smarter consolidation',     desc: 'African shippers on the same route, matched by our engine. Move more, spend less.' },
                   { icon: Shield,        title: 'Cold-chain built for Africa', desc: 'Rwanda\'s harvest has a 14-hour window. We protect every minute of it.' },
-                  { icon: Leaf,          title: 'Green by default',          desc: 'Every tonne of African cargo moves carbon-neutral. No opt-in. No extra cost. Just done.' },
                   { icon: MessageCircle, title: 'WhatsApp alerts',           desc: 'Because Africa runs on WhatsApp. Every update, on the platform your team already uses.' },
                 ].map(({ icon: Icon, title, desc }) => (
                   <div key={title} className="flex gap-4">
@@ -705,64 +704,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Flying Green ─────────────────────────────────────────────────── */}
-      <section className="py-20 pb-20 lg:pb-20" style={{ background: '#f0f9e8' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4"
-                   style={{ background: 'rgba(148,201,67,0.15)', border: '1px solid rgba(148,201,67,0.3)' }}>
-                <Leaf className="w-3.5 h-3.5" style={{ color: '#4a7c20' }} />
-                <span className="text-xs font-semibold" style={{ color: '#4a7c20' }}>Carbon-neutral. By default.</span>
-              </div>
-              <h2 style={{ color: 'var(--wb-blue)' }}>Africa moves green</h2>
-              <p className="mt-4 text-base" style={{ color: 'var(--wb-gray-500)', lineHeight: 1.75 }}>
-                Africa moves green — and the world notices. Every booking on RwandAir Cargo includes an
-                automatic CO₂ offset at zero extra cost. Your cargo moves carbon-neutral from Kigali.
-                European shippers receive a certified carbon certificate that meets EU CBAM and CSRD
-                reporting requirements — automatically.
-              </p>
-              <div className="mt-6 space-y-3">
-                {[
-                  { label: 'CO₂ offset included on every booking',    icon: '✓' },
-                  { label: 'Carbon certificate issued automatically',  icon: '✓' },
-                  { label: 'Verified by Patch.io (Gold Standard)',     icon: '✓' },
-                  { label: 'EU CBAM reporting data included',          icon: '✓' },
-                ].map(({ label, icon }) => (
-                  <div key={label} className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                          style={{ background: 'rgba(148,201,67,0.2)', color: '#4a7c20' }}>
-                      {icon}
-                    </span>
-                    <span className="text-sm" style={{ color: 'var(--wb-gray-900)' }}>{label}</span>
-                  </div>
-                ))}
-              </div>
-              <Link href="/quote"
-                    className="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-full font-bold text-sm transition-all hover:opacity-90"
-                    style={{ background: 'var(--wb-green)', color: 'white' }}>
-                <Leaf className="w-4 h-4" /> Get a green quote
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { value: '1,240t', label: 'CO₂ offset this quarter',       sub: 'equiv. 5,400 trees',       icon: '🌳' },
-                { value: '100%',   label: 'Of bookings include offset',     sub: 'automatic, no opt-in needed', icon: '♻' },
-                { value: '$0',     label: 'Extra cost to shipper',          sub: 'fully absorbed by RwandAir', icon: '🎁' },
-                { value: '24h',    label: 'Certificate delivery',           sub: 'emailed on booking confirm', icon: '📄' },
-              ].map(({ value, label, sub, icon }) => (
-                <div key={label} className="p-5 rounded-xl"
-                     style={{ background: 'white', border: '1px solid #c8e6a0' }}>
-                  <div className="text-2xl mb-2">{icon}</div>
-                  <p className="text-xl font-bold" style={{ color: 'var(--wb-blue)' }}>{value}</p>
-                  <p className="text-xs font-semibold mt-0.5" style={{ color: 'var(--wb-gray-900)' }}>{label}</p>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--wb-gray-500)' }}>{sub}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ── CTA Banner ───────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden py-20 pb-20 lg:pb-20" style={{ background: 'var(--wb-blue)' }}>

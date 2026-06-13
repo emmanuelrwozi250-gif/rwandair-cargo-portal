@@ -350,9 +350,6 @@ export default function DealsPage() {
               These are unsold belly freight spots on confirmed departures. RwandAir releases them at discounted rates to maximize aircraft utilization.
               Prices are fixed — no negotiation. Offers expire automatically. All commodities subject to airline acceptance.
             </p>
-            <p className="text-xs mt-2" style={{ color: 'var(--wb-gray-500)' }}>
-              <strong>Demo note:</strong> This page uses simulated deal data. Countdowns persist within the browser session.
-            </p>
           </div>
         </div>
       </div>

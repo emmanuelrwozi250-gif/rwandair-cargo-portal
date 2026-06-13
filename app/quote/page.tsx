@@ -3,12 +3,24 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
-  Zap, Clock, Shield, Leaf, Upload, ChevronRight,
+  Zap, Clock, Shield, Upload, ChevronRight,
   AlertTriangle, CheckCircle, Info, ArrowLeft, Scale,
   Thermometer, Star, Heart, Package, Plane, XCircle
 } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import RegistrationWall from '@/components/quote/RegistrationWall'
+import CallbackButton from '@/components/quote/CallbackButton'
+import { createClient } from '@/lib/supabase'
+import { useLanguage } from '@/components/providers/LanguageProvider'
+import { computeLineItems, usd, outOfStandardReason } from '@/lib/quote-pricing'
+import type { ContractRate } from '@/types'
+
+// Quote commodity → contract-rate / portal product-type label
+const COMMODITY_TO_PRODUCT: Record<string, string> = {
+  GENERAL: 'General', PERISHABLE: 'Fresh', PHARMACEUTICAL: 'Pharma',
+  HIGH_VALUE: 'Valuables', LIVE_ANIMALS: 'Live', DANGEROUS_GOODS: 'DG',
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatDeparture(isoStr: string): string {
@@ -37,7 +49,6 @@ interface QuoteOption {
   transitHours: number
   departure: string
   onTimePct: number
-  co2Kg: number
   recommended?: boolean
 }
 
@@ -74,7 +85,6 @@ function generateQuotes(
       transitHours: 11,
       departure: '22:15 tonight',
       onTimePct: 96.8,
-      co2Kg: Math.round(weightKg * 1.68),
       recommended: true,
     },
     {
@@ -87,7 +97,6 @@ function generateQuotes(
       transitHours: 16,
       departure: '06:30 tomorrow',
       onTimePct: 93.2,
-      co2Kg: Math.round(weightKg * 1.92),
     },
     {
       type: 'reliable',
@@ -99,7 +108,6 @@ function generateQuotes(
       transitHours: 11,
       departure: '22:15 tonight',
       onTimePct: 99.1,
-      co2Kg: Math.round(weightKg * 1.68),
     },
   ]
 
@@ -125,11 +133,17 @@ function QuoteCard({
   option,
   selected,
   onSelect,
+  weightKg,
+  contractRatePerKg,
 }: {
   option: QuoteOption
   selected: boolean
   onSelect: () => void
+  weightKg: number
+  contractRatePerKg: number | null
 }) {
+  const cargoUsd = contractRatePerKg ? Math.round(contractRatePerKg * weightKg) : option.priceUsd
+  const li = computeLineItems(cargoUsd)
   return (
     <button
       onClick={onSelect}
@@ -167,11 +181,33 @@ function QuoteCard({
         {option.badge}
       </span>
 
-      {/* Price */}
+      {/* All-in price */}
       <div className="mb-1">
-        <p className="price-unit">FROM</p>
-        <p className="price-large">${option.priceUsd.toLocaleString()}</p>
+        {contractRatePerKg && (
+          <span className="inline-block mb-1 px-2 py-0.5 rounded-full text-xs font-bold"
+                style={{ background: 'var(--wb-green-light)', color: '#4a7c20' }}>
+            Your contract rate · ${contractRatePerKg.toFixed(2)}/kg
+          </span>
+        )}
+        <p className="price-unit">ALL-IN</p>
+        <p className="price-large">{usd(li.allInUsd)}</p>
         <p className="price-label">per shipment</p>
+      </div>
+
+      {/* Line items */}
+      <div className="mt-3 pt-3 space-y-1.5 text-sm" style={{ borderTop: '1px solid var(--wb-gray-200)' }}>
+        <div className="flex items-center justify-between" style={{ color: 'var(--wb-gray-500)' }}>
+          <span>Cargo charge</span><span style={{ color: 'var(--wb-gray-900)' }}>{usd(li.cargoUsd)}</span>
+        </div>
+        <div className="flex items-center justify-between" style={{ color: 'var(--wb-gray-500)' }}>
+          <span>Fuel surcharge</span><span style={{ color: 'var(--wb-gray-900)' }}>{usd(li.fuelUsd)}</span>
+        </div>
+        <div className="flex items-center justify-between" style={{ color: 'var(--wb-gray-500)' }}>
+          <span>Handling fee</span><span style={{ color: 'var(--wb-gray-900)' }}>{usd(li.handlingUsd)}</span>
+        </div>
+        <div className="flex items-center justify-between pt-1.5 font-bold" style={{ borderTop: '1px solid var(--wb-gray-200)', color: 'var(--wb-blue)' }}>
+          <span>All-in total</span><span>{usd(li.allInUsd)}</span>
+        </div>
       </div>
 
       {/* Route details */}
@@ -199,24 +235,6 @@ function QuoteCard({
           <span className="font-semibold" style={{ color: 'var(--wb-green)' }}>
             {option.onTimePct}%
           </span>
-        </div>
-      </div>
-
-      {/* CO2 */}
-      <div className="mt-4 pt-4 space-y-1"
-           style={{ borderTop: '1px solid var(--wb-gray-200)' }}>
-        <div className="flex items-center justify-between text-sm">
-          <span className="flex items-center gap-1" style={{ color: 'var(--wb-gray-500)' }}>
-            <Leaf className="w-3.5 h-3.5" style={{ color: 'var(--wb-green)' }} />
-            CO₂ est.
-          </span>
-          <span className="font-semibold" style={{ color: 'var(--wb-gray-900)' }}>
-            {option.co2Kg}kg
-          </span>
-        </div>
-        <div className="flex items-center justify-between text-xs" style={{ color: 'var(--wb-gray-500)' }}>
-          <span>Carbon offset</span>
-          <span className="font-semibold" style={{ color: 'var(--wb-green)' }}>Included</span>
         </div>
       </div>
 
@@ -256,6 +274,7 @@ const WB_PRODUCT_OPTIONS: {
 ]
 
 export default function QuotePage() {
+  const { t } = useLanguage()
   const [origin, setOrigin] = useState('KGL')
   const [destination, setDestination] = useState('LHR')
   const [commodity, setCommodity] = useState<CommodityType>('GENERAL')
@@ -269,6 +288,29 @@ export default function QuotePage() {
   const [loading, setLoading] = useState(false)
   const [apiError, setApiError] = useState('')
   const [uploadedFile, setUploadedFile] = useState<string | null>(null)
+
+  // Auth + registration wall (rates are gated behind a free instant account)
+  const [isAuthed, setIsAuthed] = useState(false)
+  const [isApproved, setIsApproved] = useState(false)
+  const [contractRates, setContractRates] = useState<ContractRate[]>([])
+  const [showWall, setShowWall] = useState(false)
+
+  async function loadAuth() {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { setIsAuthed(false); return false }
+    setIsAuthed(true)
+    const { data: profile } = await supabase.from('profiles').select('status').eq('id', user.id).maybeSingle()
+    const approved = profile?.status === 'approved'
+    setIsApproved(approved)
+    if (approved) {
+      const { data: rates } = await supabase.from('contract_rates').select('*')
+      setContractRates((rates as ContractRate[]) ?? [])
+    }
+    return true
+  }
+
+  useEffect(() => { loadAuth() }, [])
 
   // Pre-populate from /quote?from=KGL&to=LHR&weight=500 (homepage hero widget, Feature 5b)
   useEffect(() => {
@@ -284,6 +326,22 @@ export default function QuotePage() {
   const volumetricWeight = Math.ceil((length * width * height) / 6000)
   const chargeableWeight = volumetricMode ? Math.max(weightKg, volumetricWeight) : weightKg
 
+  // Contract $/kg for the current route + product, if this approved agent has one
+  const contractRatePerKg = (() => {
+    if (!isApproved || !contractRates.length) return null
+    const product = COMMODITY_TO_PRODUCT[commodity] ?? 'General'
+    const match = contractRates.find(r =>
+      r.product_type === product &&
+      (r.route === `${origin}-${destination}` ||
+       r.route === `${origin} → ${destination}` ||
+       (r.route.includes(origin) && r.route.includes(destination)))
+    )
+    return match ? match.rate_usd_per_kg : null
+  })()
+
+  const routeKnown = ORIGINS.includes(origin) && DESTINATIONS_LIST.includes(destination)
+  const outOfStandard = outOfStandardReason({ weightKg: chargeableWeight, commodity, routeKnown })
+
   const OPTION_META: Record<string, { label: string; badge: string; badgeColor: string; recommended?: boolean }> = {
     fastest:  { label: 'FASTEST',       badge: '⭐ Recommended', badgeColor: '#fee014', recommended: true },
     cheapest: { label: 'CHEAPEST',      badge: 'Save 18%',       badgeColor: '#94c943' },
@@ -291,6 +349,15 @@ export default function QuotePage() {
   }
 
   async function handleGetQuote() {
+    if (!origin || !destination) return
+    // Gate rates behind a free instant account
+    if (!isAuthed) { setShowWall(true); return }
+    await fetchQuotes()
+  }
+
+  // The actual fetch — called directly after the wall authenticates (where
+  // isAuthed state hasn't flushed yet), bypassing the gate.
+  async function fetchQuotes() {
     if (!origin || !destination) return
     setLoading(true)
     setQuotes(null)
@@ -305,7 +372,7 @@ export default function QuotePage() {
       if (!res.ok) throw new Error(data.error || 'Failed to get quote')
       const options: QuoteOption[] = (data.options as Array<{
         type: string; route: string[]; priceUsd: number; transitHours: number;
-        departure: string; onTimePct: number; co2Kg: number;
+        departure: string; onTimePct: number;
       }>).map(opt => ({
         type: opt.type as QuoteOption['type'],
         route: opt.route,
@@ -313,7 +380,6 @@ export default function QuotePage() {
         transitHours: opt.transitHours,
         departure: formatDeparture(opt.departure),
         onTimePct: opt.onTimePct,
-        co2Kg: opt.co2Kg,
         ...(OPTION_META[opt.type] ?? { label: opt.type.toUpperCase(), badge: '', badgeColor: '#ccc' }),
       }))
       setQuotes({ options, perishableRisk: data.perishableRisk })
@@ -338,9 +404,9 @@ export default function QuotePage() {
                   style={{ color: 'rgba(255,255,255,0.6)' }}>
               <ArrowLeft className="w-4 h-4" /> Back to home
             </Link>
-            <h1 className="text-white mb-2" style={{ fontSize: '2rem' }}>Smart Booking Engine</h1>
+            <h1 className="text-white mb-2" style={{ fontSize: '2rem' }}>{t('quoteTitle')}</h1>
             <p style={{ color: 'rgba(255,255,255,0.65)', fontWeight: 300 }}>
-              Get 3 tailored routing options with live pricing and CO₂ estimates in seconds.
+              {t('quoteSubtitle')}
             </p>
           </div>
         </div>
@@ -358,7 +424,7 @@ export default function QuotePage() {
                   <div>
                     <label className="label-upper block mb-1.5"
                            style={{ color: 'var(--wb-gray-500)' }}>
-                      Origin Airport
+                      {t('quoteOrigin')}
                     </label>
                     <select value={origin} onChange={e => setOrigin(e.target.value)}
                             className="w-full rounded-xl px-4 py-3 text-sm font-semibold outline-none"
@@ -371,7 +437,7 @@ export default function QuotePage() {
                   <div>
                     <label className="label-upper block mb-1.5"
                            style={{ color: 'var(--wb-gray-500)' }}>
-                      Destination Airport
+                      {t('quoteDest')}
                     </label>
                     <select value={destination} onChange={e => setDestination(e.target.value)}
                             className="w-full rounded-xl px-4 py-3 text-sm font-semibold outline-none"
@@ -589,7 +655,7 @@ export default function QuotePage() {
                     Checking live capacity across 24 routes…
                   </p>
                   <p className="text-sm mt-1" style={{ color: 'var(--wb-gray-500)' }}>
-                    Running AI route optimization + carbon calculation
+                    Running live route optimisation across the WB network
                   </p>
                 </div>
               )}
@@ -628,9 +694,18 @@ export default function QuotePage() {
                         option={opt}
                         selected={selected === opt.type}
                         onSelect={() => setSelected(opt.type)}
+                        weightKg={chargeableWeight}
+                        contractRatePerKg={contractRatePerKg}
                       />
                     ))}
                   </div>
+
+                  {/* Out-of-standard → callback */}
+                  {outOfStandard && (
+                    <div className="mt-6">
+                      <CallbackButton context={`${origin} → ${destination}, ${commodity}, ${chargeableWeight}kg`} reason={outOfStandard} />
+                    </div>
+                  )}
 
                   {/* Proceed CTA */}
                   {selected && (
@@ -659,11 +734,7 @@ export default function QuotePage() {
                   {/* Info row */}
                   <div className="mt-4 flex flex-wrap gap-4 text-xs" style={{ color: 'var(--wb-gray-500)' }}>
                     <span className="flex items-center gap-1">
-                      <Info className="w-3.5 h-3.5" /> Prices include fuel surcharge + security fee
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Leaf className="w-3.5 h-3.5" style={{ color: 'var(--wb-green)' }} />
-                      Carbon offsets included via Patch.io
+                      <Info className="w-3.5 h-3.5" /> All-in price — fuel surcharge and handling included
                     </span>
                     <span className="flex items-center gap-1">
                       <CheckCircle className="w-3.5 h-3.5" style={{ color: 'var(--wb-green)' }} />
@@ -677,6 +748,16 @@ export default function QuotePage() {
         </div>
       </div>
       <Footer />
+
+      <RegistrationWall
+        open={showWall}
+        onClose={() => setShowWall(false)}
+        onAuthed={async () => {
+          setShowWall(false)
+          await loadAuth()
+          await fetchQuotes()
+        }}
+      />
     </>
   )
 }

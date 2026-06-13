@@ -3,8 +3,12 @@
 import { useState } from 'react'
 import { track } from '@vercel/analytics'
 import { Zap, CheckCircle } from 'lucide-react'
+import { PRODUCT_TYPES, validateIataFiata } from '@/lib/portal-constants'
 
 const VOLUME_OPTIONS = ['Under 1 tonne/month', '1–5 tonnes/month', '5–20 tonnes/month', '20t+ /month']
+const PRODUCT_LABELS: Record<string, string> = {
+  General: 'General', Fresh: 'Fresh', Pharma: 'Pharma', Valuables: 'Valuables', DG: 'Dangerous Goods', Live: 'Live Animals',
+}
 const HEAR_ABOUT_OPTIONS = [
   'cargo.one / WebCargo / CargoAi', 'Industry colleague', 'RwandAir passenger network',
   'Trade event or conference', 'Search engine', 'Social media / LinkedIn', 'Other',
@@ -22,6 +26,7 @@ export default function AgentRegisterForm() {
     company: '', iata: '', contact: '', email: '', phone: '', country: '', volume: '', hearAbout: '',
   })
   const [routes, setRoutes] = useState<string[]>([])
+  const [products, setProducts] = useState<string[]>([])
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -33,6 +38,7 @@ export default function AgentRegisterForm() {
     if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Valid email is required'
     if (!form.phone.trim()) e.phone = 'Phone number is required'
     if (!form.country.trim()) e.country = 'Country is required'
+    if (form.iata.trim() && !validateIataFiata(form.iata)) e.iata = 'Enter a valid IATA (7 digits) or FIATA code'
     return e
   }
 
@@ -46,7 +52,7 @@ export default function AgentRegisterForm() {
       const res = await fetch('/api/agents/enquiry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, routes }),
+        body: JSON.stringify({ ...form, routes, products }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
@@ -127,12 +133,33 @@ export default function AgentRegisterForm() {
       )}
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         {field('company', 'Company name', 'e.g. East Africa Freight Ltd')}
-        {field('iata', 'IATA agent code (if applicable)', 'e.g. 12345678', false)}
+        {field('iata', 'IATA / FIATA code (if applicable)', 'e.g. 1234567 or FIATA code', false)}
         {field('contact', 'Contact name', 'Full name')}
         {field('email', 'Email address', 'you@company.com')}
         {field('phone', 'Phone number', '+250 7XX XXX XXX')}
         {field('country', 'Country', 'e.g. Kenya')}
         {select('volume', 'Estimated monthly volume', VOLUME_OPTIONS)}
+
+        <fieldset>
+          <legend className="block text-sm font-semibold mb-1.5" style={{ color: 'var(--wb-blue)' }}>
+            Preferred product types <span className="font-normal text-xs" style={{ color: 'var(--wb-gray-500)' }}>(select all that apply)</span>
+          </legend>
+          <div className="flex flex-wrap gap-1.5">
+            {PRODUCT_TYPES.map(p => {
+              const on = products.includes(p)
+              return (
+                <button key={p} type="button" aria-pressed={on}
+                        onClick={() => setProducts(cur => on ? cur.filter(x => x !== p) : [...cur, p])}
+                        className="text-xs font-semibold px-3 py-2 rounded-lg transition-colors"
+                        style={on
+                          ? { background: 'var(--wb-sky-light)', border: '1.5px solid var(--wb-sky)', color: 'var(--wb-blue)' }
+                          : { background: 'white', border: '1.5px solid var(--wb-gray-200)', color: 'var(--wb-gray-500)' }}>
+                  {on ? '✓ ' : ''}{PRODUCT_LABELS[p] ?? p}
+                </button>
+              )
+            })}
+          </div>
+        </fieldset>
 
         <fieldset>
           <legend className="block text-sm font-semibold mb-1.5" style={{ color: 'var(--wb-blue)' }}>
@@ -162,7 +189,7 @@ export default function AgentRegisterForm() {
                 className="w-full flex items-center justify-center gap-2 font-bold text-sm transition-opacity"
                 style={{ background: 'var(--wb-yellow)', color: 'var(--brand-blue)', padding: '14px 28px', borderRadius: '8px', opacity: submitting ? 0.7 : 1 }}>
           <Zap className="w-4 h-4" aria-hidden="true" />
-          {submitting ? 'Submitting…' : 'Submit application'}
+          {submitting ? 'Submitting…' : 'Apply for agent account'}
         </button>
         <p className="text-xs text-center" style={{ color: 'var(--wb-gray-500)' }}>
           Or email us directly at{' '}
