@@ -84,6 +84,16 @@ export async function middleware(request: NextRequest) {
     return supabaseResponse
   }
 
+  // Agent portal — its own auth surface, separate from the exporter /login
+  if (pathname.startsWith('/portal')) {
+    if (pathname === '/portal/login') {
+      if (user) return NextResponse.redirect(new URL('/portal/dashboard', request.url))
+      return supabaseResponse
+    }
+    if (!user) return NextResponse.redirect(new URL('/portal/login', request.url))
+    return supabaseResponse
+  }
+
   // Public routes — always accessible
   if (PUBLIC_ROUTES.some(r => pathname === r) || PUBLIC_PREFIXES.some(p => pathname.startsWith(p))) {
     // Redirect logged-in users away from login/register

@@ -329,3 +329,94 @@ export interface Article {
   created_at: string
   updated_at: string
 }
+
+// ── Agent Portal (parallel account system) ──────────────────────────────────
+
+export type AgentStatus = 'registered' | 'pending' | 'approved' | 'rejected'
+export type AccountRole = 'owner' | 'member'
+
+export interface Profile {
+  id: string
+  email: string
+  company_name: string
+  country?: string
+  iata_fiata_code?: string
+  volume_tier?: string
+  product_types: string[]
+  preferred_routes: string[]
+  status: AgentStatus
+  account_role: AccountRole
+  parent_id?: string | null
+  credit_balance_usd: number
+  payment_due_date?: string | null
+  notify_departure: boolean
+  notify_arrival: boolean
+  notify_exception: boolean
+  whatsapp_number?: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface AgentBooking {
+  id: string
+  account_id: string
+  created_by?: string | null
+  flight_number?: string
+  route: string
+  origin: string
+  destination: string
+  departure_at?: string | null
+  product_type: string
+  pieces?: number | null
+  weight_kg?: number | null
+  charges_usd?: number | null
+  status: string
+  awb_number?: string | null
+  created_at: string
+}
+
+export interface Eawb {
+  id: string
+  account_id: string
+  booking_id?: string | null
+  awb_number: string
+  shipper: Record<string, string>
+  consignee: Record<string, string>
+  commodity?: string
+  pieces?: number | null
+  weight_kg?: number | null
+  dimensions?: string
+  special_handling: string[]
+  created_at: string
+}
+
+export interface AgentInvoice {
+  id: string
+  account_id: string
+  period_start: string
+  period_end: string
+  total_shipments: number
+  total_weight_kg: number
+  total_charges_usd: number
+  due_date?: string | null
+  created_at: string
+}
+
+export interface AgentNotification {
+  id: string
+  account_id: string
+  type: string
+  message: string
+  read: boolean
+  created_at: string
+}
+
+export interface ContractRate {
+  id: string
+  account_id: string
+  route: string
+  product_type: string
+  rate_usd_per_kg: number
+  valid_until?: string | null
+  created_at: string
+}
