@@ -7,7 +7,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const nextConfig = {
   outputFileTracingRoot: __dirname,
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+    ],
+  },
+  async redirects() {
+    return [
+      // Preserve SEO equity from the old Trade Insights page
+      { source: '/insights', destination: '/news', permanent: true },
+    ]
   },
   experimental: {
     serverActions: {

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
   Zap, Clock, Shield, Leaf, Upload, ChevronRight,
@@ -269,6 +269,17 @@ export default function QuotePage() {
   const [loading, setLoading] = useState(false)
   const [apiError, setApiError] = useState('')
   const [uploadedFile, setUploadedFile] = useState<string | null>(null)
+
+  // Pre-populate from /quote?from=KGL&to=LHR&weight=500 (homepage hero widget, Feature 5b)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const from = params.get('from')?.toUpperCase()
+    const to = params.get('to')?.toUpperCase()
+    const weight = Number(params.get('weight'))
+    if (from && /^[A-Z]{3}$/.test(from)) setOrigin(from)
+    if (to && /^[A-Z]{3}$/.test(to)) setDestination(to)
+    if (Number.isFinite(weight) && weight >= 1 && weight <= 20000) setWeightKg(Math.round(weight))
+  }, [])
 
   const volumetricWeight = Math.ceil((length * width * height) / 6000)
   const chargeableWeight = volumetricMode ? Math.max(weightKg, volumetricWeight) : weightKg

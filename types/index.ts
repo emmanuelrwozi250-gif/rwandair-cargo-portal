@@ -202,3 +202,130 @@ export interface WaterPort {
   country: string
   is_active: boolean
 }
+
+// ── Claims ────────────────────────────────────────────────────────────────────
+
+export type ClaimType = 'Loss' | 'Damage' | 'Delay' | 'Shortage' | 'Pilferage'
+
+export type ClaimStatus = 'Received' | 'Under Review' | 'Resolved' | 'Rejected'
+
+export type ClaimRelationship = 'shipper' | 'consignee' | 'agent'
+
+export type ContactMethod = 'email' | 'whatsapp' | 'phone'
+
+export interface Claim {
+  id: string
+  claim_ref: string
+  claim_type: ClaimType
+  status: ClaimStatus
+  awb: string
+  flight_number?: string
+  origin?: string
+  destination?: string
+  delivery_date?: string
+  declared_value_usd?: number
+  description: string
+  claim_value_usd?: number
+  file_urls: { name: string; path: string }[]
+  good_condition_confirmed: boolean
+  claimant_name: string
+  claimant_company?: string
+  claimant_email: string
+  claimant_phone: string
+  relationship: ClaimRelationship
+  preferred_contact: ContactMethod
+  time_limit_warning?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface ClaimEvent {
+  id: string
+  claim_id: string
+  status: ClaimStatus
+  note?: string
+  created_at: string
+}
+
+// ── Ratings & Reviews ─────────────────────────────────────────────────────────
+
+export type ReviewCargoType = 'Perishables' | 'Pharma' | 'General' | 'Courier'
+
+export interface Rating {
+  id: string
+  request_id?: string
+  awb: string
+  route?: string
+  cargo_type: ReviewCargoType
+  score_booking: number
+  score_ontime: number
+  score_condition: number
+  score_communication: number
+  score_overall: number
+  comment?: string
+  display_consent: boolean
+  full_name_consent: boolean
+  reviewer_name?: string
+  reviewer_company?: string
+  is_published: boolean
+  is_flagged: boolean
+  created_at: string
+}
+
+export interface RatingAggregates {
+  count: number
+  overall: number
+  booking: number
+  ontime: number
+  condition: number
+  communication: number
+}
+
+// ── Feedback ──────────────────────────────────────────────────────────────────
+
+export type FeedbackCategory =
+  | 'Booking & Pricing'
+  | 'Operations & Handling'
+  | 'Tracking & Communication'
+  | 'Website & Digital Tools'
+  | 'New Route / Destination Request'
+  | 'Other'
+
+export interface FeatureRequest {
+  id: string
+  title: string
+  request_count: number
+  is_visible: boolean
+  sort_order: number
+}
+
+// ── News & Updates ────────────────────────────────────────────────────────────
+
+export type ArticleCategory =
+  | 'Route News'
+  | 'Service Alerts'
+  | 'Trade Intelligence'
+  | 'Company News'
+  | 'Compliance Updates'
+
+export interface Article {
+  id: string
+  slug: string
+  title: string
+  category: ArticleCategory
+  published_at: string
+  author_name: string
+  author_role: string
+  hero_image_url?: string
+  hero_image_alt?: string
+  summary: string
+  body: string
+  tags: string[]
+  is_service_alert: boolean
+  related_routes: string[]
+  is_published: boolean
+  useful_yes: number
+  useful_no: number
+  created_at: string
+  updated_at: string
+}

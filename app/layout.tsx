@@ -19,10 +19,10 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rwandair-cargo-por
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'RwandAir Cargo — Africa\'s Cargo Hub | Kigali to the World',
+    default: 'RwandAir Cargo — Built to Move Africa | From Kigali, For the World',
     template: '%s | RwandAir Cargo',
   },
-  description: 'Book air cargo from Kigali to 40+ destinations across Africa, Europe, Middle East, Asia and the Americas. Real-time routing, cold-chain expertise, and same-day quotes. IATA · IOSA · EASA certified.',
+  description: 'Africa\'s cargo, moving the world. Book from Kigali to 40+ destinations with real-time routing, cold-chain precision, and same-day quotes. Built to move Africa — from flower farms to pharmaceuticals. IATA · IOSA · EASA certified.',
   keywords: [
     'RwandAir Cargo', 'air cargo Africa', 'Kigali freight', 'cargo booking Rwanda',
     'perishables airfreight', 'cold chain cargo', 'pharmaceutical air cargo',
@@ -40,23 +40,23 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: 'RwandAir Cargo',
-    title: 'RwandAir Cargo — Africa\'s Cargo Hub | Kigali to the World',
-    description: 'Book air cargo from Kigali to 40+ global destinations. Cold chain, pharmaceuticals, perishables, and general cargo. IATA · IOSA · EASA certified.',
+    title: 'RwandAir Cargo — Built to Move Africa | From Kigali, For the World',
+    description: 'Africa\'s cargo, moving the world. Rwanda\'s flowers, African pharmaceuticals, East African produce — lifted from Kigali to 40+ destinations with cold-chain precision. IATA · IOSA · EASA certified.',
     url: SITE_URL,
     images: [
       {
         url: `${SITE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: 'RwandAir Cargo — Connecting Africa to the World from Kigali Hub',
+        alt: 'RwandAir Cargo — Built to Move Africa. From Kigali, For the World.',
       },
     ],
     locale: 'en_GB',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RwandAir Cargo — Africa\'s Cargo Hub',
-    description: 'Book air cargo from Kigali to 40+ global destinations. Cold chain, pharma, perishables & general cargo.',
+    title: 'RwandAir Cargo — Built to Move Africa',
+    description: 'Africa\'s cargo, moving the world. Rwanda\'s flowers to Amsterdam in 14 hours, African pharma, perishables & general cargo from Kigali.',
     images: [`${SITE_URL}/og-image.jpg`],
   },
   alternates: {
