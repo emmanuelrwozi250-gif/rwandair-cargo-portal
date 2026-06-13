@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useId } from 'react'
+import { useState, useRef, useId, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
@@ -143,6 +143,15 @@ export default function TrackPage() {
   const singleHintId   = useId()
 
   const singleInputRef = useRef<HTMLInputElement>(null)
+
+  // Pre-populate from /track?awb=… (navbar quick-track, Feature 5a)
+  useEffect(() => {
+    const awb = new URLSearchParams(window.location.search).get('awb')
+    if (awb) {
+      setSingleAwb(awb)
+      singleInputRef.current?.focus()
+    }
+  }, [])
 
   // ── Validation ──────────────────────────────────────────────────────────────
   const singleAwbTrimmed = singleAwb.trim()

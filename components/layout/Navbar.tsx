@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Menu, X, Globe, ChevronDown, Search, Zap } from 'lucide-react'
+import { track } from '@vercel/analytics'
 import RwandAirCargoLogo from '@/components/brand/RwandAirCargoLogo'
 import {
   useLanguage,
@@ -11,10 +12,72 @@ import {
 } from '@/components/providers/LanguageProvider'
 import type { Locale } from '@/lib/i18n'
 
+const NAV_AWB_REGEX = /^459-\d{8}$/
+
+// Inline AWB tracker for the sticky navbar (Feature 5a). Desktop: always-visible
+// input. Mobile: rendered inside an expanding row under the header.
+function AwbQuickTrack({ compact = false, onNavigate }: { compact?: boolean; onNavigate?: () => void }) {
+  const router = useRouter()
+  const [value, setValue] = useState('')
+  const [error, setError] = useState(false)
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault()
+    const cleaned = value.trim().replace(/\s+/g, '')
+    const candidate = /^\d{11}$/.test(cleaned) ? `${cleaned.slice(0, 3)}-${cleaned.slice(3)}` : cleaned
+    if (!NAV_AWB_REGEX.test(candidate)) {
+      setError(true)
+      return
+    }
+    setError(false)
+    track('navbar_track')
+    router.push(`/track?awb=${candidate}`)
+    onNavigate?.()
+  }
+
+  return (
+    <form onSubmit={submit} className={compact ? 'w-full' : 'relative'} aria-label="Track a shipment">
+      <div className="flex items-center rounded-full overflow-hidden"
+           style={{ border: error ? '1.5px solid #FCA5A5' : '1.5px solid rgba(28,163,219,0.6)', background: 'rgba(255,255,255,0.08)' }}>
+        <label htmlFor={compact ? 'awb-track-m' : 'awb-track'} className="sr-only">
+          Track AWB number
+        </label>
+        <input
+          id={compact ? 'awb-track-m' : 'awb-track'}
+          type="text"
+          inputMode="numeric"
+          value={value}
+          onChange={e => { setValue(e.target.value); setError(false) }}
+          placeholder="Track AWB e.g. 459-12345678"
+          aria-invalid={error}
+          aria-describedby={error ? (compact ? 'awb-err-m' : 'awb-err') : undefined}
+          className={`bg-transparent outline-none font-mono ${compact ? 'flex-1 px-4 py-2.5 text-sm' : 'w-[200px] xl:w-[220px] px-3.5 py-2 text-xs'}`}
+          style={{ color: 'white' }}
+        />
+        <button type="submit" aria-label="Track shipment"
+                className={`flex items-center justify-center transition-colors hover:bg-white/10 ${compact ? 'px-4 py-2.5' : 'px-3 py-2'}`}
+                style={{ color: 'var(--wb-yellow)' }}>
+          <Search className={compact ? 'w-5 h-5' : 'w-3.5 h-3.5'} aria-hidden="true" />
+        </button>
+      </div>
+      {error && (
+        <p id={compact ? 'awb-err-m' : 'awb-err'} role="alert"
+           className={`text-xs font-semibold ${compact ? 'mt-1.5' : 'absolute top-full left-0 mt-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap'}`}
+           style={compact
+             ? { color: '#FCA5A5' }
+             : { background: '#7F1D1D', color: '#FECACA', boxShadow: '0 4px 12px rgba(0,0,0,0.25)' }}>
+          Please enter a valid AWB number (e.g. 459-12345678)
+        </p>
+      )}
+    </form>
+  )
+}
+
 export default function Navbar() {
   const pathname                    = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [langOpen, setLangOpen]     = useState(false)
+  const [trackOpen, setTrackOpen]   = useState(false)
   const { locale, setLocale, t }    = useLanguage()
 
   const NAV_LINKS = [
@@ -25,6 +88,7 @@ export default function Navbar() {
     { href: '/perishables', label: 'Perishables' },
     { href: '/stations',    label: 'Stations' },
     { href: '/agents',      label: 'For Agents' },
+    { href: '/news',        label: 'News' },
   ]
 
   function pickLocale(l: Locale) {
@@ -129,15 +193,8 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Track Shipment CTA */}
-            <Link
-              href="/track"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold transition-all hover:bg-white/10"
-              style={{ color: 'rgba(255,255,255,0.9)', border: '1.5px solid rgba(28,163,219,0.6)' }}
-            >
-              <Search className="w-3.5 h-3.5" aria-hidden="true" />
-              Track Shipment
-            </Link>
+            {/* Inline AWB tracking (Feature 5a) */}
+            <AwbQuickTrack />
 
             {/* Book Now CTA (primary) */}
             <Link
@@ -151,19 +208,21 @@ export default function Navbar() {
           </div>
 
           {/* Mobile hamburger */}
-          <div className="flex lg:hidden items-center gap-2">
-            {/* Compact Track on mobile header */}
-            <Link
-              href="/track"
-              className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold"
-              style={{ border: '1px solid rgba(28,163,219,0.5)', color: 'rgba(255,255,255,0.8)' }}
-              aria-label="Track shipment"
+          <div className="flex lg:hidden items-center gap-1">
+            {/* Search icon expands the AWB tracking row (Feature 5a) */}
+            <button
+              className="p-2 rounded-full"
+              onClick={() => { setTrackOpen(v => !v); setMobileOpen(false) }}
+              aria-label={trackOpen ? 'Close shipment tracking' : 'Track a shipment'}
+              aria-expanded={trackOpen}
+              aria-controls="mobile-track"
+              style={{ color: trackOpen ? 'var(--wb-yellow)' : 'rgba(255,255,255,0.85)', border: '1px solid rgba(28,163,219,0.5)' }}
             >
-              <Search className="w-3 h-3" aria-hidden="true" /> Track
-            </Link>
+              <Search className="w-4 h-4" aria-hidden="true" />
+            </button>
             <button
               className="p-2 rounded text-white"
-              onClick={() => setMobileOpen(!mobileOpen)}
+              onClick={() => { setMobileOpen(!mobileOpen); setTrackOpen(false) }}
               aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
@@ -172,6 +231,14 @@ export default function Navbar() {
             </button>
           </div>
         </nav>
+
+        {/* Mobile expanding AWB tracker */}
+        {trackOpen && (
+          <div id="mobile-track" className="lg:hidden px-4 py-3 border-t"
+               style={{ background: 'var(--brand-blue-dark)', borderColor: 'rgba(255,255,255,0.1)' }}>
+            <AwbQuickTrack compact onNavigate={() => setTrackOpen(false)} />
+          </div>
+        )}
 
         {/* Mobile drawer */}
         {mobileOpen && (

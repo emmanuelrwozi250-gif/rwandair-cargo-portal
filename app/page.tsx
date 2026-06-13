@@ -14,20 +14,23 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ConnectivityLines from '@/components/brand/ConnectivityLines'
 import ImigongoPattern from '@/components/brand/ImigongoPattern'
+import HeroQuoteWidget from '@/components/home/HeroQuoteWidget'
+import LiveTestimonials from '@/components/home/LiveTestimonials'
+import CapacityTeaser from '@/components/home/CapacityTeaser'
 
 
 // ─── Stat ticker ──────────────────────────────────────────────────────────────
 const TICKER = [
-  '40+ cargo destinations across 6 continents',
-  '98.2% on-time performance',
+  'Built to move Africa — 40+ destinations',
+  '98.2% on-time',
+  'Rwanda\'s goods, moving the world tonight',
   'WB9308 departing tonight: KGL → JIB → SHJ → JUB',
-  'Kigali: Africa\'s fastest-growing cargo hub',
   '340+ consolidations matched this month',
+  'From Africa, for the world',
   'WB9316 Mon 00:30: KGL → Djibouti → Dubai Al Maktoum',
   'Average shipper saving: 21% via consolidation',
   'Cold-chain certified for pharmaceuticals & perishables',
-  'Dedicated freighter network: 81h block time per week',
-  'WB9304 Sat 23:00: KGL → Sharjah — space available',
+  'Freighter departing KGL tonight: WB9304 → Sharjah, space available',
 ]
 
 // ─── Africa SVG watermark ─────────────────────────────────────────────────────
@@ -210,7 +213,7 @@ export default function HomePage() {
                  style={{ background: 'rgba(228,220,31,0.15)', border: '1px solid rgba(228,220,31,0.3)' }}>
               <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--wb-yellow)' }} />
               <span className="label-upper text-xs" style={{ color: 'var(--wb-yellow)' }}>
-                Live cargo intelligence platform
+                Africa&apos;s cargo, live and moving
               </span>
             </div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full"
@@ -229,27 +232,23 @@ export default function HomePage() {
             {/* Headlines & CTAs */}
             <div>
               <h1 className="text-white mb-3" style={{ fontSize: 'clamp(40px,5.5vw,72px)', lineHeight: 1.05, fontWeight: 800 }}>
-                Kigali to the World.
+                Built to Move Africa.
               </h1>
               <p className="mb-3" style={{ fontSize: 'clamp(16px,2vw,22px)', color: 'var(--wb-yellow)', letterSpacing: '0.01em', fontWeight: 500 }}>
-                Africa&apos;s cargo hub, connecting 40+ destinations.
+                From Africa, for the world — 40+ destinations, one hub, zero compromise.
               </p>
               <p className="text-base mb-8 max-w-lg"
                  style={{ color: 'rgba(255,255,255,0.82)', fontWeight: 400, lineHeight: 1.7 }}>
-                From Rwandan flowers to global pharmaceuticals — RwandAir Cargo delivers with speed,
-                cold-chain precision, and national pride.
+                From Rwandan flowers to African pharmaceuticals — lifted from Kigali with
+                cold-chain precision, on-time every time.
               </p>
 
-              {/* CTAs — primary + one ghost */}
-              <div className="flex flex-wrap" style={{ gap: '16px' }}>
-                <Link href="/quote"
-                      className="flex items-center gap-2 font-bold text-sm transition-all hover:opacity-90"
-                      style={{ background: 'var(--wb-yellow)', color: 'var(--brand-blue)', padding: '14px 28px', borderRadius: '8px' }}>
-                  <Zap className="w-4 h-4" /> Get instant quote
-                </Link>
+              {/* Inline quote widget (replaces the single CTA button) */}
+              <HeroQuoteWidget />
+              <div className="mt-4">
                 <Link href="/stations"
-                      className="flex items-center gap-2 font-bold text-sm transition-all hover:bg-white/10"
-                      style={{ border: '1.5px solid rgba(255,255,255,0.4)', color: 'rgba(255,255,255,0.85)', background: 'transparent', padding: '14px 28px', borderRadius: '8px' }}>
+                      className="inline-flex items-center gap-2 font-bold text-sm transition-all hover:bg-white/10"
+                      style={{ border: '1.5px solid rgba(255,255,255,0.4)', color: 'rgba(255,255,255,0.85)', padding: '12px 24px', borderRadius: '8px' }}>
                   <Plane className="w-4 h-4" /> Explore our routes
                 </Link>
               </div>
@@ -338,29 +337,29 @@ export default function HomePage() {
       <section className="py-12 pb-20 lg:pb-20" style={{ background: 'var(--wb-gray-50)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 style={{ color: 'var(--wb-blue)' }}>What do you need today?</h2>
-            <p className="mt-2" style={{ color: 'var(--wb-gray-500)' }}>Every action is a few seconds away.</p>
+            <h2 style={{ color: 'var(--wb-blue)' }}>Move something. Right now.</h2>
+            <p className="mt-2" style={{ color: 'var(--wb-gray-500)' }}>From Africa to anywhere — in seconds.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 icon: Zap,
                 title: 'Instant Quote',
-                desc: 'Get 3 tailored routing options with live pricing in under 30 seconds. Compare fastest, cheapest, and most reliable.',
+                desc: 'Three routes. Live pricing. 30 seconds. Move your cargo the smart way, from anywhere in Africa.',
                 cta: 'Get a quote',
                 href: '/quote',
               },
               {
                 icon: Package,
                 title: 'Join Consolidation',
-                desc: 'Our engine matches your shipment with others on the same route. Save up to 25% and guarantee space on tonight\'s flight.',
+                desc: 'African shippers moving in the same direction? We match you. Save up to 25% and secure your space on tonight\'s departure.',
                 cta: 'Find consolidation',
                 href: '/consolidate',
               },
               {
                 icon: Clock,
                 title: 'Last-Minute Deals',
-                desc: 'Grab discounted empty belly space before tonight\'s flights depart. Savings up to 30% — offers expire fast.',
+                desc: 'Tonight\'s aircraft leaves Kigali with space to fill. Claim it. Up to 30% off — expires at departure.',
                 cta: 'View live deals',
                 href: '/deals',
               },
@@ -413,66 +412,8 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── Testimonials ───────────────────────────────────────────────────── */}
-      {/* TODO: replace with real customer quotes */}
-      <section className="py-20" style={{ background: 'var(--wb-gray-50)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="label-upper mb-3" style={{ color: 'var(--wb-sky)' }}>Customer Stories</p>
-            <h2 style={{ color: 'var(--wb-blue)' }}>Trusted by African exporters</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                quote: 'RwandAir Cargo gets our flowers to Amsterdam in under 14 hours. Cold-chain has never failed us.',
-                name: 'Amina K.',
-                company: 'Kigali Floriculture Ltd',
-                country: 'Rwanda',
-                badge: 'Perishables',
-                badgeColor: '#94C944',
-                badgeBg: 'rgba(45,125,70,0.1)',
-              },
-              {
-                quote: 'The consolidation engine saved us 22% on our last three Dubai shipments.',
-                name: 'Jean-Pierre M.',
-                company: 'EastAfrica Freight Solutions',
-                country: 'Kenya',
-                badge: 'General Cargo',
-                badgeColor: '#00529C',
-                badgeBg: 'rgba(4,84,155,0.08)',
-              },
-              {
-                quote: 'CEIV Pharma certification and real-time temp monitoring gave our procurement team the confidence to approve RwandAir.',
-                name: 'Dr. Sarah O.',
-                company: 'MedExpress Africa',
-                country: 'Uganda',
-                badge: 'Pharmaceuticals',
-                badgeColor: '#16A1DC',
-                badgeBg: 'rgba(28,163,219,0.1)',
-              },
-            ].map(({ quote, name, company, country, badge, badgeColor, badgeBg }) => (
-              <div key={name} className="rounded-2xl p-8 flex flex-col gap-4"
-                   style={{ background: 'white', border: '1px solid var(--wb-gray-200)' }}>
-                <svg width="28" height="20" viewBox="0 0 28 20" fill="none" aria-hidden="true">
-                  <path d="M0 20V12C0 5.373 4.477 1.12 13.43 0l1.14 2.16C9.38 3.44 6.9 6.04 6.28 10H12V20H0zm16 0V12c0-6.627 4.477-10.88 13.43-12L30.57 2.16C25.38 3.44 22.9 6.04 22.28 10H28V20H16z"
-                        fill="var(--wb-yellow)" fillOpacity="0.5"/>
-                </svg>
-                <p className="text-sm leading-relaxed flex-1" style={{ color: 'var(--wb-gray-500)' }}>
-                  &ldquo;{quote}&rdquo;
-                </p>
-                <div>
-                  <p className="font-bold text-sm" style={{ color: 'var(--wb-blue)' }}>{name}</p>
-                  <p className="text-xs" style={{ color: 'var(--wb-gray-500)' }}>{company} · {country}</p>
-                </div>
-                <span className="self-start text-xs font-semibold px-2.5 py-1 rounded-full"
-                      style={{ background: badgeBg, color: badgeColor }}>
-                  {badge}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── Testimonials — live verified reviews with static fallback ──────── */}
+      <LiveTestimonials />
 
       {/* ── Partner logo strip ──────────────────────────────────────────────── */}
       <div style={{ background: 'white', borderTop: '1px solid var(--wb-gray-200)', borderBottom: '1px solid var(--wb-gray-200)', overflow: 'hidden' }}>
@@ -502,9 +443,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="label-upper mb-3" style={{ color: 'var(--wb-sky)' }}>Cargo Services</p>
-            <h2 style={{ color: 'var(--wb-blue)' }}>Purpose-built cargo solutions</h2>
+            <h2 style={{ color: 'var(--wb-blue)' }}>Built for what Africa moves</h2>
             <p className="mt-2 max-w-2xl mx-auto" style={{ color: 'var(--wb-gray-500)' }}>
-              Eleven specialised cargo categories — from parcels and couriers to full aircraft charters and ground handling at Kigali.
+              Eleven cargo categories — because what Africa ships deserves infrastructure built for it.
+              Flowers. Pharmaceuticals. Livestock. Valuables. All moving from Kigali.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -513,7 +455,7 @@ export default function HomePage() {
                 slug: 'general-cargo',
                 name: 'General Cargo',
                 tagline: 'Reliable, all-route',
-                desc: 'Standard cargo across all 40+ RwandAir routes with consolidation matching available.',
+                desc: 'Everything Africa ships. Across all 40+ routes, consolidated or direct — space guaranteed.',
                 color: '#00529C',
                 bgColor: 'rgba(4,84,155,0.07)',
                 icon: Package,
@@ -523,7 +465,7 @@ export default function HomePage() {
                 slug: 'perishables',
                 name: 'Perishables',
                 tagline: 'Active cold-chain',
-                desc: 'Flowers, fruit, vegetables, fish. Active cold-chain, shelf-life calculation.',
+                desc: 'Rwanda\'s flowers. Uganda\'s fish. Africa\'s fresh produce — cold-chain from farm gate to landing.',
                 color: '#94C944',
                 bgColor: 'rgba(45,125,70,0.08)',
                 icon: Thermometer,
@@ -533,7 +475,7 @@ export default function HomePage() {
                 slug: 'pharmaceuticals',
                 name: 'Pharmaceuticals',
                 tagline: 'GDP-certified',
-                desc: 'GDP-certified. ±2°C / ±8°C. CEIV Pharma compliant across all hub connections.',
+                desc: 'Medicines that Africa needs. Vaccines going out, treatments coming in. CEIV Pharma certified end-to-end.',
                 color: '#16A1DC',
                 bgColor: 'rgba(28,163,219,0.08)',
                 icon: Shield,
@@ -593,7 +535,7 @@ export default function HomePage() {
                 slug: 'courier',
                 name: 'Courier',
                 tagline: 'Next-flight-out express',
-                desc: 'Same-day collection, guaranteed space on the next departure. Documents, samples, and urgent small packages.',
+                desc: 'Urgent. African. Moving tonight. Same-day collection, next departure guaranteed — documents, samples, urgent packages.',
                 color: '#0891B2',
                 bgColor: 'rgba(8,145,178,0.07)',
                 icon: Truck,
@@ -603,7 +545,7 @@ export default function HomePage() {
                 slug: 'cargo-handling',
                 name: 'Cargo Handling',
                 tagline: 'ISAGO-certified at KGL',
-                desc: 'Full cargo ground handling at Kigali International Airport — ramp, ULD management, cold-chain, acceptance, and screening.',
+                desc: 'Kigali-based. ISAGO-certified. The hands that load Africa\'s exports for the world — ramp, ULD, cold-chain, screening.',
                 color: '#475569',
                 bgColor: 'rgba(71,85,105,0.07)',
                 icon: Warehouse,
@@ -613,7 +555,7 @@ export default function HomePage() {
                 slug: 'charter',
                 name: 'Charter',
                 tagline: 'Full aircraft on demand',
-                desc: 'B737-800F freighter charter up to 22,000kg. Flexible routing across Africa, Middle East & Europe. 2-hour quote response.',
+                desc: 'The whole aircraft. Your route, your timing. 22,000kg of African cargo moving on your terms. 2-hour quote response.',
                 color: '#1D4ED8',
                 bgColor: 'rgba(29,78,216,0.07)',
                 icon: Plane,
@@ -649,6 +591,9 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Live capacity teaser ──────────────────────────────────────────── */}
+      <CapacityTeaser />
+
       {/* ── Animated stats bar ────────────────────────────────────────────────── */}
       <section style={{ background: 'var(--brand-blue-dark)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -667,11 +612,12 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <p className="label-upper mb-3" style={{ color: 'var(--wb-sky)' }}>Why RwandAir Cargo</p>
-              <h2 style={{ color: 'var(--wb-blue)' }}>Connecting Africa to the World</h2>
+              <h2 style={{ color: 'var(--wb-blue)' }}>Why we&apos;re built for this</h2>
               <p className="mt-4 text-base" style={{ color: 'var(--wb-gray-500)', lineHeight: 1.75 }}>
-                Our vision is to connect Africa to the World and vice versa. From Kigali&apos;s strategic hub,
-                RwandAir Cargo brings innovation, service excellence, and global network connectivity to
-                every African exporter and importer.
+                This is Africa&apos;s carrier — built from the ground up in Kigali to move what Africa
+                produces. Not adapted from somewhere else. Not an afterthought on a bigger network.
+                Purpose-built, here, for the exporters, the growers, the manufacturers, and the
+                logistics teams who move Africa forward.
               </p>
 
               {/* Trust & certifications strip */}
@@ -695,11 +641,11 @@ export default function HomePage() {
 
               <div className="mt-8 space-y-5">
                 {[
-                  { icon: Zap,           title: 'Real-time intelligence',    desc: 'Live capacity, IoT sensor tracking, and AI alerts for every shipment.' },
-                  { icon: Package,       title: 'Consolidation matching',    desc: 'AI matches your cargo with others on the same route — save up to 25%.' },
-                  { icon: Shield,        title: 'Perishables expertise',     desc: 'Shelf-life calculation, temp monitoring, and proactive reroute recommendations.' },
-                  { icon: Leaf,          title: 'Carbon certified',          desc: 'Every booking includes CO₂ calculation and offset via Patch.io — automatically.' },
-                  { icon: MessageCircle, title: 'WhatsApp-first comms',      desc: 'Proactive alerts via WhatsApp — perfect for African market connectivity.' },
+                  { icon: Zap,           title: 'Live intelligence',         desc: 'Every shipment tracked, every sensor active, every alert instant. Africa\'s cargo doesn\'t go dark.' },
+                  { icon: Package,       title: 'Smarter consolidation',     desc: 'African shippers on the same route, matched by our engine. Move more, spend less.' },
+                  { icon: Shield,        title: 'Cold-chain built for Africa', desc: 'Rwanda\'s harvest has a 14-hour window. We protect every minute of it.' },
+                  { icon: Leaf,          title: 'Green by default',          desc: 'Every tonne of African cargo moves carbon-neutral. No opt-in. No extra cost. Just done.' },
+                  { icon: MessageCircle, title: 'WhatsApp alerts',           desc: 'Because Africa runs on WhatsApp. Every update, on the platform your team already uses.' },
                 ].map(({ icon: Icon, title, desc }) => (
                   <div key={title} className="flex gap-4">
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
@@ -714,17 +660,21 @@ export default function HomePage() {
                 ))}
               </div>
 
-              {/* Rwanda exports emotional callout */}
-              <div className="mt-10 rounded-xl px-6 py-5"
+              {/* Rwanda exports — standalone brand statement */}
+              <div className="mt-10 rounded-xl px-6 py-6"
                    style={{
                      background: 'rgba(228,220,31,0.07)',
                      border: '1px solid rgba(228,220,31,0.3)',
                      borderLeft: '4px solid var(--wb-yellow)',
                    }}>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--wb-gray-900)' }}>
-                  🌸 Rwanda&apos;s flowers, coffee, and horticultural produce reach European markets in{' '}
-                  <strong>under 14 hours</strong> — because every Rwandan farmer deserves a world-class
-                  export channel.
+                <p className="text-lg font-bold leading-snug" style={{ color: 'var(--wb-blue)' }}>
+                  Rwanda&apos;s flowers reach Amsterdam in 14 hours.
+                </p>
+                <p className="text-sm mt-1.5 leading-relaxed" style={{ color: 'var(--wb-gray-900)' }}>
+                  Because every African grower deserves a world-class export channel.
+                </p>
+                <p className="text-xs mt-3 font-semibold italic" style={{ color: 'var(--wb-gray-500)' }}>
+                  Built to move Africa.
                 </p>
               </div>
             </div>
@@ -763,13 +713,14 @@ export default function HomePage() {
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4"
                    style={{ background: 'rgba(148,201,67,0.15)', border: '1px solid rgba(148,201,67,0.3)' }}>
                 <Leaf className="w-3.5 h-3.5" style={{ color: '#4a7c20' }} />
-                <span className="text-xs font-semibold" style={{ color: '#4a7c20' }}>Flying Green Initiative</span>
+                <span className="text-xs font-semibold" style={{ color: '#4a7c20' }}>Carbon-neutral. By default.</span>
               </div>
-              <h2 style={{ color: 'var(--wb-blue)' }}>Carbon-neutral shipping, by default</h2>
+              <h2 style={{ color: 'var(--wb-blue)' }}>Africa moves green</h2>
               <p className="mt-4 text-base" style={{ color: 'var(--wb-gray-500)', lineHeight: 1.75 }}>
-                Every RwandAir Cargo booking automatically includes a CO₂ calculation and certified offset
-                via Patch.io — at zero extra cost to you. European shippers receive a carbon certificate
-                with every shipment, meeting EU sustainability reporting requirements.
+                Africa moves green — and the world notices. Every booking on RwandAir Cargo includes an
+                automatic CO₂ offset at zero extra cost. Your cargo moves carbon-neutral from Kigali.
+                European shippers receive a certified carbon certificate that meets EU CBAM and CSRD
+                reporting requirements — automatically.
               </p>
               <div className="mt-6 space-y-3">
                 {[
@@ -819,9 +770,9 @@ export default function HomePage() {
         <ConnectivityLines opacity={0.08} variant="light" animated={false} />
         <div className="relative z-10 max-w-3xl mx-auto px-4 text-center">
           <p className="text-sm font-semibold mb-3 italic" style={{ color: 'var(--wb-yellow)', letterSpacing: '0.02em' }}>
-            Kigali to the World — and the World to Africa.
+            From Africa, for the world — and back again.
           </p>
-          <h2 className="text-white mb-4">Ready to move your cargo?</h2>
+          <h2 className="text-white mb-4">Africa&apos;s cargo is ready to move. Are you?</h2>
           <p className="text-base mb-8" style={{ color: 'rgba(255,255,255,0.65)', fontWeight: 300 }}>
             Get an instant quote in seconds, or speak directly with our 24/7 cargo desk.
           </p>

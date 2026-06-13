@@ -2,6 +2,7 @@ import Link from 'next/link'
 import RwandaLandscape from '@/components/brand/RwandaLandscape'
 import { Globe, MessageCircle, Phone, Mail, MapPin } from 'lucide-react'
 import RwandAirCargoLogo from '@/components/brand/RwandAirCargoLogo'
+import FeedbackDrawer from '@/components/feedback/FeedbackDrawer'
 
 export default function Footer() {
   return (
@@ -13,7 +14,7 @@ export default function Footer() {
 
       <div style={{ background: 'var(--brand-blue)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-10">
 
             {/* Brand col */}
             <div className="md:col-span-1">
@@ -21,10 +22,10 @@ export default function Footer() {
                 <RwandAirCargoLogo size={56} />
               </div>
               <p className="text-xs italic mb-4 mt-2" style={{ color: 'rgba(242,222,14,0.7)' }}>
-                Fly the Dream of Africa
+                Built to Move Africa
               </p>
               <p className="text-sm leading-relaxed mb-5" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                Connecting Africa to the World and vice versa — real-time routing, consolidation, and perishables expertise from Kigali Hub.
+                From Africa, for the world — real-time routing, cold-chain precision, and African cargo expertise. Moving from Kigali, tonight.
               </p>
 
               {/* Award badge */}
@@ -70,10 +71,29 @@ export default function Footer() {
                   ['Last-Min Deals', '/deals'],
                   ['Cargo Stations', '/stations'],
                   ['For Freight Agents', '/agents'],
-                  ['Trade Insights', '/insights'],
-                  ['Service Guarantee & Claims', '/legal/service-guarantee'],
+                  ['File a Claim', '/claims'],
+                  ['Rate our Services', '/reviews'],
+                  ['Feedback', '/feedback'],
                 ].map(([label, href]) => (
                   <li key={href}>
+                    <Link href={href} className="hover:text-white transition-colors">{label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Trust & Support */}
+            <div>
+              <p className="label-upper mb-4" style={{ color: 'var(--wb-sky)' }}>Trust &amp; Support</p>
+              <ul className="space-y-2 text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                {[
+                  ['Claims Process', '/claims'],
+                  ['Service Guarantee', '/legal/service-guarantee'],
+                  ['Reviews', '/reviews'],
+                  ['Feedback', '/feedback'],
+                  ['News & Updates', '/news'],
+                ].map(([label, href]) => (
+                  <li key={`${href}-${label}`}>
                     <Link href={href} className="hover:text-white transition-colors">{label}</Link>
                   </li>
                 ))}
@@ -174,7 +194,8 @@ export default function Footer() {
             <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
               © {new Date().getFullYear()} RwandAir Limited. All rights reserved. Kigali, Rwanda.
             </p>
-            <div className="flex gap-5 text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+            <div className="flex items-center gap-5 text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              <FeedbackDrawer />
               <a href="https://www.rwandair.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Privacy</a>
               <a href="https://www.rwandair.com/terms-conditions" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Terms</a>
               <a href="https://www.rwandair.com/gdpr" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GDPR</a>

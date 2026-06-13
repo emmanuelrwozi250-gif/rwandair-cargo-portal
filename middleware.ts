@@ -17,12 +17,15 @@ const PUBLIC_ROUTES = [
   '/agents',
   '/agent',
   '/integrations',
-  '/insights',
   '/api-docs',
+  '/claims',
+  '/rate',
+  '/reviews',
+  '/feedback',
 ]
 
 // Public route prefixes (dynamic segments)
-const PUBLIC_PREFIXES = ['/products', '/track', '/legal']
+const PUBLIC_PREFIXES = ['/products', '/track', '/legal', '/news', '/agents/register']
 
 export async function middleware(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -67,7 +70,16 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/track') ||
     pathname.startsWith('/api/capacity') ||
     pathname.startsWith('/api/agents') ||
-    pathname.startsWith('/api/agent')
+    pathname.startsWith('/api/agent') ||
+    pathname.startsWith('/api/claims') ||
+    pathname.startsWith('/api/rate') ||
+    pathname.startsWith('/api/reviews') ||
+    pathname.startsWith('/api/nps') ||
+    pathname.startsWith('/api/feedback') ||
+    pathname.startsWith('/api/feature-requests') ||
+    pathname.startsWith('/api/news') ||
+    pathname.startsWith('/api/articles') ||
+    pathname.startsWith('/api/cron')
   ) {
     return supabaseResponse
   }

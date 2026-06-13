@@ -3,5 +3,11 @@
   "buildCommand": "next build",
   "outputDirectory": ".next",
   "installCommand": "npm install",
-  "devCommand": "next dev"
+  "devCommand": "next dev",
+  "crons": [
+    {
+      "path": "/api/cron/rating-requests",
+      "schedule": "0 8 * * *"
+    }
+  ]
 }

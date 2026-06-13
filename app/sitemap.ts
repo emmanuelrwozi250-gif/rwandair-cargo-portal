@@ -1,8 +1,11 @@
 import type { MetadataRoute } from 'next'
+import { fetchArticles, ARTICLE_CATEGORIES } from '@/lib/news'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rwandair-cargo-portal-nnvj.vercel.app'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -16,9 +19,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/stations`,                 lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${SITE_URL}/agents`,                   lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE_URL}/integrations`,             lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${SITE_URL}/insights`,                 lastModified: now, changeFrequency: 'weekly',  priority: 0.7 },
     { url: `${SITE_URL}/api-docs`,                 lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE_URL}/legal/service-guarantee`,  lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${SITE_URL}/news`,                     lastModified: now, changeFrequency: 'daily',   priority: 0.9 },
+    { url: `${SITE_URL}/claims`,                   lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/reviews`,                  lastModified: now, changeFrequency: 'daily',   priority: 0.7 },
+    { url: `${SITE_URL}/feedback`,                 lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
   ]
 
   const productSlugs = [
@@ -34,5 +40,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }))
 
-  return [...staticRoutes, ...productRoutes]
+  // News categories are indexable (not noindex) per editorial SEO requirements
+  const categoryRoutes: MetadataRoute.Sitemap = Object.values(ARTICLE_CATEGORIES).map(meta => ({
+    url: `${SITE_URL}/news/category/${meta.slug}`,
+    lastModified: now,
+    changeFrequency: 'daily' as const,
+    priority: 0.6,
+  }))
+
+  // Updated on publish via ISR (revalidate above)
+  const articles = await fetchArticles({ limit: 500 })
+  const articleRoutes: MetadataRoute.Sitemap = articles.map(a => ({
+    url: `${SITE_URL}/news/${a.slug}`,
+    lastModified: new Date(a.updated_at),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }))
+
+  return [...staticRoutes, ...productRoutes, ...categoryRoutes, ...articleRoutes]
 }

@@ -41,12 +41,13 @@ function emailWrapper(content: string): string {
     <div style="font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;color:#1a2332;">
       <div style="background:#02284d;padding:24px 32px;border-radius:8px 8px 0 0;">
         <h1 style="color:#FBE115;font-size:22px;margin:0;font-weight:700;letter-spacing:-0.5px;">RwandAir CARGO</h1>
-        <p style="color:#a0aec0;font-size:13px;margin:4px 0 0;">Cargo Booking &amp; Tracking Portal</p>
+        <p style="color:#a0aec0;font-size:13px;margin:4px 0 0;">Built to Move Africa</p>
       </div>
       <div style="background:#fff;padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;">
         ${content}
       </div>
       <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:16px;">RwandAir Cargo · Kigali International Airport, Rwanda</p>
+      <p style="text-align:center;color:#cbd5e1;font-size:11px;margin-top:4px;font-style:italic;">Built to Move Africa · From Africa, For the World</p>
     </div>
   `
 }
@@ -384,6 +385,156 @@ export async function sendPickupDeliveredToTerminalEmail(pickup: PickupRequest, 
       </table>
       <p style="margin-top:16px;color:#64748b;font-size:13px;">Your cargo is now in the hands of the freight team. You will receive further updates as your shipment progresses.</p>
       <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/shipments/${pickup.shipment_id}" style="display:inline-block;margin-top:24px;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">View Shipment →</a>
+    `),
+  })
+}
+
+// ===== CLAIMS EMAILS =====
+
+export async function sendClaimConfirmationEmail(claim: {
+  claim_ref: string
+  claim_type: string
+  awb: string
+  claimant_name: string
+  claimant_email: string
+}) {
+  const resend = getResend()
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: claim.claimant_email,
+    subject: `Your cargo claim has been registered — ${claim.claim_ref}`,
+    html: emailWrapper(`
+      <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Your claim has been registered</h2>
+      <p style="color:#64748b;margin:0 0 16px;">Dear ${escapeHtml(claim.claimant_name)}, we're sorry your shipment didn't arrive as expected. Our cargo desk will contact you within <strong>72 hours</strong>, and we aim to resolve claims within 30 days.</p>
+      <table style="border-collapse:collapse;width:100%;">
+        <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600;width:40%">Claim reference</td><td style="padding:6px 12px;font-family:monospace;font-weight:700">${escapeHtml(claim.claim_ref)}</td></tr>
+        <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Claim type</td><td style="padding:6px 12px">${escapeHtml(claim.claim_type)}</td></tr>
+        <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Air waybill</td><td style="padding:6px 12px;font-family:monospace">${escapeHtml(claim.awb)}</td></tr>
+      </table>
+      <p style="color:#64748b;margin:16px 0 0;font-size:13px;">Track your claim status anytime at <a href="${process.env.NEXT_PUBLIC_APP_URL}/claims?ref=${encodeURIComponent(claim.claim_ref)}" style="color:#02284d;">the claims portal</a> using your reference number. Please quote it in all correspondence.</p>
+      <p style="color:#94a3b8;margin:16px 0 0;font-size:12px;">RwandAir Cargo processes claims in accordance with the Montreal Convention 1999 and IATA Resolution 600a. Your personal data is used solely for processing this claim.</p>
+    `),
+  })
+}
+
+export async function sendClaimDeskNotificationEmail(claim: {
+  claim_ref: string
+  claim_type: string
+  awb: string
+  claimant_name: string
+  claimant_email: string
+  claimant_phone: string
+  claim_value_usd?: number | null
+  description: string
+  time_limit_warning?: string | null
+}) {
+  const resend = getResend()
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: ADMIN_EMAIL,
+    subject: `New cargo claim: ${claim.claim_ref} (${claim.claim_type} — ${claim.awb})`,
+    html: emailWrapper(`
+      <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">New cargo claim received</h2>
+      ${claim.time_limit_warning ? `<p style="color:#b45309;background:#fef3c7;padding:8px 12px;border-radius:6px;margin:0 0 16px;font-size:13px;"><strong>⚠ Time-limit note:</strong> ${escapeHtml(claim.time_limit_warning)}</p>` : ''}
+      <table style="border-collapse:collapse;width:100%;">
+        <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600;width:40%">Reference</td><td style="padding:6px 12px;font-family:monospace;font-weight:700">${escapeHtml(claim.claim_ref)}</td></tr>
+        <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Type</td><td style="padding:6px 12px">${escapeHtml(claim.claim_type)}</td></tr>
+        <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">AWB</td><td style="padding:6px 12px;font-family:monospace">${escapeHtml(claim.awb)}</td></tr>
+        <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Claimant</td><td style="padding:6px 12px">${escapeHtml(claim.claimant_name)} · ${escapeHtml(claim.claimant_email)} · ${escapeHtml(claim.claimant_phone)}</td></tr>
+        ${claim.claim_value_usd ? `<tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Claimed value</td><td style="padding:6px 12px">USD ${Number(claim.claim_value_usd).toLocaleString()}</td></tr>` : ''}
+      </table>
+      <p style="color:#64748b;margin:16px 0 0;font-size:13px;white-space:pre-wrap;">${escapeHtml(claim.description.slice(0, 600))}${claim.description.length > 600 ? '…' : ''}</p>
+      <p style="color:#94a3b8;margin:16px 0 0;font-size:12px;">SLA: acknowledge within 72 hours.</p>
+    `),
+  })
+}
+
+// ===== RATINGS EMAILS =====
+
+export async function sendRatingRequestEmail(opts: {
+  email: string
+  awb: string
+  route?: string
+  rateUrl: string
+}) {
+  const resend = getResend()
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: opts.email,
+    subject: `How was your RwandAir Cargo shipment? [AWB ${opts.awb}]`,
+    html: emailWrapper(`
+      <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">How did we do?</h2>
+      <p style="color:#64748b;margin:0 0 16px;">Your shipment <strong style="font-family:monospace">${escapeHtml(opts.awb)}</strong>${opts.route ? ` (${escapeHtml(opts.route)})` : ''} was delivered. We'd love 60 seconds of your time — your feedback directly shapes how we run the operation.</p>
+      <a href="${opts.rateUrl}" style="display:inline-block;background:#02284d;color:#FBE115;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Rate your shipment →</a>
+      <p style="color:#94a3b8;margin:16px 0 0;font-size:12px;">This link is personal to your shipment and expires in 7 days. As a thank-you, you'll receive a 5% discount code for your next booking.</p>
+    `),
+  })
+}
+
+export async function sendLowScoreAlertEmail(rating: {
+  awb: string
+  route?: string | null
+  score_overall: number
+  comment?: string | null
+}) {
+  const resend = getResend()
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: ADMIN_EMAIL,
+    subject: `⚠ Low rating received (${rating.score_overall}/5) — AWB ${rating.awb}`,
+    html: emailWrapper(`
+      <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Low customer rating — follow-up needed</h2>
+      <table style="border-collapse:collapse;width:100%;">
+        <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600;width:40%">AWB</td><td style="padding:6px 12px;font-family:monospace">${escapeHtml(rating.awb)}</td></tr>
+        ${rating.route ? `<tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Route</td><td style="padding:6px 12px">${escapeHtml(rating.route)}</td></tr>` : ''}
+        <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Overall score</td><td style="padding:6px 12px;font-weight:700;color:#dc2626">${rating.score_overall} / 5</td></tr>
+      </table>
+      ${rating.comment ? `<p style="color:#64748b;margin:16px 0 0;font-size:13px;white-space:pre-wrap;">"${escapeHtml(rating.comment.slice(0, 500))}"</p>` : ''}
+      <p style="color:#94a3b8;margin:16px 0 0;font-size:12px;">Cargo desk: please contact this customer for service recovery.</p>
+    `),
+  })
+}
+
+// ===== FEEDBACK EMAILS =====
+
+export async function sendUrgentFeedbackAlertEmail(feedback: {
+  category: string
+  message: string
+  name?: string | null
+  email?: string | null
+  awb_ref?: string | null
+}) {
+  const resend = getResend()
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: ADMIN_EMAIL,
+    subject: `🔴 URGENT feedback — ${feedback.category}`,
+    html: emailWrapper(`
+      <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Urgent feedback flagged for same-day review</h2>
+      <table style="border-collapse:collapse;width:100%;">
+        <tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600;width:40%">Category</td><td style="padding:6px 12px">${escapeHtml(feedback.category)}</td></tr>
+        ${feedback.name ? `<tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Name</td><td style="padding:6px 12px">${escapeHtml(feedback.name)}</td></tr>` : ''}
+        ${feedback.email ? `<tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">Email</td><td style="padding:6px 12px">${escapeHtml(feedback.email)}</td></tr>` : ''}
+        ${feedback.awb_ref ? `<tr><td style="padding:6px 12px;background:#f8fafc;font-weight:600">AWB</td><td style="padding:6px 12px;font-family:monospace">${escapeHtml(feedback.awb_ref)}</td></tr>` : ''}
+      </table>
+      <p style="color:#64748b;margin:16px 0 0;font-size:13px;white-space:pre-wrap;">${escapeHtml(feedback.message.slice(0, 800))}</p>
+    `),
+  })
+}
+
+// ===== NEWS SUBSCRIPTION =====
+
+export async function sendNewsSubscribeConfirmEmail(email: string, categories: string[]) {
+  const resend = getResend()
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: email,
+    subject: 'You\'re subscribed to RwandAir Cargo updates',
+    html: emailWrapper(`
+      <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Subscription confirmed</h2>
+      <p style="color:#64748b;margin:0 0 16px;">You'll now receive RwandAir Cargo updates${categories.length ? ` for: <strong>${categories.map(escapeHtml).join(', ')}</strong>` : ''}.</p>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/news" style="display:inline-block;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Browse the news hub →</a>
+      <p style="color:#94a3b8;margin:16px 0 0;font-size:12px;">You can unsubscribe anytime by replying to any update email.</p>
     `),
   })
 }

@@ -10,6 +10,8 @@ interface EnquiryBody {
   phone: string
   country: string
   volume?: string
+  routes?: string[]
+  hearAbout?: string
 }
 
 function validateBody(body: unknown): body is EnquiryBody {
@@ -40,6 +42,10 @@ export async function POST(req: NextRequest) {
   }
 
   const { company, iata, contact, email, phone, country, volume } = body
+  const routes = Array.isArray(body.routes)
+    ? body.routes.filter((r): r is string => typeof r === 'string').slice(0, 20)
+    : []
+  const hearAbout = typeof body.hearAbout === 'string' ? body.hearAbout.trim().slice(0, 120) : ''
 
   // ── Persist to Supabase if configured ───────────────────────────────────────
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -57,6 +63,8 @@ export async function POST(req: NextRequest) {
         phone:           phone.trim(),
         country:         country.trim(),
         monthly_volume:  volume || null,
+        primary_routes:  routes,
+        hear_about:      hearAbout || null,
         submitted_at:    new Date().toISOString(),
         status:          'new',
       })
@@ -85,6 +93,8 @@ export async function POST(req: NextRequest) {
             `Phone:    ${phone}`,
             `Country:  ${country}`,
             `Volume:   ${volume || '—'}`,
+            `Routes:   ${routes.length ? routes.join('; ') : '—'}`,
+            `Heard via: ${hearAbout || '—'}`,
           ].join('\n'),
         }),
       })
