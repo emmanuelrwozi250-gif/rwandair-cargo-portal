@@ -12,6 +12,7 @@ import Footer from '@/components/layout/Footer'
 import RegistrationWall from '@/components/quote/RegistrationWall'
 import CallbackButton from '@/components/quote/CallbackButton'
 import { createClient } from '@/lib/supabase'
+import { useLanguage } from '@/components/providers/LanguageProvider'
 import { computeLineItems, usd, outOfStandardReason } from '@/lib/quote-pricing'
 import type { ContractRate } from '@/types'
 
@@ -273,6 +274,7 @@ const WB_PRODUCT_OPTIONS: {
 ]
 
 export default function QuotePage() {
+  const { t } = useLanguage()
   const [origin, setOrigin] = useState('KGL')
   const [destination, setDestination] = useState('LHR')
   const [commodity, setCommodity] = useState<CommodityType>('GENERAL')
@@ -402,9 +404,9 @@ export default function QuotePage() {
                   style={{ color: 'rgba(255,255,255,0.6)' }}>
               <ArrowLeft className="w-4 h-4" /> Back to home
             </Link>
-            <h1 className="text-white mb-2" style={{ fontSize: '2rem' }}>Smart Booking Engine</h1>
+            <h1 className="text-white mb-2" style={{ fontSize: '2rem' }}>{t('quoteTitle')}</h1>
             <p style={{ color: 'rgba(255,255,255,0.65)', fontWeight: 300 }}>
-              Get 3 tailored routing options with live pricing and CO₂ estimates in seconds.
+              {t('quoteSubtitle')}
             </p>
           </div>
         </div>
@@ -422,7 +424,7 @@ export default function QuotePage() {
                   <div>
                     <label className="label-upper block mb-1.5"
                            style={{ color: 'var(--wb-gray-500)' }}>
-                      Origin Airport
+                      {t('quoteOrigin')}
                     </label>
                     <select value={origin} onChange={e => setOrigin(e.target.value)}
                             className="w-full rounded-xl px-4 py-3 text-sm font-semibold outline-none"
@@ -435,7 +437,7 @@ export default function QuotePage() {
                   <div>
                     <label className="label-upper block mb-1.5"
                            style={{ color: 'var(--wb-gray-500)' }}>
-                      Destination Airport
+                      {t('quoteDest')}
                     </label>
                     <select value={destination} onChange={e => setDestination(e.target.value)}
                             className="w-full rounded-xl px-4 py-3 text-sm font-semibold outline-none"

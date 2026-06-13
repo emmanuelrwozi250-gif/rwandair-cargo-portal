@@ -50,9 +50,8 @@ Always confirm critical details (weight, commodity, destination) before generati
 **QUOTE — [ORIGIN] → [DESTINATION]**
 📦 [Weight]kg [Commodity]
 ✈️ Route: [Route]
-💵 Price: $[Amount] (from)
+💵 Price: $[Amount] all-in (from)
 ⏱️ Transit: [Hours]h
-🌿 CO₂: [Amount]kg (offset included)
 ---`
 
 // Mock tool call handlers

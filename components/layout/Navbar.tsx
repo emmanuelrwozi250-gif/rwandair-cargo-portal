@@ -3,12 +3,12 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, Globe, ChevronDown, Search, Zap } from 'lucide-react'
+import { Menu, X, Search, Zap } from 'lucide-react'
 import { track } from '@vercel/analytics'
 import RwandAirCargoLogo from '@/components/brand/RwandAirCargoLogo'
 import {
   useLanguage,
-  LOCALES, LOCALE_NAMES, LOCALE_FLAGS,
+  LOCALES, LOCALE_NAMES, LOCALE_LABELS,
 } from '@/components/providers/LanguageProvider'
 import type { Locale } from '@/lib/i18n'
 
@@ -76,25 +76,23 @@ function AwbQuickTrack({ compact = false, onNavigate }: { compact?: boolean; onN
 export default function Navbar() {
   const pathname                    = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [langOpen, setLangOpen]     = useState(false)
   const [trackOpen, setTrackOpen]   = useState(false)
   const { locale, setLocale, t }    = useLanguage()
 
-  const NAV_LINKS = [
-    { href: '/quote',       label: 'Get a Quote' },
-    { href: '/consolidate', label: 'Consolidate' },
-    { href: '/capacity',    label: 'Capacity' },
-    { href: '/deals',       label: 'Deals' },
-    { href: '/perishables', label: 'Perishables' },
-    { href: '/charter',     label: 'Charter' },
-    { href: '/stations',    label: 'Stations' },
-    { href: '/agents',      label: 'For Agents' },
-    { href: '/news',        label: 'News' },
+  const NAV_LINKS: { href: string; label: string }[] = [
+    { href: '/quote',       label: t('navQuote') },
+    { href: '/consolidate', label: t('navConsolidate') },
+    { href: '/capacity',    label: t('navCapacity') },
+    { href: '/deals',       label: t('navDeals') },
+    { href: '/perishables', label: t('navPerishables') },
+    { href: '/charter',     label: t('navCharter') },
+    { href: '/stations',    label: t('navStations') },
+    { href: '/agents',      label: t('navAgents') },
+    { href: '/news',        label: t('navNews') },
   ]
 
   function pickLocale(l: Locale) {
     setLocale(l)
-    setLangOpen(false)
   }
 
   function isActive(href: string) {
@@ -148,50 +146,22 @@ export default function Navbar() {
 
           {/* Right: language + Track + Book Now */}
           <div className="hidden lg:flex items-center gap-2">
-            {/* Language picker */}
-            <div className="relative">
-              <button
-                onClick={() => setLangOpen(v => !v)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-sm font-semibold transition-colors"
-                style={{ color: 'rgba(255,255,255,0.65)' }}
-                aria-label="Change language"
-                aria-expanded={langOpen}
-                aria-haspopup="listbox"
-              >
-                <Globe className="w-4 h-4" aria-hidden="true" />
-                <span>{LOCALE_FLAGS[locale]}</span>
-                <ChevronDown className="w-3 h-3" style={{ opacity: 0.6 }} aria-hidden="true" />
-              </button>
-
-              {langOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setLangOpen(false)} aria-hidden="true" />
-                  <div
-                    className="absolute right-0 top-full mt-1 rounded-xl overflow-hidden z-50 w-44"
-                    style={{ background: 'white', boxShadow: '0 8px 32px rgba(0,0,0,0.18)', border: '1px solid rgba(4,84,155,0.1)' }}
-                    role="listbox"
-                    aria-label="Select language"
+            {/* Plain-text EN / FR / AR switcher (no flags) */}
+            <div className="flex items-center gap-0.5" role="group" aria-label="Language">
+              {LOCALES.map((l, i) => (
+                <span key={l} className="flex items-center">
+                  {i > 0 && <span aria-hidden="true" style={{ color: 'rgba(255,255,255,0.3)' }}>/</span>}
+                  <button
+                    onClick={() => pickLocale(l)}
+                    aria-label={`Switch to ${LOCALE_NAMES[l]}`}
+                    aria-current={l === locale ? 'true' : undefined}
+                    className="px-1.5 py-1 text-sm font-bold transition-colors"
+                    style={{ color: l === locale ? 'var(--brand-yellow)' : 'rgba(255,255,255,0.7)' }}
                   >
-                    {LOCALES.map(l => (
-                      <button
-                        key={l}
-                        onClick={() => pickLocale(l)}
-                        role="option"
-                        aria-selected={l === locale}
-                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left transition-colors hover:bg-gray-50"
-                        style={{
-                          color: l === locale ? 'var(--brand-blue)' : 'var(--neutral-dark)',
-                          background: l === locale ? 'rgba(4,84,155,0.06)' : 'transparent',
-                          fontWeight: l === locale ? 700 : 400,
-                        }}
-                      >
-                        <span style={{ fontSize: '1.1rem' }}>{LOCALE_FLAGS[l]}</span>
-                        <span>{LOCALE_NAMES[l]}</span>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
+                    {LOCALE_LABELS[l]}
+                  </button>
+                </span>
+              ))}
             </div>
 
             {/* Inline AWB tracking (Feature 5a) */}
@@ -204,7 +174,7 @@ export default function Navbar() {
               style={{ background: 'var(--brand-yellow)', color: 'var(--brand-blue)' }}
             >
               <Zap className="w-3.5 h-3.5" aria-hidden="true" />
-              Book Cargo
+              {t('ctaBook')}
             </Link>
           </div>
 
@@ -280,7 +250,7 @@ export default function Navbar() {
                     <button
                       key={l}
                       onClick={() => { pickLocale(l); setMobileOpen(false) }}
-                      className="flex flex-col items-center gap-0.5 py-2.5 rounded-lg text-xs font-semibold"
+                      className="py-2.5 rounded-lg text-sm font-bold"
                       aria-label={`Switch to ${LOCALE_NAMES[l]}`}
                       aria-pressed={l === locale}
                       style={{
@@ -288,8 +258,7 @@ export default function Navbar() {
                         background: l === locale ? 'var(--brand-yellow)' : 'rgba(255,255,255,0.08)',
                       }}
                     >
-                      <span style={{ fontSize: '1.2rem' }}>{LOCALE_FLAGS[l]}</span>
-                      <span>{LOCALE_NAMES[l]}</span>
+                      {LOCALE_LABELS[l]}
                     </button>
                   ))}
                 </div>
@@ -303,7 +272,7 @@ export default function Navbar() {
                   style={{ border: '1.5px solid rgba(28,163,219,0.6)', color: 'rgba(255,255,255,0.9)' }}
                   onClick={() => setMobileOpen(false)}
                 >
-                  Track Shipment
+                  {t('ctaTrack')}
                 </Link>
                 <Link
                   href="/quote"
@@ -311,7 +280,7 @@ export default function Navbar() {
                   style={{ background: 'var(--brand-yellow)', color: 'var(--brand-blue)' }}
                   onClick={() => setMobileOpen(false)}
                 >
-                  Book Cargo
+                  {t('ctaBook')}
                 </Link>
               </li>
             </ul>

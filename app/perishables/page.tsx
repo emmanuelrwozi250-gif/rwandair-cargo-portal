@@ -9,6 +9,7 @@ import {
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { useToast } from '@/components/ui/Toast'
+import { useLanguage } from '@/components/providers/LanguageProvider'
 
 // ─── Mock active perishable shipments ─────────────────────────────────────────
 const SHIPMENTS_INITIAL = [
@@ -294,6 +295,7 @@ function ShipmentCard({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function PerishablesPage() {
   const { addToast } = useToast()
+  const { t } = useLanguage()
   const [liveTime, setLiveTime] = useState(new Date())
   const [shipments, setShipments] = useState(SHIPMENTS_INITIAL)
   const [contactingId, setContactingId] = useState<string | null>(null)
@@ -336,7 +338,7 @@ export default function PerishablesPage() {
             </Link>
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <h1 className="text-white mb-1" style={{ fontSize: '1.75rem' }}>Perishables Command Center</h1>
+                <h1 className="text-white mb-1" style={{ fontSize: '1.75rem' }}>{t('headPerishables')}</h1>
                 <p style={{ color: 'rgba(255,255,255,0.65)', fontWeight: 300 }}>
                   Live IoT monitoring for {shipments.length} active perishable shipments.
                 </p>

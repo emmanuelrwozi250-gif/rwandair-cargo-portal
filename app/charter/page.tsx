@@ -4,12 +4,14 @@ import { useState } from 'react'
 import { track } from '@vercel/analytics'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import { useLanguage } from '@/components/providers/LanguageProvider'
 import { Plane, CheckCircle, X } from 'lucide-react'
 
 const ORIGINS = ['KGL', 'EBB', 'NBO', 'DAR', 'LOS', 'JNB', 'ADD']
 const CARGO_TYPES = ['General', 'Perishables', 'Pharmaceuticals', 'Dangerous Goods', 'Live Animals', 'Valuables', 'Oversized / Project', 'Humanitarian / Aid']
 
 export default function CharterPage() {
+  const { t } = useLanguage()
   const [form, setForm] = useState({
     origin: 'KGL', destination: '', cargoType: '', description: '',
     weight: '', volume: '', dateRange: '', name: '', company: '', email: '', phone: '', requirements: '',
@@ -51,7 +53,7 @@ export default function CharterPage() {
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <p className="label-upper mb-3" style={{ color: 'var(--wb-sky)' }}>Charter</p>
             <h1 className="text-white mb-4" style={{ fontSize: 'clamp(28px,4vw,48px)', fontWeight: 800 }}>
-              Charter the whole aircraft
+              {t('headCharter')}
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, maxWidth: '560px' }}>
               Your route, your timing — up to 22,000 kg of African cargo moving on your terms.
