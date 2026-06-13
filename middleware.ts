@@ -9,8 +9,6 @@ const PUBLIC_ROUTES = [
   '/quote',
   '/consolidate',
   '/perishables',
-  '/capacity',
-  '/deals',
   '/stations',
   '/globe',
   '/track',
@@ -81,6 +79,16 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/articles') ||
     pathname.startsWith('/api/cron')
   ) {
+    return supabaseResponse
+  }
+
+  // Agent-only marketplace pages — require a signed-in account, bounce to portal login
+  if (pathname.startsWith('/capacity') || pathname.startsWith('/deals')) {
+    if (!user) {
+      const url = new URL('/portal/login', request.url)
+      url.searchParams.set('next', pathname)
+      return NextResponse.redirect(url)
+    }
     return supabaseResponse
   }
 

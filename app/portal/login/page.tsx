@@ -22,6 +22,12 @@ export default function PortalLoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Honour ?next= for agent-gated pages (e.g. /capacity, /deals); fall back to dashboard
+  function destination() {
+    const next = new URLSearchParams(window.location.search).get('next')
+    return next && next.startsWith('/') && !next.startsWith('//') ? next : '/portal/dashboard'
+  }
+
   async function finishOrChallenge() {
     const supabase = createClient()
     // Does this account require a second factor to reach aal2?
@@ -56,7 +62,7 @@ export default function PortalLoginPage() {
       if (!data.user) { setError('Sign in failed. Please try again.'); return }
 
       const done = await finishOrChallenge()
-      if (done) { router.push('/portal/dashboard'); router.refresh() }
+      if (done) { router.push(destination()); router.refresh() }
     } catch {
       setError('A network error occurred. Please try again.')
     } finally {
@@ -72,7 +78,7 @@ export default function PortalLoginPage() {
       const supabase = createClient()
       const { error: vErr } = await supabase.auth.mfa.challengeAndVerify({ factorId, code: code.trim() })
       if (vErr) { setError('That code didn\'t verify. Please try again.'); return }
-      router.push('/portal/dashboard')
+      router.push(destination())
       router.refresh()
     } catch {
       setError('Verification failed. Please try again.')

@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
 
     interface QuoteOption {
       type: string; route: string[]; priceUsd: number; transitHours: number;
-      departure: string; onTimePct: number; co2Kg: number; carbonOffsetIncluded: boolean;
+      departure: string; onTimePct: number;
       flightNumbers: string[]; cutoffHours: number
     }
     interface PerishableRisk {
@@ -97,8 +97,6 @@ export async function POST(req: NextRequest) {
         transitHours,
         departure: new Date(Date.now() + 4 * 3600000).toISOString(),
         onTimePct: 96.8,
-        co2Kg: Math.round(weightKg * 1.68),
-        carbonOffsetIncluded: true,
         flightNumbers: [flightDirect],
         cutoffHours: 96,
       },
@@ -109,8 +107,6 @@ export async function POST(req: NextRequest) {
         transitHours: transitVia,
         departure: new Date(Date.now() + 8 * 3600000).toISOString(),
         onTimePct: 93.2,
-        co2Kg: Math.round(weightKg * 1.92),
-        carbonOffsetIncluded: true,
         flightNumbers: flightVia.split('/'),
         cutoffHours: 72,
       },
@@ -121,8 +117,6 @@ export async function POST(req: NextRequest) {
         transitHours,
         departure: new Date(Date.now() + 4 * 3600000).toISOString(),
         onTimePct: 99.1,
-        co2Kg: Math.round(weightKg * 1.68),
-        carbonOffsetIncluded: true,
         flightNumbers: [flightDirect],
         cutoffHours: 96,
       },

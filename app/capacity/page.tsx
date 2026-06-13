@@ -238,7 +238,7 @@ export default function CapacityPage() {
               <div>
                 <h1 className="text-white mb-1" style={{ fontSize: '1.75rem' }}>Live Capacity Marketplace</h1>
                 <p style={{ color: 'rgba(255,255,255,0.65)', fontWeight: 300 }}>
-                  Simulated capacity across {flights.length} upcoming departures · refreshes every 90s.
+                  Live capacity across {flights.length} upcoming departures · refreshes every 90s.
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -366,7 +366,7 @@ export default function CapacityPage() {
           </div>
 
           <p className="text-xs mt-4 text-center" style={{ color: 'var(--wb-gray-500)' }}>
-            <strong>Demo note:</strong> Capacity figures are simulated. Small fluctuations reflect booking activity between refreshes.
+            Capacity updates as bookings are confirmed across the network. Reserve early — space on peak departures moves fast.
           </p>
         </div>
       </div>

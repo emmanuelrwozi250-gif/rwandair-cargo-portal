@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
-  Zap, Clock, Shield, Leaf, Upload, ChevronRight,
+  Zap, Clock, Shield, Upload, ChevronRight,
   AlertTriangle, CheckCircle, Info, ArrowLeft, Scale,
   Thermometer, Star, Heart, Package, Plane, XCircle
 } from 'lucide-react'
@@ -37,7 +37,6 @@ interface QuoteOption {
   transitHours: number
   departure: string
   onTimePct: number
-  co2Kg: number
   recommended?: boolean
 }
 
@@ -74,7 +73,6 @@ function generateQuotes(
       transitHours: 11,
       departure: '22:15 tonight',
       onTimePct: 96.8,
-      co2Kg: Math.round(weightKg * 1.68),
       recommended: true,
     },
     {
@@ -87,7 +85,6 @@ function generateQuotes(
       transitHours: 16,
       departure: '06:30 tomorrow',
       onTimePct: 93.2,
-      co2Kg: Math.round(weightKg * 1.92),
     },
     {
       type: 'reliable',
@@ -99,7 +96,6 @@ function generateQuotes(
       transitHours: 11,
       departure: '22:15 tonight',
       onTimePct: 99.1,
-      co2Kg: Math.round(weightKg * 1.68),
     },
   ]
 
@@ -202,24 +198,6 @@ function QuoteCard({
         </div>
       </div>
 
-      {/* CO2 */}
-      <div className="mt-4 pt-4 space-y-1"
-           style={{ borderTop: '1px solid var(--wb-gray-200)' }}>
-        <div className="flex items-center justify-between text-sm">
-          <span className="flex items-center gap-1" style={{ color: 'var(--wb-gray-500)' }}>
-            <Leaf className="w-3.5 h-3.5" style={{ color: 'var(--wb-green)' }} />
-            CO₂ est.
-          </span>
-          <span className="font-semibold" style={{ color: 'var(--wb-gray-900)' }}>
-            {option.co2Kg}kg
-          </span>
-        </div>
-        <div className="flex items-center justify-between text-xs" style={{ color: 'var(--wb-gray-500)' }}>
-          <span>Carbon offset</span>
-          <span className="font-semibold" style={{ color: 'var(--wb-green)' }}>Included</span>
-        </div>
-      </div>
-
       {/* CTA */}
       <div className="mt-5">
         <div className="w-full py-2.5 rounded-xl text-sm font-bold text-center transition-all"
@@ -305,7 +283,7 @@ export default function QuotePage() {
       if (!res.ok) throw new Error(data.error || 'Failed to get quote')
       const options: QuoteOption[] = (data.options as Array<{
         type: string; route: string[]; priceUsd: number; transitHours: number;
-        departure: string; onTimePct: number; co2Kg: number;
+        departure: string; onTimePct: number;
       }>).map(opt => ({
         type: opt.type as QuoteOption['type'],
         route: opt.route,
@@ -313,7 +291,6 @@ export default function QuotePage() {
         transitHours: opt.transitHours,
         departure: formatDeparture(opt.departure),
         onTimePct: opt.onTimePct,
-        co2Kg: opt.co2Kg,
         ...(OPTION_META[opt.type] ?? { label: opt.type.toUpperCase(), badge: '', badgeColor: '#ccc' }),
       }))
       setQuotes({ options, perishableRisk: data.perishableRisk })
@@ -589,7 +566,7 @@ export default function QuotePage() {
                     Checking live capacity across 24 routes…
                   </p>
                   <p className="text-sm mt-1" style={{ color: 'var(--wb-gray-500)' }}>
-                    Running AI route optimization + carbon calculation
+                    Running live route optimisation across the WB network
                   </p>
                 </div>
               )}
@@ -659,11 +636,7 @@ export default function QuotePage() {
                   {/* Info row */}
                   <div className="mt-4 flex flex-wrap gap-4 text-xs" style={{ color: 'var(--wb-gray-500)' }}>
                     <span className="flex items-center gap-1">
-                      <Info className="w-3.5 h-3.5" /> Prices include fuel surcharge + security fee
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Leaf className="w-3.5 h-3.5" style={{ color: 'var(--wb-green)' }} />
-                      Carbon offsets included via Patch.io
+                      <Info className="w-3.5 h-3.5" /> All-in price — fuel surcharge and handling included
                     </span>
                     <span className="flex items-center gap-1">
                       <CheckCircle className="w-3.5 h-3.5" style={{ color: 'var(--wb-green)' }} />
