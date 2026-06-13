@@ -21,6 +21,7 @@ const PUBLIC_ROUTES = [
   '/rate',
   '/reviews',
   '/feedback',
+  '/agent-admin',
 ]
 
 // Public route prefixes (dynamic segments)
@@ -79,6 +80,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/news') ||
     pathname.startsWith('/api/articles') ||
     pathname.startsWith('/api/charter') ||
+    pathname.startsWith('/api/agent-admin') ||
     pathname.startsWith('/api/cron')
   ) {
     return supabaseResponse
