@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { sendAgentWelcomeEmail } from '@/lib/email'
+import { validateIataFiata } from '@/lib/portal-constants'
 
 export const runtime = 'nodejs'
 
@@ -11,6 +13,7 @@ interface EnquiryBody {
   country: string
   volume?: string
   routes?: string[]
+  products?: string[]
   hearAbout?: string
 }
 
@@ -42,63 +45,80 @@ export async function POST(req: NextRequest) {
   }
 
   const { company, iata, contact, email, phone, country, volume } = body
+  const cleanEmail = email.trim().toLowerCase()
   const routes = Array.isArray(body.routes)
     ? body.routes.filter((r): r is string => typeof r === 'string').slice(0, 20)
     : []
+  const products = Array.isArray(body.products)
+    ? body.products.filter((p): p is string => typeof p === 'string').slice(0, 10)
+    : []
   const hearAbout = typeof body.hearAbout === 'string' ? body.hearAbout.trim().slice(0, 120) : ''
 
-  // ── Persist to Supabase if configured ───────────────────────────────────────
+  if (iata && iata.trim() && !validateIataFiata(iata)) {
+    return NextResponse.json({ error: 'Enter a valid IATA (7 digits) or FIATA code, or leave it blank.' }, { status: 422 })
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceKey  = process.env.SUPABASE_SERVICE_ROLE_KEY
+  let accountCreated = false
 
   if (supabaseUrl && serviceKey) {
     try {
       const { createClient } = await import('@supabase/supabase-js')
-      const admin = createClient(supabaseUrl, serviceKey)
+      const admin = createClient(supabaseUrl, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } })
+
+      // CRM log
       await admin.from('agent_enquiries').insert({
-        company_name:    company.trim(),
-        iata_code:       iata?.trim() || null,
-        contact_name:    contact.trim(),
-        email:           email.trim().toLowerCase(),
-        phone:           phone.trim(),
-        country:         country.trim(),
-        monthly_volume:  volume || null,
-        primary_routes:  routes,
-        hear_about:      hearAbout || null,
-        submitted_at:    new Date().toISOString(),
-        status:          'new',
+        company_name: company.trim(), iata_code: iata?.trim() || null,
+        contact_name: contact.trim(), email: cleanEmail, phone: phone.trim(),
+        country: country.trim(), monthly_volume: volume || null,
+        primary_routes: routes, hear_about: hearAbout || null,
+        submitted_at: new Date().toISOString(), status: 'new',
       })
+
+      // Create a PENDING agent account (owner). Idempotent on existing email.
+      const { data: created, error: createErr } = await admin.auth.admin.createUser({
+        email: cleanEmail, email_confirm: true, user_metadata: { company_name: company.trim() },
+      })
+      if (!createErr && created.user) {
+        await admin.from('profiles').update({
+          company_name: company.trim(),
+          country: country.trim(),
+          iata_fiata_code: iata?.trim() || null,
+          volume_tier: volume || null,
+          product_types: products,
+          preferred_routes: routes,
+          status: 'pending',
+          account_role: 'owner',
+        }).eq('id', created.user.id)
+        accountCreated = true
+      }
     } catch (err) {
-      // Log but don't fail — table may not exist yet
-      console.error('[agents/enquiry] Supabase insert error:', err)
+      console.error('[agents/enquiry] Supabase error:', err)
     }
   }
 
-  // ── Send notification email via Resend if configured ────────────────────────
+  // Welcome email to applicant + commercial notification (best-effort)
   const resendKey = process.env.RESEND_API_KEY
   if (resendKey) {
     try {
-      const res = await fetch('https://api.resend.com/emails', {
+      if (accountCreated) await sendAgentWelcomeEmail({ email: cleanEmail, company: company.trim() })
+      await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
         body: JSON.stringify({
-          from: 'RwandAir Cargo Portal <noreply@rwandair-cargo-portal-nnvj.vercel.app>',
-          to:   ['cargobooking@rwandair.com'],
-          subject: `New Agent Enquiry — ${company}`,
+          from: 'RwandAir Cargo <no-reply@cargo.rwandair.com>',
+          to: ['cargobooking@rwandair.com'],
+          subject: `New agent application — ${company}`,
           text: [
-            `Company:  ${company}`,
-            `IATA:     ${iata || '—'}`,
-            `Contact:  ${contact}`,
-            `Email:    ${email}`,
-            `Phone:    ${phone}`,
-            `Country:  ${country}`,
-            `Volume:   ${volume || '—'}`,
-            `Routes:   ${routes.length ? routes.join('; ') : '—'}`,
-            `Heard via: ${hearAbout || '—'}`,
+            `Company:  ${company}`, `IATA/FIATA: ${iata || '—'}`, `Contact:  ${contact}`,
+            `Email:    ${cleanEmail}`, `Phone:    ${phone}`, `Country:  ${country}`,
+            `Volume:   ${volume || '—'}`, `Products: ${products.length ? products.join(', ') : '—'}`,
+            `Routes:   ${routes.length ? routes.join('; ') : '—'}`, `Heard via: ${hearAbout || '—'}`,
+            `Account created: ${accountCreated ? 'yes (pending)' : 'no (email may already exist)'}`,
           ].join('\n'),
         }),
-      })
-      if (!res.ok) console.error('[agents/enquiry] Resend error:', await res.text())
+      }).catch(e => console.error('[agents/enquiry] commercial email:', e))
     } catch (err) {
       console.error('[agents/enquiry] Email send error:', err)
     }

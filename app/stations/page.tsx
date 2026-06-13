@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft, Search, CheckCircle, X, MapPin, Thermometer, Shield, Package } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import { useLanguage } from '@/components/providers/LanguageProvider'
 
 // ─── Station data ─────────────────────────────────────────────────────────────
 interface Station {
@@ -177,6 +178,7 @@ const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function StationsPage() {
+  const { t } = useLanguage()
   const [search, setSearch]   = useState('')
   const [region, setRegion]   = useState<typeof REGIONS[number]>('All')
   const [type, setType]       = useState<typeof TYPES[number]>('All')
@@ -203,7 +205,7 @@ export default function StationsPage() {
                   style={{ color: 'rgba(255,255,255,0.6)' }}>
               <ArrowLeft className="w-4 h-4" /> Back to home
             </Link>
-            <h1 className="text-white mb-2" style={{ fontSize: '2rem' }}>Cargo Station Directory</h1>
+            <h1 className="text-white mb-2" style={{ fontSize: '2rem' }}>{t('headStations')}</h1>
             <p style={{ color: 'rgba(255,255,255,0.65)', fontWeight: 300 }}>
               Handler details, cold-store availability, and certifications across all {STATIONS.length} RwandAir Cargo stations.
             </p>

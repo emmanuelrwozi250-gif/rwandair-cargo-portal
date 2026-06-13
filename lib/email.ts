@@ -539,6 +539,54 @@ export async function sendNewsSubscribeConfirmEmail(email: string, categories: s
   })
 }
 
+// ===== AGENT ACCOUNT EMAILS =====
+
+export async function sendAgentWelcomeEmail(opts: { email: string; company: string; signInUrl?: string }) {
+  const resend = getResend()
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: opts.email,
+    subject: 'Your RwandAir Cargo agent application — received',
+    html: emailWrapper(`
+      <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Thanks, ${escapeHtml(opts.company)} — we've got your application</h2>
+      <p style="color:#64748b;margin:0 0 16px;">Your agent account has been created and is <strong>pending approval</strong>. Our commercial team reviews applications within <strong>2 business days</strong>; you'll get an email the moment you're approved, unlocking contract rates and credit terms.</p>
+      <p style="color:#64748b;margin:0 0 16px;">In the meantime you can sign in to your portal and book at spot rates:</p>
+      <a href="${opts.signInUrl ?? `${process.env.NEXT_PUBLIC_APP_URL}/portal/login`}" style="display:inline-block;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Open your portal →</a>
+      <p style="color:#94a3b8;margin:16px 0 0;font-size:12px;">This is a passwordless sign-in link tied to your email. Built to Move Africa.</p>
+    `),
+  })
+}
+
+export async function sendAgentApprovedEmail(opts: { email: string; company: string }) {
+  const resend = getResend()
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: opts.email,
+    subject: 'Your RwandAir Cargo agent account is approved',
+    html: emailWrapper(`
+      <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Welcome aboard, ${escapeHtml(opts.company)}</h2>
+      <p style="color:#64748b;margin:0 0 16px;">Your agent account is approved. Your contract rates, allocations and net credit terms are now active in the portal.</p>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/portal/login" style="display:inline-block;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Sign in to your portal →</a>
+      <p style="color:#94a3b8;margin:16px 0 0;font-size:12px;">Built to Move Africa · From Africa, For the World</p>
+    `),
+  })
+}
+
+export async function sendAgentRejectedEmail(opts: { email: string; company: string }) {
+  const resend = getResend()
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: opts.email,
+    subject: 'Update on your RwandAir Cargo agent application',
+    html: emailWrapper(`
+      <h2 style="font-size:18px;margin:0 0 8px;color:#02284d;">Application update</h2>
+      <p style="color:#64748b;margin:0 0 16px;">Thank you for your interest in becoming a RwandAir Cargo agent, ${escapeHtml(opts.company)}. We&apos;re unable to approve your account at this time.</p>
+      <p style="color:#64748b;margin:0 0 16px;">If circumstances change — volume, routes, or documentation — we&apos;d welcome a fresh application. You can reapply anytime.</p>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/agents/register" style="display:inline-block;background:#02284d;color:#FBE115;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;">Reapply →</a>
+    `),
+  })
+}
+
 export async function sendPickupCancelledEmail(pickup: PickupRequest, exporterEmail: string) {
   const resend = getResend()
   await resend.emails.send({

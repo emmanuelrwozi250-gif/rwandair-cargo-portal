@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   Package, Plane, TrendingUp, CheckCircle, Clock,
-  AlertTriangle, Zap, ChevronRight, Phone, Leaf, Info
+  AlertTriangle, Zap, ChevronRight, Phone, Info
 } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
@@ -147,7 +147,6 @@ export default function DashboardPage() {
     { label: 'Active shipments',    value: loading ? '…' : String(activeCount),   icon: Plane,       color: 'var(--wb-sky)'   },
     { label: 'Total shipped (30d)', value: loading ? '…' : totalWeightLabel,       icon: Package,     color: 'var(--wb-blue)'  },
     { label: 'On-time rate',        value: loading ? '…' : onTimePct,              icon: CheckCircle, color: 'var(--wb-green)' },
-    { label: 'CO₂ offset',          value: loading ? '…' : `${(shipments.reduce((s, r) => s + r.weightKg, 0) * 0.00168).toFixed(1)}t`, icon: Leaf, color: '#4a7c20' },
   ]
 
   return (

@@ -9,9 +9,8 @@ const PUBLIC_ROUTES = [
   '/quote',
   '/consolidate',
   '/perishables',
-  '/capacity',
-  '/deals',
   '/stations',
+  '/charter',
   '/globe',
   '/track',
   '/agents',
@@ -22,6 +21,7 @@ const PUBLIC_ROUTES = [
   '/rate',
   '/reviews',
   '/feedback',
+  '/agent-admin',
 ]
 
 // Public route prefixes (dynamic segments)
@@ -31,9 +31,18 @@ export async function middleware(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  // If env vars are not configured, still protect admin/dashboard routes
+  // If env vars are not configured, still protect authenticated areas
   if (!url || !key) {
     const { pathname } = request.nextUrl
+    // Agent portal + agent-only marketplace pages → portal login
+    if (
+      (pathname.startsWith('/portal') && pathname !== '/portal/login') ||
+      pathname.startsWith('/capacity') ||
+      pathname.startsWith('/deals')
+    ) {
+      return NextResponse.redirect(new URL('/portal/login', request.url))
+    }
+    // Exporter dashboard + Supabase admin → exporter login
     if (pathname.startsWith('/admin') || pathname.startsWith('/dashboard')) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
@@ -79,8 +88,30 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/feature-requests') ||
     pathname.startsWith('/api/news') ||
     pathname.startsWith('/api/articles') ||
+    pathname.startsWith('/api/charter') ||
+    pathname.startsWith('/api/agent-admin') ||
     pathname.startsWith('/api/cron')
   ) {
+    return supabaseResponse
+  }
+
+  // Agent-only marketplace pages — require a signed-in account, bounce to portal login
+  if (pathname.startsWith('/capacity') || pathname.startsWith('/deals')) {
+    if (!user) {
+      const url = new URL('/portal/login', request.url)
+      url.searchParams.set('next', pathname)
+      return NextResponse.redirect(url)
+    }
+    return supabaseResponse
+  }
+
+  // Agent portal — its own auth surface, separate from the exporter /login
+  if (pathname.startsWith('/portal')) {
+    if (pathname === '/portal/login') {
+      if (user) return NextResponse.redirect(new URL('/portal/dashboard', request.url))
+      return supabaseResponse
+    }
+    if (!user) return NextResponse.redirect(new URL('/portal/login', request.url))
     return supabaseResponse
   }
 

@@ -9,5 +9,8 @@
       "path": "/api/cron/rating-requests",
       "schedule": "0 8 * * *"
     }
+  ],
+  "redirects": [
+    { "source": "/agents/portal", "destination": "/portal", "permanent": true }
   ]
 }

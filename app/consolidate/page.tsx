@@ -7,6 +7,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ConnectivityLines from '@/components/brand/ConnectivityLines'
 import { useToast } from '@/components/ui/Toast'
+import { useLanguage } from '@/components/providers/LanguageProvider'
 
 // ─── Standard per-kg rates by commodity ──────────────────────────────────────
 // Consolidated rate = standard * (1 - savings%)
@@ -162,6 +163,7 @@ function JoinForm({ group, onClose, onSubmit }: { group: typeof GROUPS[0]; onClo
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function ConsolidatePage() {
   const { addToast } = useToast()
+  const { t } = useLanguage()
   const [joiningGroup, setJoiningGroup] = useState<string | null>(null)
   const [commodity, setCommodity] = useState('')
   const [weight, setWeight] = useState(500)
@@ -182,7 +184,7 @@ export default function ConsolidatePage() {
                   style={{ color: 'rgba(255,255,255,0.6)' }}>
               <ArrowLeft className="w-4 h-4" /> Back
             </Link>
-            <h1 className="text-white mb-2" style={{ fontSize: '1.75rem' }}>Consolidation Planner</h1>
+            <h1 className="text-white mb-2" style={{ fontSize: '1.75rem' }}>{t('headConsolidate')}</h1>
             <p style={{ color: 'rgba(255,255,255,0.65)', fontWeight: 300 }}>
               Join an active consolidation group and save up to 25% — space is confirmed tonight.
             </p>

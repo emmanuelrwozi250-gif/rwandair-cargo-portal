@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import { getServerT } from '@/lib/i18n/server'
 import {
   Zap, Headphones, Layers, CreditCard, FileCheck, Plug, BarChart3,
   Check, Minus, ChevronRight,
@@ -81,7 +82,8 @@ const API_SNIPPET = [
   { t: '}', c: '#E5E7EB' },
 ]
 
-export default function AgentsPage() {
+export default async function AgentsPage() {
+  const t = await getServerT()
   return (
     <>
       <Navbar />
@@ -96,7 +98,7 @@ export default function AgentsPage() {
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <p className="label-upper mb-3" style={{ color: 'var(--wb-sky)' }}>Freight Agents &amp; Forwarders</p>
             <h1 className="text-white mb-4" style={{ fontSize: 'clamp(28px,4vw,56px)', fontWeight: 800, lineHeight: 1.05 }}>
-              The cargo platform built<br />for freight professionals
+              {t('headAgents')}
             </h1>
             <p className="mb-8" style={{ color: 'rgba(255,255,255,0.8)', lineHeight: 1.7, maxWidth: '560px' }}>
               Allocations, credit lines, priority booking, and API access — all in one place.

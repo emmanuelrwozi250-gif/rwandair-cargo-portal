@@ -116,7 +116,6 @@ function getDocuments(commodityType: CommodityType) {
     { name: 'Airway Bill (AWB)', ready: true },
     { name: 'Customs Declaration', ready: true },
     { name: 'Temperature Certificate', ready: commodityType === 'flowers' || commodityType === 'seafood' },
-    { name: 'Carbon Certificate', ready: true },
     { name: 'Phytosanitary Certificate', ready: commodityType === 'flowers' },
     { name: 'Packing List', ready: true },
   ]
