@@ -9,6 +9,17 @@ import {
 } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import RegistrationWall from '@/components/quote/RegistrationWall'
+import CallbackButton from '@/components/quote/CallbackButton'
+import { createClient } from '@/lib/supabase'
+import { computeLineItems, usd, outOfStandardReason } from '@/lib/quote-pricing'
+import type { ContractRate } from '@/types'
+
+// Quote commodity → contract-rate / portal product-type label
+const COMMODITY_TO_PRODUCT: Record<string, string> = {
+  GENERAL: 'General', PERISHABLE: 'Fresh', PHARMACEUTICAL: 'Pharma',
+  HIGH_VALUE: 'Valuables', LIVE_ANIMALS: 'Live', DANGEROUS_GOODS: 'DG',
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatDeparture(isoStr: string): string {
@@ -121,11 +132,17 @@ function QuoteCard({
   option,
   selected,
   onSelect,
+  weightKg,
+  contractRatePerKg,
 }: {
   option: QuoteOption
   selected: boolean
   onSelect: () => void
+  weightKg: number
+  contractRatePerKg: number | null
 }) {
+  const cargoUsd = contractRatePerKg ? Math.round(contractRatePerKg * weightKg) : option.priceUsd
+  const li = computeLineItems(cargoUsd)
   return (
     <button
       onClick={onSelect}
@@ -163,11 +180,33 @@ function QuoteCard({
         {option.badge}
       </span>
 
-      {/* Price */}
+      {/* All-in price */}
       <div className="mb-1">
-        <p className="price-unit">FROM</p>
-        <p className="price-large">${option.priceUsd.toLocaleString()}</p>
+        {contractRatePerKg && (
+          <span className="inline-block mb-1 px-2 py-0.5 rounded-full text-xs font-bold"
+                style={{ background: 'var(--wb-green-light)', color: '#4a7c20' }}>
+            Your contract rate · ${contractRatePerKg.toFixed(2)}/kg
+          </span>
+        )}
+        <p className="price-unit">ALL-IN</p>
+        <p className="price-large">{usd(li.allInUsd)}</p>
         <p className="price-label">per shipment</p>
+      </div>
+
+      {/* Line items */}
+      <div className="mt-3 pt-3 space-y-1.5 text-sm" style={{ borderTop: '1px solid var(--wb-gray-200)' }}>
+        <div className="flex items-center justify-between" style={{ color: 'var(--wb-gray-500)' }}>
+          <span>Cargo charge</span><span style={{ color: 'var(--wb-gray-900)' }}>{usd(li.cargoUsd)}</span>
+        </div>
+        <div className="flex items-center justify-between" style={{ color: 'var(--wb-gray-500)' }}>
+          <span>Fuel surcharge</span><span style={{ color: 'var(--wb-gray-900)' }}>{usd(li.fuelUsd)}</span>
+        </div>
+        <div className="flex items-center justify-between" style={{ color: 'var(--wb-gray-500)' }}>
+          <span>Handling fee</span><span style={{ color: 'var(--wb-gray-900)' }}>{usd(li.handlingUsd)}</span>
+        </div>
+        <div className="flex items-center justify-between pt-1.5 font-bold" style={{ borderTop: '1px solid var(--wb-gray-200)', color: 'var(--wb-blue)' }}>
+          <span>All-in total</span><span>{usd(li.allInUsd)}</span>
+        </div>
       </div>
 
       {/* Route details */}
@@ -248,6 +287,29 @@ export default function QuotePage() {
   const [apiError, setApiError] = useState('')
   const [uploadedFile, setUploadedFile] = useState<string | null>(null)
 
+  // Auth + registration wall (rates are gated behind a free instant account)
+  const [isAuthed, setIsAuthed] = useState(false)
+  const [isApproved, setIsApproved] = useState(false)
+  const [contractRates, setContractRates] = useState<ContractRate[]>([])
+  const [showWall, setShowWall] = useState(false)
+
+  async function loadAuth() {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { setIsAuthed(false); return false }
+    setIsAuthed(true)
+    const { data: profile } = await supabase.from('profiles').select('status').eq('id', user.id).maybeSingle()
+    const approved = profile?.status === 'approved'
+    setIsApproved(approved)
+    if (approved) {
+      const { data: rates } = await supabase.from('contract_rates').select('*')
+      setContractRates((rates as ContractRate[]) ?? [])
+    }
+    return true
+  }
+
+  useEffect(() => { loadAuth() }, [])
+
   // Pre-populate from /quote?from=KGL&to=LHR&weight=500 (homepage hero widget, Feature 5b)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -262,6 +324,22 @@ export default function QuotePage() {
   const volumetricWeight = Math.ceil((length * width * height) / 6000)
   const chargeableWeight = volumetricMode ? Math.max(weightKg, volumetricWeight) : weightKg
 
+  // Contract $/kg for the current route + product, if this approved agent has one
+  const contractRatePerKg = (() => {
+    if (!isApproved || !contractRates.length) return null
+    const product = COMMODITY_TO_PRODUCT[commodity] ?? 'General'
+    const match = contractRates.find(r =>
+      r.product_type === product &&
+      (r.route === `${origin}-${destination}` ||
+       r.route === `${origin} → ${destination}` ||
+       (r.route.includes(origin) && r.route.includes(destination)))
+    )
+    return match ? match.rate_usd_per_kg : null
+  })()
+
+  const routeKnown = ORIGINS.includes(origin) && DESTINATIONS_LIST.includes(destination)
+  const outOfStandard = outOfStandardReason({ weightKg: chargeableWeight, commodity, routeKnown })
+
   const OPTION_META: Record<string, { label: string; badge: string; badgeColor: string; recommended?: boolean }> = {
     fastest:  { label: 'FASTEST',       badge: '⭐ Recommended', badgeColor: '#fee014', recommended: true },
     cheapest: { label: 'CHEAPEST',      badge: 'Save 18%',       badgeColor: '#94c943' },
@@ -269,6 +347,15 @@ export default function QuotePage() {
   }
 
   async function handleGetQuote() {
+    if (!origin || !destination) return
+    // Gate rates behind a free instant account
+    if (!isAuthed) { setShowWall(true); return }
+    await fetchQuotes()
+  }
+
+  // The actual fetch — called directly after the wall authenticates (where
+  // isAuthed state hasn't flushed yet), bypassing the gate.
+  async function fetchQuotes() {
     if (!origin || !destination) return
     setLoading(true)
     setQuotes(null)
@@ -605,9 +692,18 @@ export default function QuotePage() {
                         option={opt}
                         selected={selected === opt.type}
                         onSelect={() => setSelected(opt.type)}
+                        weightKg={chargeableWeight}
+                        contractRatePerKg={contractRatePerKg}
                       />
                     ))}
                   </div>
+
+                  {/* Out-of-standard → callback */}
+                  {outOfStandard && (
+                    <div className="mt-6">
+                      <CallbackButton context={`${origin} → ${destination}, ${commodity}, ${chargeableWeight}kg`} reason={outOfStandard} />
+                    </div>
+                  )}
 
                   {/* Proceed CTA */}
                   {selected && (
@@ -650,6 +746,16 @@ export default function QuotePage() {
         </div>
       </div>
       <Footer />
+
+      <RegistrationWall
+        open={showWall}
+        onClose={() => setShowWall(false)}
+        onAuthed={async () => {
+          setShowWall(false)
+          await loadAuth()
+          await fetchQuotes()
+        }}
+      />
     </>
   )
 }
